@@ -30,6 +30,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-# Spring Boot Secrets / Config 
-src/main/resources/application.yaml
