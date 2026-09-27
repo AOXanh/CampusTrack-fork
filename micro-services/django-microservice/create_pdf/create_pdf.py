@@ -15,111 +15,155 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 from create_pdf.get_template import get_template
 
-load_dotenv()
+# Load environment variables
+load_dotenv() # returns: bool
 
-# Google expects SCOPES to be a list, so we wrap the string from .env in brackets
-SCOPES = [os.environ.get("SCOPES")]
-FOLDER_ID = os.environ.get("FOLDER_ID")
+# os.environ.get(key: str) -> str | None
+SCOPES = [os.environ.get("SCOPES")] # SCOPES: list[str]
+FOLDER_ID = os.environ.get("FOLDER_ID") # FOLDER_ID: str
 
 
-def upload_pdf_to_drive(pdf_bytes, filename):
+def upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
     creds = None
     
-    # Load Token from .env
-    token_str = os.environ.get("TOKEN")
+    # os.environ.get(key: str) -> str | None
+    token_str = os.environ.get("TOKEN") # token_str: str | None
+    
     if token_str:
-        token_info = json.loads(token_str)
-        # Use from_authorized_user_info to load from the dictionary
-        creds = Credentials.from_authorized_user_info(token_info, SCOPES)
+        # json.loads(s: str) -> dict
+        token_info = json.loads(token_str) # token_info: dict
         
-    # If no valid credentials available, let the user log in or refresh.
+        # Credentials.from_authorized_user_info(info: dict, scopes: list) -> Credentials
+        creds = Credentials.from_authorized_user_info(token_info, SCOPES) # creds: Credentials
+        
+    # Check if credentials are not valid
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            # creds.refresh(request: Request) -> None
             creds.refresh(Request())
-            # Print the new token so you can manually copy/paste it into your .env
+            
             print("TOKEN REFRESHED! Update your .env TOKEN with this:")
-            print(creds.to_json())
+            # creds.to_json() -> str
+            print(creds.to_json()) 
         else:
-            # Look for CLIENT_SECRTE (matching your .env typo) or CLIENT_SECRET
-            client_secret_str = os.environ.get("CLIENT_SECRTE") or os.environ.get("CLIENT_SECRET")
+            # os.environ.get(key: str) -> str | None
+            client_secret_str = os.environ.get("CLIENT_SECRTE") or os.environ.get("CLIENT_SECRET") # client_secret_str: str | None
+            
             if not client_secret_str:
                 raise ValueError("Missing CLIENT_SECRTE in .env")
                 
-            client_config = json.loads(client_secret_str)
+            # json.loads(s: str) -> dict
+            client_config = json.loads(client_secret_str) # client_config: dict
             
-            # Use from_client_config to load from the dictionary
-            flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
-            creds = flow.run_local_server(port=0)
+            # InstalledAppFlow.from_client_config(client_config: dict, scopes: list) -> InstalledAppFlow
+            flow = InstalledAppFlow.from_client_config(client_config, SCOPES) # flow: InstalledAppFlow
             
-            # Print the new token so you can manually copy/paste it into your .env
+            # flow.run_local_server(port: int) -> Credentials
+            creds = flow.run_local_server(port=0) # creds: Credentials
+            
             print("NEW TOKEN GENERATED! Add this to your .env TOKEN:")
-            print(creds.to_json())
+            # creds.to_json() -> str
+            print(creds.to_json()) 
 
 
-
-    # Proceed with Google Drive API Upload
-    service = build('drive', 'v3', credentials=creds)
+    # build(serviceName: str, version: str, credentials: Credentials) -> Resource
+    service = build('drive', 'v3', credentials=creds) # service: Resource
 
     file_metadata = {
         'name': filename,
         'parents': [FOLDER_ID]
-    }
+    } # file_metadata: dict
     
-    media = MediaIoBaseUpload(io.BytesIO(pdf_bytes), mimetype='application/pdf', resumable=True)
+    # io.BytesIO(initial_bytes: bytes) -> BytesIO
+    pdf_stream = io.BytesIO(pdf_bytes) # pdf_stream: BytesIO
+    
+    # MediaIoBaseUpload(fd: BytesIO, mimetype: str, resumable: bool) -> MediaIoBaseUpload
+    media = MediaIoBaseUpload(pdf_stream, mimetype='application/pdf', resumable=True) # media: MediaIoBaseUpload
 
+    # service.files().create(body: dict, media_body: MediaIoBaseUpload, fields: str) -> HttpRequest
+    # .execute() -> dict
     file = service.files().create(
         body=file_metadata,
         media_body=media,
         fields='id, webViewLink'
-    ).execute()
+    ).execute() # file: dict
     
-    file_id = file.get('id')
+    # file.get(key: str) -> str
+    file_id = file.get('id') # file_id: str
 
-    # Make the file readable to anyone with the link
-    permission = {'type': 'anyone', 'role': 'reader'}
+    permission = {'type': 'anyone', 'role': 'reader'} # permission: dict
+    
+    # service.permissions().create(fileId: str, body: dict, fields: str) -> HttpRequest
+    # .execute() -> dict
     service.permissions().create(
         fileId=file_id, 
         body=permission, 
         fields='id'
     ).execute()
 
+    # file.get(key: str) -> str
     return file.get('webViewLink')
 
 
 # ==========================================
 # 3. PDF GENERATOR FUNCTION
 # ==========================================
-def create_incident_report_pdf(data):
-    # Render HTML with Jinja2
-    template = Template(get_template())
+def create_incident_report_pdf(data: dict) -> JsonResponse: 
+    
+    # get_template() -> str
+    template_string = get_template() # template_string: str
+    
+    # Template(source: str) -> Template
+    template = Template(template_string) # template: Template
+    
+    # template.render(kwargs: dict) -> str
+    # data.get(key: str, default: any) -> dict | list
     rendered_html = template.render(
         report=data.get("report", {}),
         involved_parties=data.get("involved_parties", []),
         details=data.get("details", {}),
         preparer=data.get("preparer", {})
-    )
+    ) # rendered_html: str
     
-    # Generate PDF in memory using Playwright
+    # sync_playwright() -> PlaywrightContextManager
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
+        # p.chromium.launch() -> Browser
+        browser = p.chromium.launch() # browser: Browser
+        
+        # browser.new_page() -> Page
+        page = browser.new_page() # page: Page
+        
+        # page.set_content(html: str) -> None
         page.set_content(rendered_html)
-        pdf_bytes = page.pdf(format="A4", print_background=True)
+        
+        # page.pdf(format: str, print_background: bool) -> bytes
+        pdf_bytes = page.pdf(format="A4", print_background=True) # pdf_bytes: bytes
+        
+        # browser.close() -> None
         browser.close()
         
-    # Generate a unique filename
-    filename = f"UC_Incident_Report_{uuid.uuid4().hex[:8]}.pdf"
+    # uuid.uuid4() -> UUID
+    # .hex -> str
+    random_hex = uuid.uuid4().hex[:8] # random_hex: str
     
-    # Upload to Google Drive and get the link
+    filename = f"UC_Incident_Report_{random_hex}.pdf" # filename: str
+    
     try:
-        gdrive_url = upload_pdf_to_drive(pdf_bytes, filename)
+        # upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str
+        gdrive_url = upload_pdf_to_drive(pdf_bytes, filename) # gdrive_url: str
+        
+        # JsonResponse(data: dict) -> JsonResponse
         return JsonResponse({
             "status": "success", 
             "filename": filename,
             "Link": gdrive_url
         })
     except Exception as e:
+        # str(object: Exception) -> str
+        error_msg = str(e) # error_msg: str
+        
+        # JsonResponse(data: dict, status: int) -> JsonResponse
         return JsonResponse({
             "status": "error",
-            "message": f"Google Drive upload failed: {str(e)}"
+            "message": f"Google Drive upload failed: {error_msg}"
         }, status=500)
