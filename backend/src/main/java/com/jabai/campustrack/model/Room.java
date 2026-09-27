@@ -1,10 +1,14 @@
-package com.jabai.campustrack.Models;
+package com.jabai.campustrack.model;
 
-import com.jabai.campustrack.Models.Enums.Criticality;
-import com.jabai.campustrack.Models.Enums.RoomType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+
+import com.jabai.campustrack.model.Enums.Criticality;
+import com.jabai.campustrack.model.Enums.RoomType;
 
 @Entity
 @Table(name = "Rooms")
@@ -38,6 +42,8 @@ public class Room {
   private Criticality criticality;
 
   // Getters
+  
+  
   public Building getBuilding() { return building; }
   public int getRoomNumber() { return roomNumber; }
   public int getCapacity() { return capacity; }
@@ -50,4 +56,5 @@ public class Room {
   public void setCapacity(int value) { capacity = value; }
   public void setRoomType(RoomType value) { roomType = value; }
   public void setCriticality(Criticality value) { criticality = value; }
+  
 }

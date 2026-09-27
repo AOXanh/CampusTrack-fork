@@ -1,7 +1,8 @@
-package com.jabai.campustrack.Controllers;
+package com.jabai.campustrack.controller;
 
-import com.jabai.campustrack.Models.Health;
-import com.jabai.campustrack.Services.HealthService;
+import com.jabai.campustrack.model.Health;
+import com.jabai.campustrack.services.HealthService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
