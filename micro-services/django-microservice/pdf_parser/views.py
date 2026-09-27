@@ -1,11 +1,11 @@
 from django.http.request import HttpRequest
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-from create_pdf.create_pdf import create_incident_report_pdf
+from django.views.decorators.http import require_POST
 
-# dummy_data.py
+from . import services
 
+# Dummy report data
 dummy_report_data = {
     "report": {
         "report_id": "IR-2023-10-045",
@@ -13,7 +13,7 @@ dummy_report_data = {
         "incident_date": "October 24, 2023",
         "incident_time": "10:30 AM",
         "location": "Main Campus - 3rd Floor, CCS Laboratory Room 302",
-        "severity": "Medium"  # Options: High, Medium, Low 
+        "severity": "Medium"  # Options: High, Medium, Low
     },
     "involved_parties": [
         {
@@ -42,7 +42,6 @@ dummy_report_data = {
     }
 }
 
-
 def pdf_parser_helloworld(request: HttpRequest):
     return JsonResponse({ "message": "Hello world ;D" })
 
@@ -50,9 +49,18 @@ def pdf_parser_health(request: HttpRequest):
     return JsonResponse({ "health_status": "Healthy" })
 
 @csrf_exempt #FOR DEVELOPMENT PHASE ONLY;
+@require_POST
 def create_pdf_report(request: HttpRequest):
-    if request.method == 'POST':
-        payload = dummy_report_data
-        return create_incident_report_pdf(payload)
-    else:  
-        return JsonResponse({ "GET": "USE POST METHOD" })
+    try:
+        filename, link = services.create_incident_report_pdf(dummy_report_data)
+        return JsonResponse({
+            "status": "Success",
+            "filename": filename,
+            "link": link
+        })
+    except Exception as ex:
+        # print("created_pdf_report Error:", ex)
+        return JsonResponse({
+            "status": "Failed",
+            "message": "Something went wrong while creating the PDF file"
+        }, status=500)

@@ -18,6 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path("pdf-parser/", include("pdf_parser.urls"))
+
+    # API
+    path("api/pdf-parser/", include("pdf_parser.urls"))
 ]
