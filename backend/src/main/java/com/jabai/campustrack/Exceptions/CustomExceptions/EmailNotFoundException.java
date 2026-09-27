@@ -1,4 +1,4 @@
-package com.jabai.campustrack.globalerrorhandler;
+package com.jabai.campustrack.Exceptions.CustomExceptions;
 
 
 public class EmailNotFoundException extends RuntimeException {

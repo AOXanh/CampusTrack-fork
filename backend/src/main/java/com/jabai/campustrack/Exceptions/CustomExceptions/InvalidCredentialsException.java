@@ -1,4 +1,4 @@
-package com.jabai.campustrack.globalerrorhandler;
+package com.jabai.campustrack.Exceptions.CustomExceptions;
 
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException(String message){ 

@@ -1,14 +1,10 @@
-package com.jabai.campustrack.model;
+package com.jabai.campustrack.Models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
-import com.jabai.campustrack.model.Enums.Criticality;
-import com.jabai.campustrack.model.Enums.RoomType;
+import com.jabai.campustrack.Models.Enums.Criticality;
+import com.jabai.campustrack.Models.Enums.RoomType;
 
 @Entity
 @Table(name = "Rooms")

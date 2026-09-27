@@ -1,76 +1,66 @@
-package com.jabai.campustrack.services;
+package com.jabai.campustrack.Services;
 
+import com.jabai.campustrack.DTOs.Requests.LoginUserRequestDto;
+import com.jabai.campustrack.DTOs.Requests.RegisterUserRequestDto;
+import com.jabai.campustrack.DTOs.Responses.LoginUserResponseDto;
+import com.jabai.campustrack.DTOs.Responses.RegisterUserResponseDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jabai.campustrack.repository.UserRepository;
-import com.jabai.campustrack.model.Enums.*;
-import com.jabai.campustrack.globalerrorhandler.EmailAlreadyExistException;
-import com.jabai.campustrack.globalerrorhandler.EmailNotFoundException;
-import com.jabai.campustrack.globalerrorhandler.InvalidCredentialsException;
-import com.jabai.campustrack.jwt.JwtUtil;
-import com.jabai.campustrack.model.*; 
+import com.jabai.campustrack.Repositories.UserRepository;
+import com.jabai.campustrack.Exceptions.CustomExceptions.EmailAlreadyExistException;
+import com.jabai.campustrack.Exceptions.CustomExceptions.EmailNotFoundException;
+import com.jabai.campustrack.Exceptions.CustomExceptions.InvalidCredentialsException;
+import com.jabai.campustrack.Securities.JwtUtil;
+import com.jabai.campustrack.Models.*;
+
+import java.util.Optional;
 
 @Service 
 public class UserService {
-    
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository; 
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil){ 
-        this.userRepository = userRepository; 
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil; 
+        this.jwtUtil = jwtUtil;
     }
 
-    public String registerUser(User user){
+    public RegisterUserResponseDto registerUser(RegisterUserRequestDto registerUserRequestDto) {
+        if (userRepository.findByEmail(registerUserRequestDto.getEmail()).isPresent())
+            throw new EmailAlreadyExistException("Email already exists");
 
-         System.out.println("NAME: " + user.getName());
-    System.out.println("EMAIL: " + user.getEmail());
-    System.out.println("PASSWORD: " + user.getHashedPassword());
+        String hashedPassword = passwordEncoder.encode(registerUserRequestDto.getPassword());
 
-    if(userRepository.findByEmail(user.getEmail()).isPresent()){ 
-        throw new EmailAlreadyExistException("Email already exists");
+        User user = new User(
+            registerUserRequestDto.getName(),
+            registerUserRequestDto.getEmail(),
+            hashedPassword,
+            registerUserRequestDto.getUserRole()
+        );
+
+        userRepository.save(user);
+        return new RegisterUserResponseDto("Your account has successfully been created.");
     }
 
-    user.setHashedPassword(
-        passwordEncoder.encode(user.getHashedPassword())
-    );
+    public LoginUserResponseDto loginUser(LoginUserRequestDto loginUserRequestDto) throws RuntimeException {
+        Optional<User> foundUser = userRepository.findByEmail(loginUserRequestDto.getEmail());
 
-    user.setUserRole(UserRole.USER);
-    userRepository.save(user); 
+        if (foundUser.isEmpty())
+            throw new EmailNotFoundException("Unable to find user.");
+        if (!passwordEncoder.matches(loginUserRequestDto.getPassword(), foundUser.get().getHashedPassword()))
+            throw new InvalidCredentialsException("Your email or password is incorrect.");
 
-    return "Registered successfully"; 
-   /* 
-   
-   
-    if(userRepository.findByEmail(user.getEmail()).isPresent()){ 
-        throw new EmailAlreadyExistException("Email already exists");
-     }
-     user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
-     user.setUserRole(UserRole.USER);
-     userRepository.save(user); 
-        return "Registered successfully"; 
-        */ 
+        User currentUser = foundUser.get();
+        String userToken = jwtUtil.generateToken(currentUser);
+
+        return new LoginUserResponseDto(
+                "Login success!",
+                currentUser.getName(),
+                currentUser.getEmail(),
+                userToken
+        );
     }
-
-    public String loginUser(User user){ 
-        User currentUser = userRepository.findByEmail(user.getEmail()).orElseThrow(() -> new EmailNotFoundException("Email not found"));
-        if(!passwordEncoder.matches(user.getHashedPassword(), currentUser.getHashedPassword())){    
-            throw new InvalidCredentialsException("Email or Password is incorrect"); 
-        }
-      return   jwtUtil.generateToken(currentUser); 
-    }
-
-
-
-
-
-
-
-
-
-
-
 }
