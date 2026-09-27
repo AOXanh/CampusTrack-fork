@@ -1,6 +1,6 @@
-package com.jabai.campustrack.Services;
+package com.jabai.campustrack.services;
 
-import com.jabai.campustrack.Models.Health;
+import com.jabai.campustrack.model.Health;
 
 public class HealthService {
   public Health getHealthy() {

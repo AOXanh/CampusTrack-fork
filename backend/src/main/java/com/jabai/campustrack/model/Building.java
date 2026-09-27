@@ -1,6 +1,9 @@
-package com.jabai.campustrack.Models;
+package com.jabai.campustrack.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +28,8 @@ public class Building {
   @Column(name = "name", nullable = false)
   private String name;
 
+
+  
   // Getters
   public List<Room> getRooms() { return rooms; }
   public long getId() { return id; }
@@ -39,5 +44,7 @@ public class Building {
   }
   public void removeRoom(Room value) {
     rooms.remove(value);
+    
   }
+    
 }

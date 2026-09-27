@@ -1,12 +1,14 @@
-package com.jabai.campustrack.Models;
+package com.jabai.campustrack.model;
 
-import com.jabai.campustrack.Models.Enums.UserRole;
 import jakarta.persistence.*;
+
 
 import java.time.LocalDateTime;
 
+import com.jabai.campustrack.model.Enums.UserRole;
+
 @Entity
-@Table(name = "Users")
+@Table(name = "Users") 
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +32,10 @@ public class User {
   @Column(name = "user_role", nullable = false)
   private UserRole userRole;
 
-  // Getters
+  // Getters 
+
+  
+  
   public long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public String getName() { return name; }
@@ -38,9 +43,18 @@ public class User {
   public String getHashedPassword() { return password; }
   public UserRole getUserRole() { return userRole; }
 
-  // Setters
+ 
+ 
+//Commented the Getters and Setters for the Lombok extension 
+
+  //Setters 
+   
   public void setName(String value) { name = value; }
-  public void setEmail(String value) { email = email; }
+  public void setEmail(String value) { email = value; }
   public void setHashedPassword(String value) { password = value; }
   public void setUserRole(UserRole value) { userRole = value; }
+
+   
+
+  
 }

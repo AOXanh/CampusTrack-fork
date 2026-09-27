@@ -1,4 +1,4 @@
-package com.jabai.campustrack.Models;
+package com.jabai.campustrack.model;
 
 public class Health {
   private final String health;
