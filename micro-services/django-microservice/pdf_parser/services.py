@@ -65,13 +65,13 @@ def _upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
     return file.get('webViewLink')
 
 """
-This function creates the incident report PDF
+This public function creates the incident report PDF
 
 Dict required properties: { "report", "involved_parties", "details" and "preparer" }
 Parameters: data (dict)
-Returns: str (the google drive link)
+Returns: tuple[str] (The filename and the google drive view link)
 """
-def create_incident_report_pdf(data: dict) -> tuple:
+def create_incident_report_pdf(data: dict) -> tuple[str]:
     template_string = render_to_string("pdf/incident_report_pdf.html")
     template = Template(template_string)
 

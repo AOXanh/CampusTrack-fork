@@ -45,9 +45,6 @@ dummy_report_data = {
 def pdf_parser_helloworld(request: HttpRequest):
     return JsonResponse({ "message": "Hello world ;D" })
 
-def pdf_parser_health(request: HttpRequest):
-    return JsonResponse({ "health_status": "Healthy" })
-
 @csrf_exempt #FOR DEVELOPMENT PHASE ONLY;
 @require_POST
 def create_pdf_report(request: HttpRequest):
