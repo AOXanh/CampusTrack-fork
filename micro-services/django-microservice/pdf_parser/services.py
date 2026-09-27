@@ -11,8 +11,6 @@ from googleapiclient.http import MediaIoBaseUpload
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
-import pdf_parser
-
 load_dotenv()
 
 _SCOPES: list[str | None] = [os.environ.get("SCOPES")]
