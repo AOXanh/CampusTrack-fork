@@ -1,0 +1,13 @@
+package com.jabai.campustrack.Models.Enums;
+
+public enum AssetCategory {
+  COMPUTER,
+  PROJECTOR,
+  AIRCONDITIONER,
+  FURNITURE,
+  NETWORK_EQUIPMENT,
+  LAB_EQUIPMENT,
+  ELECTRICAL_EQUIPMENT,
+  OFFICE_EQUIPMENT,
+  OTHER
+}

@@ -1,10 +1,10 @@
-CREATE TABLE Buildings (
+CREATE TABLE buildings (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE Rooms (
+CREATE TABLE rooms (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     building_id BIGINT UNSIGNED NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE Rooms (
     criticality VARCHAR(50) NOT NULL,
 
     CONSTRAINT fk_rooms_building
-        FOREIGN KEY (building_id) REFERENCES Buildings(id)
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
         ON DELETE CASCADE,
     CONSTRAINT uq_rooms_building_room_number
         UNIQUE (building_id, room_number)

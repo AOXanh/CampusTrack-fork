@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Buildings")
+@Table(name = "buildings")
 public class Building {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +18,17 @@ public class Building {
 
   // Core columns
   // Rooms
-  @OneToMany(mappedBy = "building", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Room> rooms = new ArrayList<>();
 
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = 100)
   private String name;
+
+  protected Building() { }
+
+  public Building(String name) {
+    this.name = name;
+  }
 
   // Getters
   public List<Room> getRooms() { return rooms; }
@@ -32,7 +38,10 @@ public class Building {
 
   // Setters
   public void setName(String value) { name = value; }
-  public void removeRoom(Room value) { rooms.remove(value); }
+  public void removeRoom(Room value) {
+    rooms.remove(value);
+    value.setBuilding(null);
+  }
   public void addRoom(Room value) {
     rooms.add(value);
     value.setBuilding(this);

@@ -1,0 +1,1 @@
+ALTER TABLE rooms MODIFY room_number VARCHAR(50) NOT NULL;

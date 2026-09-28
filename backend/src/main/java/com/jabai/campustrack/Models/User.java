@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.jabai.campustrack.Models.Enums.UserRole;
 
 @Entity
-@Table(name = "Users") 
+@Table(name = "users")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +17,10 @@ public class User {
   private LocalDateTime createdAt;
 
   // Core columns
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = 100)
   private String name;
 
-  @Column(name = "email", nullable = false, unique = true)
+  @Column(name = "email", nullable = false, unique = true, length = 100)
   private String email;
 
   @Column(name = "password_hash", nullable = false)
@@ -30,7 +30,7 @@ public class User {
   @Column(name = "user_role", nullable = false)
   private UserRole userRole;
 
-  public User() { }
+  protected User() { }
 
   public User(String name, String email, String password, UserRole userRole) {
     this.name = name;

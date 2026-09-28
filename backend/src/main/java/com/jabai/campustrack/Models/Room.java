@@ -3,11 +3,14 @@ package com.jabai.campustrack.Models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import com.jabai.campustrack.Models.Enums.Criticality;
+import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 
 @Entity
-@Table(name = "Rooms")
+@Table(
+        name = "rooms",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"building_id", "room_number" })
+)
 public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +26,8 @@ public class Room {
   @JoinColumn(name = "building_id", nullable = false)
   private Building building;
 
-  @Column(name = "room_number", nullable = false)
-  private int roomNumber;
+  @Column(name = "room_number", nullable = false, length = 50)
+  private String roomNumber;
 
   @Column(name = "capacity", nullable = false)
   private int capacity;
@@ -35,22 +38,32 @@ public class Room {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "criticality", nullable = false)
-  private Criticality criticality;
+  private RoomCriticality criticality;
+
+  protected Room() { }
+
+  public Room(Building building, String roomNumber, int capacity, RoomType roomType, RoomCriticality criticality) {
+    this.building = building;
+    this.roomNumber = roomNumber;
+    this.capacity = capacity;
+    this.roomType = roomType;
+    this.criticality = criticality;
+  }
 
   // Getters
-  
-  
   public Building getBuilding() { return building; }
-  public int getRoomNumber() { return roomNumber; }
+  public LocalDateTime getCreatedAt() { return createdAt; }
+  public String getRoomNumber() { return roomNumber; }
   public int getCapacity() { return capacity; }
   public RoomType getRoomType() { return roomType; }
-  public Criticality getCriticality() { return criticality; }
+  public RoomCriticality getCriticality() { return criticality; }
+  public long getId() { return id; }
 
   // Setters
   public void setBuilding(Building value) { building = value; }
-  public void setRoomNumber(int value) { roomNumber = value; }
+  public void setRoomNumber(String value) { roomNumber = value; }
   public void setCapacity(int value) { capacity = value; }
   public void setRoomType(RoomType value) { roomType = value; }
-  public void setCriticality(Criticality value) { criticality = value; }
-  
+  public void setCriticality(RoomCriticality value) { criticality = value; }
+
 }
