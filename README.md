@@ -5,9 +5,11 @@ A platform that links physical campus assets to their digital records using NFC,
 ## Project Structure
 ```
 CampusTrack/
-├── backend/          # Java Spring Boot core with Python microservices (API, auth, business logic)
 ├── database/         # MySQL Dockerfile and schema/migration scripts
-├── frontend/          # Next.js web application
+├── backend/          # Java Spring Boot core
+├── micro-services/   # Backend micro-services
+├── frontend/         # Next.js web application
+├── docs/             # Project documentation and design references
 └── README.md
 ```
 
