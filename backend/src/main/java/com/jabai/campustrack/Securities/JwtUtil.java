@@ -1,5 +1,6 @@
 package com.jabai.campustrack.Securities;
 
+import java.security.Key;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
@@ -32,5 +33,16 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(signingKey)
                 .compact();
+    } 
+
+    public String extractRole(String token){ 
+        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
+        return  Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class); 
     }
+
 }

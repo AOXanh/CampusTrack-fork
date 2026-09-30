@@ -13,6 +13,7 @@ import com.jabai.campustrack.Exceptions.CustomExceptions.EmailNotFoundException;
 import com.jabai.campustrack.Exceptions.CustomExceptions.InvalidCredentialsException;
 import com.jabai.campustrack.Securities.JwtUtil;
 import com.jabai.campustrack.Models.*;
+import com.jabai.campustrack.Models.Enums.UserRole;
 
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class UserService {
             registerUserRequestDto.getName(),
             registerUserRequestDto.getEmail(),
             hashedPassword,
-            registerUserRequestDto.getUserRole()
+            UserRole.USER
         );
 
         userRepository.save(user);
