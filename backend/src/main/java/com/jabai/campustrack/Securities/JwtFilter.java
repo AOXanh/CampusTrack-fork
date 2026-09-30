@@ -27,12 +27,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override  
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException{ 
-
+        //Extracts the header 
         String authHeader = request.getHeader("Authorization"); 
         if(authHeader == null || !authHeader.startsWith("Bearer ")){ 
             filterChain.doFilter(request, response);
             return; 
         }
+
+        //Extracts the token apart from the Bearer 
         String token = authHeader.substring(7); 
         boolean isTokenValid = jwtUtil.isTokenValid(token);
 
@@ -45,11 +47,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = jwtUtil.extractSubject(token); 
         String role = jwtUtil.extractRole(token); 
 
+
+        //This lists the user's designated role or authority 
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
         List<GrantedAuthority> authorities = List.of(authority); 
 
+        //This grabs the current user and their authority 
         UsernamePasswordAuthenticationToken currentUser = new UsernamePasswordAuthenticationToken(username, null, authorities);  
 
+        //This checks the current user and its authority, if it checks then the HTTP response on filterchain would return a valid point 
         SecurityContextHolder
         .getContext()
         .setAuthentication(currentUser); 
