@@ -4,6 +4,7 @@ import com.jabai.campustrack.Models.Enums.IncidentCategory;
 import com.jabai.campustrack.Models.Enums.IncidentPriority;
 import com.jabai.campustrack.Models.Enums.IncidentStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Generated;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Incident {
   private long id;
 
   @Column(name = "created_at", insertable = false, updatable = false)
+  @Generated // Read the database timestamp after an insert.
   private LocalDateTime createdAt;
 
   // Core columns

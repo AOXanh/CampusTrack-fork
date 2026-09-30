@@ -1,9 +1,15 @@
 package com.jabai.campustrack.Controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.jabai.campustrack.DTOs.Requests.IncidentRequestDto;
+import com.jabai.campustrack.DTOs.Requests.IncidentStatusRequestDto;
+import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
+import com.jabai.campustrack.Services.IncidentService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import java.net.URI;
+import java.security.Principal;
+import java.util.List;
 
 /**
  * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
@@ -20,8 +26,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/incidents")
 public class IncidentController {
-  @GetMapping("/hello-world")
-  public ResponseEntity<String> helloWorld() {
-    return ResponseEntity.ok("Hello world from incidents ;D");
+  private final IncidentService incidents;
+
+  public IncidentController(IncidentService incidents) { this.incidents = incidents; }
+
+  @PostMapping
+  public ResponseEntity<IncidentResponseDto> create(@Valid @RequestBody IncidentRequestDto request,
+                                                   Principal principal) {
+    IncidentResponseDto response = incidents.create(request, principal.getName());
+    return ResponseEntity.created(URI.create("/api/incidents/" + response.id())).body(response);
+  }
+
+  @GetMapping
+  public List<IncidentResponseDto> list(Principal principal,
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+    return incidents.list(principal.getName(), page, size);
+  }
+
+  @GetMapping("/{id}")
+  public IncidentResponseDto get(@PathVariable long id, Principal principal) {
+    return incidents.get(id, principal.getName());
+  }
+
+  @PutMapping("/{id}")
+  public IncidentResponseDto update(@PathVariable long id, @Valid @RequestBody IncidentRequestDto request,
+                                    Principal principal) {
+    return incidents.update(id, request, principal.getName());
+  }
+
+  // Assignment and lifecycle changes use their own validated request.
+  @PatchMapping("/{id}/status")
+  public IncidentResponseDto updateStatus(@PathVariable long id,
+      @Valid @RequestBody IncidentStatusRequestDto request, Principal principal) {
+    return incidents.updateStatus(id, request, principal.getName());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable long id, Principal principal) {
+    incidents.delete(id, principal.getName());
+    return ResponseEntity.noContent().build();
   }
 }

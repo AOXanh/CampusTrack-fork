@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,7 +38,6 @@ public class SecurityConfig {
             // Temporary development access
             "/api/assets/**",
             "/api/buildings/**",
-            "/api/incidents/**",
             "/api/maintenance-records/**",
             "/api/nfc-tags/**",
             "/api/rooms/**",
@@ -47,7 +47,9 @@ public class SecurityConfig {
     };
 
     private final String[] AUTHORIZED_PATHS = {
-            "/api/auth/**"
+            "/api/auth/**",
+            "/api/incidents",
+            "/api/incidents/**"
     };
 
     @Bean
@@ -60,6 +62,9 @@ public class SecurityConfig {
 
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(errors -> errors.authenticationEntryPoint(
+                (request, response, error) -> response.sendError(401)))
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(UNAUTHORIZED_PATHS).permitAll()
                     .requestMatchers(AUTHORIZED_PATHS).authenticated()
