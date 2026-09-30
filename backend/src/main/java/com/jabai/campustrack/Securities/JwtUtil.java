@@ -1,6 +1,5 @@
 package com.jabai.campustrack.Securities;
 
-import java.security.Key;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
@@ -78,7 +77,7 @@ public class JwtUtil {
         }catch(Exception e){ 
 
             //Basin pwede mo maka make og exception if ever dili ko maka make exception ani 
-
+        
             return  false;
         }
     }
