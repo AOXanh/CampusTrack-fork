@@ -62,6 +62,25 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject(); 
+    } 
+
+    //This checks if the JWT of a user request is valid 
+
+    public boolean isTokenValid(String token){ 
+        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
+        try{    
+              Jwts.parser()
+                    .verifyWith(signingKey)
+                    .build()
+                    .parseSignedClaims(token);
+                    return true; 
+
+        }catch(Exception e){ 
+
+            //Basin pwede mo maka make og exception if ever dili ko maka make exception ani 
+
+            return  false;
+        }
     }
-    
+
 }
