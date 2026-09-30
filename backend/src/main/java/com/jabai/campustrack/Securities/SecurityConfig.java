@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
@@ -22,11 +23,18 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
+
     private final String[] UNAUTHORIZED_PATHS = {
             "/api/auth/register",
             "/api/auth/login",
 
-            // Temporary rani ha
+            // Temporary development access
             "/api/assets/**",
             "/api/buildings/**",
             "/api/incidents/**",
@@ -37,21 +45,28 @@ public class SecurityConfig {
             "/h2-console/**",
             "/error"
     };
-    private final String[] AUTHORIZED_PATHS = {"/api/auth/**"};
+
+    private final String[] AUTHORIZED_PATHS = {
+            "/api/auth/**"
+    };
 
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        http.csrf(AbstractHttpConfigurer::disable)
-            .headers(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable) // <--- Temporary ra sad ni
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+            .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(UNAUTHORIZED_PATHS).permitAll()
                     .requestMatchers(AUTHORIZED_PATHS).authenticated()
                     .anyRequest().authenticated();
-            });
-        return http.build(); 
+            })
+            .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class); //This configures the token filter before allowing spring security to run
+
+        return http.build();
     }
 }
