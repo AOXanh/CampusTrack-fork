@@ -23,6 +23,9 @@ public class JwtUtil {
     @Value("${spring.jwt.expiration}")
     private long JWT_EXPIRATION;
 
+
+    //This generates a web token so that every request made must go through a validation before allowing the user to do certain actions
+    
     public String generateToken(User user) {
         SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
         return Jwts.builder()
@@ -35,6 +38,9 @@ public class JwtUtil {
                 .compact();
     } 
 
+
+  //  This extracts the user's role so that later on we'll be able to use this extraction when evaluating their role for certain authority
+
     public String extractRole(String token){ 
         SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
         return  Jwts.parser()
@@ -45,4 +51,17 @@ public class JwtUtil {
                 .get("role", String.class); 
     }
 
+
+    //This extracts the Username/ Email / Subject / Unique Identifier of the user so that we know who are we currently working with 
+    
+    public String extractSubject(String token){ 
+        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
+        return  Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject(); 
+    }
+    
 }
