@@ -7,8 +7,13 @@ import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.GetRoomsResponseDto;
+import com.jabai.campustrack.DTOs.Responses.UpdateRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
+import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,7 +23,7 @@ public class RoomService {
 
     public RoomService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
-    }
+    } // g
 
     public CreateRoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
         // Building building = buildingRepository.findByBuilding(); if building repository exists use this to check if building actually exists (validates both id and name)
@@ -50,5 +55,20 @@ public class RoomService {
         List<RoomJson> fetchedRooms = roomRepository.findByBuilding_Id(buildingID);
 
         return new GetRoomsResponseDto(fetchedRooms);
+    }
+    
+    public UpdateRoomResponseDto updateRoom(UpdateRoomRequestDto updateRoomRequestDto) {
+        Room Updatedroom = updateRoomRequestDto.getRoom();
+        Room Savedroom = roomRepository.findById(Updatedroom.getId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
+
+        if (Updatedroom.getBuilding() != null) {Savedroom.setBuilding(Updatedroom.getBuilding());}
+        if (Updatedroom.getCapacity() > 0) {Savedroom.setCapacity(Updatedroom.getCapacity());}
+        if (Updatedroom.getCriticality() != null) {Savedroom.setCriticality(Updatedroom.getCriticality());}
+        if (Updatedroom.getRoomType() != null) {Savedroom.setRoomType(Updatedroom.getRoomType());}
+        // idk if room number should be editable
+
+        roomRepository.save(Savedroom);
+        return new UpdateRoomResponseDto("Successfully updated room.");
     }
 }

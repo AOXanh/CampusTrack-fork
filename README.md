@@ -53,3 +53,8 @@ Asset registration, building and room management, NFC identification, incident r
 ---
 
 *Built as an OOPROG special project.*
+
+-- me --
+
+deps: docker
+src/main/java/com/jabai/campustrack/resources/application.yaml is where youll find password, uncomment update if you want to add the database fields.
