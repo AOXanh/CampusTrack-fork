@@ -1,17 +1,17 @@
-package com.jabai.campustrack.DTOs.Requests;
+    package com.jabai.campustrack.DTOs.Requests;
 
-import jakarta.validation.constraints.NotBlank;
+    import jakarta.validation.constraints.NotBlank;
 
-public class CreateBuildingRequestDto {
+    public class CreateBuildingRequestDto {
 
-    @NotBlank(message = "Building name is required.")
-    private final String name;
+        @NotBlank(message = "Building name is required.")
+        private final String name;
 
-    public CreateBuildingRequestDto(String name) {
-        this.name = name;
+        public CreateBuildingRequestDto(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
-
-    public String getName() {
-        return name;
-    }
-}
