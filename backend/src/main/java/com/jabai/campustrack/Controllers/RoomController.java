@@ -64,7 +64,6 @@ public class RoomController {
     return ResponseEntity.ok(responseDto);
   }
 
-  // update room not tested yet, please test!
   @PatchMapping("/update-room")
   public ResponseEntity<UpdateRoomResponseDto> updateRoom(@RequestBody UpdateRoomRequestDto updateRoomRequestDto) {
     UpdateRoomResponseDto responseDto = roomService.updateRoom(updateRoomRequestDto);

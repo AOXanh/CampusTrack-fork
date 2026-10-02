@@ -28,7 +28,7 @@ public class RoomService {
 
     public RoomService(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
-    } // g
+    }
 
     public CreateRoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
         try {
@@ -45,18 +45,10 @@ public class RoomService {
             createRoomRequestDto.getCriticality()
         );
 
-        /* 
-        this is how a building json looks like
-            {
-            "name": "Room 101",
-            "building": { "id": 7 }
-            }
-        */ 
         // if it exists, it will add the room, if not, it will throw an error
         // i would preferrably add a user facing error, but for now, since there's no
         // buildingRepository to do the check, this will do. 
         roomRepository.save(room);
-        // wont work until we can do a check if building actually exists (and get its id).
         return new CreateRoomResponseDto("Successfully created the room!");
     }
 

@@ -49,7 +49,4 @@ public class CreateRoomRequestDto {
     public RoomType getRoomtype() {
         return roomtype;
     }
-
-    // note for self, do check the input for criticality, roomtype, and building is inside enum and maybe make
-    // a message output if it isn't inside it (instead of an error on the console)
 }
