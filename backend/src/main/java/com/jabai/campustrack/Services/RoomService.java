@@ -6,6 +6,7 @@ import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Repositories.RoomRepository;
+import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.UpdateRoomResponseDto;
@@ -28,10 +29,12 @@ import java.util.Map;
 @Service 
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final BuildingRepository buildingRepository;
     private final PagedResourcesAssembler<RoomJson> assembler;
 
-    public RoomService(RoomRepository roomRepository, PagedResourcesAssembler<RoomJson> assembler) {
+    public RoomService(RoomRepository roomRepository, BuildingRepository buildingRepository, PagedResourcesAssembler<RoomJson> assembler) {
         this.roomRepository = roomRepository;
+        this.buildingRepository = buildingRepository;
         this.assembler = assembler;
     }
 
@@ -41,7 +44,11 @@ public class RoomService {
         } catch (NumberFormatException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room number should be an integer.");
         }
-        // Building building = buildingRepository.findByBuilding(); if building repository exists use this to check if building actually exists (validates both id and name)
+
+        if (!buildingRepository.existsById(createRoomRequestDto.getBuilding().getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building does not exist.");
+        }
+
         Room room = new Room(
             createRoomRequestDto.getBuilding(),
             createRoomRequestDto.getRoomNumber(),
@@ -50,9 +57,6 @@ public class RoomService {
             createRoomRequestDto.getCriticality()
         );
     
-        // if it exists, it will add the room, if not, it will throw an error
-        // i would preferrably add a user facing error, but for now, since there's no
-        // buildingRepository to do the check, this will do. 
         roomRepository.save(room);
         return new CreateRoomResponseDto("Successfully created the room!");
     }
@@ -87,7 +91,6 @@ public class RoomService {
     }
     
     public UpdateRoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
-        //Building building = buildingRepository.findByBuilding(); for check if building exists
         Room Updatedroom = updateRoomRequestDto.getRoom();
         Room Savedroom = roomRepository.findById(roomId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));

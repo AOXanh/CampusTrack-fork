@@ -20,7 +20,7 @@ public class Room {
   private long id;
 
   @CreationTimestamp 
-  @Column(name = "created_at", updatable = false, insertable = false)
+  @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
 
   // Core columns
