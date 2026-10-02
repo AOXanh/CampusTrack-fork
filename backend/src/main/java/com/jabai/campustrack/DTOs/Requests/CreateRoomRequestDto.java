@@ -1,6 +1,5 @@
 package com.jabai.campustrack.DTOs.Requests;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,23 +13,23 @@ public class CreateRoomRequestDto {
     private final Building building; 
 
     @NotEmpty(message="Room number is required.")
-    private final String roomnumber;
+    private final String roomNumber;
 
     @NotNull(message="Capacity is required.")
     @Positive 
     private final int capacity;
 
     @NotNull(message="Room Type is required.")
-    private final RoomType roomtype;
+    private final RoomType roomType;
 
     @NotNull(message="Criticality is required.")
     private final RoomCriticality criticality;
     
-    public CreateRoomRequestDto(Building building, String roomnumber, int capacity, RoomType roomtype, RoomCriticality criticality) {
+    public CreateRoomRequestDto(Building building, String roomNumber, int capacity, RoomType roomType, RoomCriticality criticality) {
         this.building = building;
-        this.roomnumber = roomnumber;
+        this.roomNumber = roomNumber;
         this.capacity = capacity;
-        this.roomtype = roomtype;
+        this.roomType = roomType;
         this.criticality = criticality;
     }
 
@@ -43,10 +42,10 @@ public class CreateRoomRequestDto {
     public RoomCriticality getCriticality() {
         return criticality;
     }
-    public String getRoomnumber() {
-        return roomnumber;
+    public String getRoomNumber() {
+        return roomNumber;
     }
-    public RoomType getRoomtype() {
-        return roomtype;
+    public RoomType getRoomType() {
+        return roomType;
     }
 }

@@ -10,7 +10,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/campus_track
     username: root
-    password: devServer@123n
+    password: rootPass@123n
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jwt:

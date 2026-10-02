@@ -8,7 +8,6 @@ import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Responses.GetRoomsResponseDto;
 import com.jabai.campustrack.DTOs.Responses.UpdateRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
@@ -38,16 +37,16 @@ public class RoomService {
 
     public CreateRoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
         try {
-            Integer.parseInt(createRoomRequestDto.getRoomnumber());
+            Integer.parseInt(createRoomRequestDto.getRoomNumber());
         } catch (NumberFormatException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room number should be an integer.");
         }
         // Building building = buildingRepository.findByBuilding(); if building repository exists use this to check if building actually exists (validates both id and name)
         Room room = new Room(
             createRoomRequestDto.getBuilding(),
-            createRoomRequestDto.getRoomnumber(),
+            createRoomRequestDto.getRoomNumber(),
             createRoomRequestDto.getCapacity(),
-            createRoomRequestDto.getRoomtype(),
+            createRoomRequestDto.getRoomType(),
             createRoomRequestDto.getCriticality()
         );
     
