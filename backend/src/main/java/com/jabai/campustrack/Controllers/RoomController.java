@@ -10,7 +10,6 @@ import com.jabai.campustrack.DTOs.Responses.DeleteRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Responses.GetRoomsResponseDto;
 
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,23 +25,6 @@ import com.jabai.campustrack.Services.RoomService;
 
 import jakarta.validation.Valid;
 
-/**
- * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
- *
- * <p>KYLE: Perform CRUD operations para sa Rooms table</p>
- *
- * <p>Layer structure:</p>
- * <ul>
- *   <li>Controller layer -> DTO (with annotations)</li>
- *   <li>Service layer -> DTO</li>
- *   <li>Repository layer -> Model</li>
- * </ul>
- * 
- * Just waiting for Building's Controller layer/Service layer/Repository layer to be done to able to
- * do checks if building specified exists in the database.
- * 
- * do MaintenanceRecordController.java first before doing RoomController.java
- */
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
@@ -59,7 +41,7 @@ public class RoomController {
   }
 
   @GetMapping("/get-rooms")
-  public ResponseEntity<GetRoomsResponseDto> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, @ParameterObject Pageable pageable) {
+  public ResponseEntity<GetRoomsResponseDto> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
     GetRoomsResponseDto responseDto = roomService.getRooms(getRoomsRequestDto, pageable);
     return ResponseEntity.ok(responseDto);
   }
