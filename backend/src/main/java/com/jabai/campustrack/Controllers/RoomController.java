@@ -8,7 +8,6 @@ import com.jabai.campustrack.DTOs.Responses.CreateRoomResponseDto;
 import com.jabai.campustrack.DTOs.Responses.DeleteRoomResponseDto;
 import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
-import com.jabai.campustrack.DTOs.Responses.GetRoomsResponseDto;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
