@@ -1,5 +1,7 @@
 target/
 .mvn/wrapper/maven-wrapper.jar
+src/main/java/com/jabai/campustrack/Securities/SecurityConfig.java
+src/main/resources/application.yaml
 !**/src/main/**/target/
 !**/src/test/**/target/
 
