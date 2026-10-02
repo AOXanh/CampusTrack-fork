@@ -16,6 +16,7 @@ import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,6 +31,11 @@ public class RoomService {
     } // g
 
     public CreateRoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
+        try {
+            Integer.parseInt(createRoomRequestDto.getRoomnumber());
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room number should be an integer.");
+        }
         // Building building = buildingRepository.findByBuilding(); if building repository exists use this to check if building actually exists (validates both id and name)
         Room room = new Room(
             createRoomRequestDto.getBuilding(),

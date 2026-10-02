@@ -13,7 +13,7 @@ public class CreateRoomRequestDto {
     @NotNull(message="Building is required.")
     private final Building building; 
 
-    @NotEmpty(message="Room number is required.") // check if positive and if it is a number
+    @NotEmpty(message="Room number is required.")
     private final String roomnumber;
 
     @NotNull(message="Capacity is required.")
