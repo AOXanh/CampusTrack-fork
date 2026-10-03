@@ -34,9 +34,9 @@ public class RoomService {
 
         Room room = new Room(
             building,
-            createRoomRequestDto.getRoomNumber(),
+            createRoomRequestDto.getRoom_number(),
             createRoomRequestDto.getCapacity(),
-            createRoomRequestDto.getRoomType(),
+            createRoomRequestDto.getRoom_type(),
             createRoomRequestDto.getCriticality()
         );
     
@@ -70,8 +70,8 @@ public class RoomService {
 
         if (updateRoomRequestDto.getCapacity() != null) {Savedroom.setCapacity(updateRoomRequestDto.getCapacity());}
         if (updateRoomRequestDto.getCriticality() != null) {Savedroom.setCriticality(updateRoomRequestDto.getCriticality());}
-        if (updateRoomRequestDto.getRoomType() != null) {Savedroom.setRoomType(updateRoomRequestDto.getRoomType());}
-        if (updateRoomRequestDto.getRoomNumber() != null) {Savedroom.setRoomNumber(updateRoomRequestDto.getRoomNumber());}
+        if (updateRoomRequestDto.getRoom_type() != null) {Savedroom.setRoomType(updateRoomRequestDto.getRoom_type());}
+        if (updateRoomRequestDto.getRoom_number() != null) {Savedroom.setRoomNumber(updateRoomRequestDto.getRoom_number());}
         
         roomRepository.save(Savedroom);
         return roomsResponseJson(Savedroom, false);

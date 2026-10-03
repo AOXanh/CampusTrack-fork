@@ -12,17 +12,17 @@ public class UpdateRoomRequestDto {
     private final Long room_id;
 
     private final Long building_id;
-    private final String roomNumber;
+    private final String room_number;
     private final Integer capacity;
-    private final RoomType roomType;
+    private final RoomType room_type;
     private final RoomCriticality criticality;
 
-    public UpdateRoomRequestDto(Long room_id, Long building_id, String roomNumber, Integer capacity, RoomType roomType, RoomCriticality criticality) {
+    public UpdateRoomRequestDto(Long room_id, Long building_id, String room_number, Integer capacity, RoomType room_type, RoomCriticality criticality) {
         this.room_id = room_id;
         this.building_id = building_id;
-        this.roomNumber = roomNumber;
+        this.room_number = room_number;
         this.capacity = capacity;
-        this.roomType = roomType;
+        this.room_type = room_type;
         this.criticality = criticality;
     }
 
@@ -38,10 +38,10 @@ public class UpdateRoomRequestDto {
     public RoomCriticality getCriticality() {
         return criticality;
     }
-    public String getRoomNumber() {
-        return roomNumber;
-    }
-    public RoomType getRoomType() {
-        return roomType;
-    }
+   public String getRoom_number() {
+       return room_number;
+   }
+   public RoomType getRoom_type() {
+       return room_type;
+   }
 }
