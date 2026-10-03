@@ -13,12 +13,12 @@ public class RoomResponseDto {
     private final long id;
     private final LocalDateTime createdAt;
     private final BuildingResponseDto building;
-    private final String roomNumber;
+    private final String room_number;
     private final int capacity;
-    private final RoomType roomType;
+    private final RoomType room_type;
     private final RoomCriticality roomCriticality;
 
-    public RoomResponseDto(long id, LocalDateTime createdAt, Building building, String roomNumber, int capacity, RoomType roomType, RoomCriticality roomCriticality) {
+    public RoomResponseDto(long id, LocalDateTime createdAt, Building building, String room_number, int capacity, RoomType room_type, RoomCriticality roomCriticality) {
         this.id = id;
         this.createdAt = createdAt;
         if (building != null) {
@@ -26,9 +26,9 @@ public class RoomResponseDto {
         } else {
             this.building = null;
         }
-        this.roomNumber = roomNumber;
+        this.room_number = room_number;
         this.capacity = capacity;
-        this.roomType = roomType;
+        this.room_type = room_type;
         this.roomCriticality = roomCriticality;
     }
 
@@ -41,14 +41,14 @@ public class RoomResponseDto {
     public BuildingResponseDto getBuilding() {
         return building;
     }
-    public String getRoomNumber() {
-        return roomNumber;
+    public String getRoom_number() {
+        return room_number;
     }
     public int getCapacity() {
         return capacity;
     }
-    public RoomType getRoomType() {
-        return roomType;
+    public RoomType getRoom_type() {
+        return room_type;
     }
     public RoomCriticality getRoomCriticality() {
         return roomCriticality;
