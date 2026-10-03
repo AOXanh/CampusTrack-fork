@@ -58,8 +58,8 @@ public class RoomController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity<RoomResponseDto> deleteRoom(@PathVariable Long id) {
-    RoomResponseDto responseDto = roomService.deleteRoom(id);
-    return ResponseEntity.ok(responseDto);
+    roomService.deleteRoom(id);
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/hello-world")

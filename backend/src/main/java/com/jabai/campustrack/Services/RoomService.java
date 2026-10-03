@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
+import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.BuildingRepository;
@@ -25,18 +26,14 @@ public class RoomService {
     }
 
     public RoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
-        try {
-            Integer.parseInt(createRoomRequestDto.getRoomNumber());
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room number should be an integer.");
-        }
+        Building building = buildingRepository.findById(createRoomRequestDto.getBuilding_id()).orElse(null);
 
-        if (!buildingRepository.existsById(createRoomRequestDto.getBuilding().getId())) {
+        if (building == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building does not exist.");
         }
 
         Room room = new Room(
-            createRoomRequestDto.getBuilding(),
+            building,
             createRoomRequestDto.getRoomNumber(),
             createRoomRequestDto.getCapacity(),
             createRoomRequestDto.getRoomType(),
@@ -61,17 +58,21 @@ public class RoomService {
     }
     
     public RoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
-        Room Updatedroom = updateRoomRequestDto.getRoom();
         Room Savedroom = roomRepository.findById(roomId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
 
-        if (Updatedroom.getBuilding() != null) {Savedroom.setBuilding(Updatedroom.getBuilding());}
-        if (Updatedroom.getCapacity() > 0) {Savedroom.setCapacity(Updatedroom.getCapacity());}
-        if (Updatedroom.getCriticality() != null) {Savedroom.setCriticality(Updatedroom.getCriticality());}
-        if (Updatedroom.getRoomType() != null) {Savedroom.setRoomType(Updatedroom.getRoomType());}
-        if (Updatedroom.getRoomNumber() != null) {Savedroom.setRoomNumber(Updatedroom.getRoomNumber());}
-        
+        if (updateRoomRequestDto.getBuilding_id() != null) {
+            Building building = buildingRepository.findById(updateRoomRequestDto.getBuilding_id()).orElse(null);
+            if (building == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building id not found.");
+            }
+        }
 
+        if (updateRoomRequestDto.getCapacity() != null) {Savedroom.setCapacity(updateRoomRequestDto.getCapacity());}
+        if (updateRoomRequestDto.getCriticality() != null) {Savedroom.setCriticality(updateRoomRequestDto.getCriticality());}
+        if (updateRoomRequestDto.getRoomType() != null) {Savedroom.setRoomType(updateRoomRequestDto.getRoomType());}
+        if (updateRoomRequestDto.getRoomNumber() != null) {Savedroom.setRoomNumber(updateRoomRequestDto.getRoomNumber());}
+        
         roomRepository.save(Savedroom);
         return roomsResponseJson(Savedroom, false);
     }
