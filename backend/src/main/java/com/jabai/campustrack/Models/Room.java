@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Generated;
 
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
@@ -19,7 +20,7 @@ public class Room {
   @Column(name = "id")
   private long id;
 
-  @CreationTimestamp 
+  @Generated
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
 
