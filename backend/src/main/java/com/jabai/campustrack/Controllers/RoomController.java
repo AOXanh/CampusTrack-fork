@@ -3,7 +3,6 @@ package com.jabai.campustrack.Controllers;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
-import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 
@@ -41,14 +40,14 @@ public class RoomController {
   }
 
   @GetMapping
-  public ResponseEntity<RoomResponseDto> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, @PageableDefault(size=10) Pageable pageable) {
-    RoomResponseDto responseDto = roomService.getRooms(getRoomsRequestDto, pageable);
+  public ResponseEntity<Page<RoomResponseDto>> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, @PageableDefault(size=10) Pageable pageable) {
+    Page<RoomResponseDto> responseDto = roomService.getRooms(getRoomsRequestDto, pageable);
     return ResponseEntity.ok(responseDto);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<GetRoomResponseDto> getRoom(@PathVariable Long id) {
-    GetRoomResponseDto responseDto = roomService.getRoom(id);
+  public ResponseEntity<RoomResponseDto> getRoom(@PathVariable Long id) {
+    RoomResponseDto responseDto = roomService.getRoom(id);
     return ResponseEntity.ok(responseDto);
   }
 

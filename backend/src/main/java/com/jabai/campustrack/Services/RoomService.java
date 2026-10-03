@@ -1,12 +1,9 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
-import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.Models.Room;
-import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.BuildingRepository;
-import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
@@ -16,10 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service 
 public class RoomService {
@@ -51,36 +44,20 @@ public class RoomService {
         );
     
         roomRepository.save(room);
-        return new RoomResponseDto("Successfully created the room!");
+        return roomsResponseJson(room, false);
     }
 
-    public RoomResponseDto getRooms(GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
+    public Page<RoomResponseDto> getRooms(GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
         Long buildingID = getRoomsRequestDto.getBuilding_id();
-        Page<RoomJson> fetchedRooms = roomRepository.search(buildingID, getRoomsRequestDto.getCriticality(), getRoomsRequestDto.getRoomType(), pageable);
-        
-        return new RoomResponseDto(fetchedRooms);
+        Page<Room> fetchedRooms = roomRepository.search(buildingID, getRoomsRequestDto.getCriticality(), getRoomsRequestDto.getRoomType(), pageable);
+        return fetchedRooms.map(toMap -> roomsResponseJson(toMap, true));
     }
 
-    public GetRoomResponseDto getRoom(long roomId) {
+    public RoomResponseDto getRoom(long roomId) {
         Room fetchedRoom = roomRepository.findById(roomId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
 
-        Building roomBuilding = fetchedRoom.getBuilding();
-        Map<String, Object> buildingJson = new HashMap<>();
-
-        buildingJson.put("id", roomBuilding.getId());
-        buildingJson.put("createdAt", roomBuilding.getCreatedAt());
-        buildingJson.put("name", roomBuilding.getName());
-
-        return new GetRoomResponseDto(
-            fetchedRoom.getId(), 
-            fetchedRoom.getCreatedAt(), 
-            buildingJson,
-            fetchedRoom.getRoomNumber(),
-            fetchedRoom.getCapacity(),
-            fetchedRoom.getRoomType(),
-            fetchedRoom.getCriticality()
-        );
+        return roomsResponseJson(fetchedRoom, false);
     }
     
     public RoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
@@ -96,7 +73,7 @@ public class RoomService {
         
 
         roomRepository.save(Savedroom);
-        return new RoomResponseDto("Successfully updated room.");
+        return roomsResponseJson(Savedroom, false);
     }
 
     public RoomResponseDto deleteRoom(long roomId) {
@@ -104,6 +81,18 @@ public class RoomService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
         
         roomRepository.delete(SavedRoom);
-        return new RoomResponseDto("Successfully deleted room.");
+        return roomsResponseJson(SavedRoom, false);
+    }
+
+    private RoomResponseDto roomsResponseJson(Room room, boolean noBuilding) {
+        return new RoomResponseDto(
+            room.getId(), 
+            room.getCreatedAt(), 
+            noBuilding == true ? null : room.getBuilding(), 
+            room.getRoomNumber(), 
+            room.getCapacity(), 
+            room.getRoomType(), 
+            room.getCriticality()
+        );
     }
 }

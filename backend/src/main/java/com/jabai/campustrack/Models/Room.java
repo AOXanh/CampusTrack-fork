@@ -3,7 +3,6 @@ package com.jabai.campustrack.Models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Generated;
 
 import com.jabai.campustrack.Models.Enums.RoomCriticality;

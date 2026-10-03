@@ -19,7 +19,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           AND (:criticality IS NULL OR r.criticality = :criticality)
           AND (:roomType IS NULL OR r.roomType = :roomType)
         """)
-    Page<RoomJson> search(@Param("buildingId") Long buildingId,
+    Page<Room> search(@Param("buildingId") Long buildingId,
                           @Param("criticality") RoomCriticality criticality,
                           @Param("roomType") RoomType roomType,
                           Pageable pageable);
