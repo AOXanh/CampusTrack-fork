@@ -1,14 +1,10 @@
 package com.jabai.campustrack.DTOs.Responses;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.jabai.campustrack.Models.Building;
-import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
-import com.jabai.campustrack.Repositories.RoomJson;
 
 public class GetRoomResponseDto {
    private final long id;

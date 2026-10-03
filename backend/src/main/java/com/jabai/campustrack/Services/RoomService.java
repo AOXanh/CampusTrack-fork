@@ -1,7 +1,6 @@
 package com.jabai.campustrack.Services;
 
-import com.jabai.campustrack.DTOs.Responses.CreateRoomResponseDto;
-import com.jabai.campustrack.DTOs.Responses.DeleteRoomResponseDto;
+import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Models.Building;
@@ -9,15 +8,11 @@ import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.Repositories.RoomJson;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Responses.UpdateRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,15 +25,13 @@ import java.util.Map;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final BuildingRepository buildingRepository;
-    private final PagedResourcesAssembler<RoomJson> assembler;
 
-    public RoomService(RoomRepository roomRepository, BuildingRepository buildingRepository, PagedResourcesAssembler<RoomJson> assembler) {
+    public RoomService(RoomRepository roomRepository, BuildingRepository buildingRepository) {
         this.roomRepository = roomRepository;
         this.buildingRepository = buildingRepository;
-        this.assembler = assembler;
     }
 
-    public CreateRoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
+    public RoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
         try {
             Integer.parseInt(createRoomRequestDto.getRoomNumber());
         } catch (NumberFormatException e) {
@@ -58,14 +51,14 @@ public class RoomService {
         );
     
         roomRepository.save(room);
-        return new CreateRoomResponseDto("Successfully created the room!");
+        return new RoomResponseDto("Successfully created the room!");
     }
 
-    public PagedModel<EntityModel<RoomJson>> getRooms(GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
+    public RoomResponseDto getRooms(GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
         Long buildingID = getRoomsRequestDto.getBuilding_id();
         Page<RoomJson> fetchedRooms = roomRepository.search(buildingID, getRoomsRequestDto.getCriticality(), getRoomsRequestDto.getRoomType(), pageable);
         
-        return assembler.toModel(fetchedRooms);
+        return new RoomResponseDto(fetchedRooms);
     }
 
     public GetRoomResponseDto getRoom(long roomId) {
@@ -90,7 +83,7 @@ public class RoomService {
         );
     }
     
-    public UpdateRoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
+    public RoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
         Room Updatedroom = updateRoomRequestDto.getRoom();
         Room Savedroom = roomRepository.findById(roomId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
@@ -103,14 +96,14 @@ public class RoomService {
         
 
         roomRepository.save(Savedroom);
-        return new UpdateRoomResponseDto("Successfully updated room.");
+        return new RoomResponseDto("Successfully updated room.");
     }
 
-    public DeleteRoomResponseDto deleteRoom(long roomId) {
+    public RoomResponseDto deleteRoom(long roomId) {
         Room SavedRoom = roomRepository.findById(roomId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
         
         roomRepository.delete(SavedRoom);
-        return new DeleteRoomResponseDto("Successfully deleted room.");
+        return new RoomResponseDto("Successfully deleted room.");
     }
 }

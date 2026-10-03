@@ -2,16 +2,14 @@ package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Responses.UpdateRoomResponseDto;
+import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 import com.jabai.campustrack.Repositories.RoomJson;
-import com.jabai.campustrack.DTOs.Responses.CreateRoomResponseDto;
-import com.jabai.campustrack.DTOs.Responses.DeleteRoomResponseDto;
 import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.PagedModel;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,15 +35,15 @@ public class RoomController {
   }
 
   @PostMapping
-  public ResponseEntity<CreateRoomResponseDto> createRoom(@Valid @RequestBody CreateRoomRequestDto createRoomRequestDto) {
-    CreateRoomResponseDto responseDto = roomService.createRoom(createRoomRequestDto);
+  public ResponseEntity<RoomResponseDto> createRoom(@Valid @RequestBody CreateRoomRequestDto createRoomRequestDto) {
+    RoomResponseDto responseDto = roomService.createRoom(createRoomRequestDto);
     return ResponseEntity.ok(responseDto);
   }
 
   @GetMapping
-  public ResponseEntity<PagedModel<EntityModel<RoomJson>>> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
-    PagedModel<EntityModel<RoomJson>> response = roomService.getRooms(getRoomsRequestDto, pageable);
-    return ResponseEntity.ok(response);
+  public ResponseEntity<RoomResponseDto> getRooms(@Valid GetRoomsRequestDto getRoomsRequestDto, @PageableDefault(size=10) Pageable pageable) {
+    RoomResponseDto responseDto = roomService.getRooms(getRoomsRequestDto, pageable);
+    return ResponseEntity.ok(responseDto);
   }
 
   @GetMapping("/{id}")
@@ -55,14 +53,14 @@ public class RoomController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<UpdateRoomResponseDto> updateRoom(@PathVariable Long id, @RequestBody UpdateRoomRequestDto updateRoomRequestDto) {
-    UpdateRoomResponseDto responseDto = roomService.updateRoom(id, updateRoomRequestDto);
+  public ResponseEntity<RoomResponseDto> updateRoom(@PathVariable Long id, @RequestBody UpdateRoomRequestDto updateRoomRequestDto) {
+    RoomResponseDto responseDto = roomService.updateRoom(id, updateRoomRequestDto);
     return ResponseEntity.ok(responseDto);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<DeleteRoomResponseDto> deleteRoom(@PathVariable Long id) {
-    DeleteRoomResponseDto responseDto = roomService.deleteRoom(id);
+  public ResponseEntity<RoomResponseDto> deleteRoom(@PathVariable Long id) {
+    RoomResponseDto responseDto = roomService.deleteRoom(id);
     return ResponseEntity.ok(responseDto);
   }
 
