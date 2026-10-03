@@ -3,7 +3,6 @@ package com.jabai.campustrack.Controllers;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
-import com.jabai.campustrack.DTOs.Responses.GetRoomResponseDto;
 import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 
 import org.springframework.data.domain.Page;
