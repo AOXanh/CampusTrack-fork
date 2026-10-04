@@ -3,6 +3,7 @@ package com.jabai.campustrack.Services;
 import com.jabai.campustrack.DTOs.Requests.CreateBuildingRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateBuildingRequestDto;
 import com.jabai.campustrack.DTOs.Responses.BuildingResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import org.springframework.stereotype.Service;
@@ -11,82 +12,65 @@ import java.util.List;
 
 @Service
 public class BuildingService {
-
     private final BuildingRepository buildingRepository;
 
     public BuildingService(BuildingRepository buildingRepository) {
         this.buildingRepository = buildingRepository;
     }
 
-    // CREATE
-    public BuildingResponseDto createBuilding(
-            CreateBuildingRequestDto request
-    ) {
+    // ===== Main operations =====
+    // Create
+    public BuildingResponseDto createBuilding(CreateBuildingRequestDto request) {
+        String name = request.getName();
 
-        Building building = new Building(
-                request.getName()
-        );
-
+        Building building = new Building(name);
         Building savedBuilding = buildingRepository.save(building);
 
-        return toResponseDto(savedBuilding);
+        return buildBuildingResponseDto(savedBuilding);
     }
 
-    // READ ALL
+    // Read all
     public List<BuildingResponseDto> getAllBuildings() {
-
-        return buildingRepository.findAll()
+        return buildingRepository
+                .findAll()
                 .stream()
-                .map(this::toResponseDto)
+                .map(this::buildBuildingResponseDto)
                 .toList();
     }
 
-    // READ ONE
+    // Read
     public BuildingResponseDto getBuildingById(Long id) {
+        Building building = buildingRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d.", id)));
 
-        Building building = buildingRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Building not found.")
-                );
-
-        return toResponseDto(building);
+        return buildBuildingResponseDto(building);
     }
 
-    // UPDATE
-    public BuildingResponseDto updateBuilding(
-            Long id,
-            UpdateBuildingRequestDto request
-    ) {
+    // Updates
+    public BuildingResponseDto updateBuilding(Long id, UpdateBuildingRequestDto request) {
+        String name = request.getName();
 
-        Building building = buildingRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Building not found.")
-                );
+        Building foundBuilding = buildingRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d.", id)));
+        foundBuilding.setName(name);
+        Building updatedBuilding = buildingRepository.save(foundBuilding);
 
-        building.setName(request.getName());
-
-        Building updatedBuilding =
-                buildingRepository.save(building);
-
-        return toResponseDto(updatedBuilding);
+        return buildBuildingResponseDto(updatedBuilding);
     }
 
-    // DELETE
+    // Delete
     public void deleteBuilding(Long id) {
-
-        Building building = buildingRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Building not found.")
-                );
+        Building building = buildingRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d.", id)));
 
         buildingRepository.delete(building);
     }
 
-    // MODEL → RESPONSE DTO
-    private BuildingResponseDto toResponseDto(
-            Building building
-    ) {
-
+    // ===== Service Utils =====
+    private BuildingResponseDto buildBuildingResponseDto(Building building) {
         return new BuildingResponseDto(
                 building.getId(),
                 building.getName(),

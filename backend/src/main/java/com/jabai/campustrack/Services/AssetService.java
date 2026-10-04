@@ -3,158 +3,127 @@ package com.jabai.campustrack.Services;
 import com.jabai.campustrack.DTOs.Requests.CreateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Asset;
+import com.jabai.campustrack.Models.Enums.AssetCategory;
+import com.jabai.campustrack.Models.Enums.AssetCondition;
+import com.jabai.campustrack.Models.Enums.AssetCriticality;
+import com.jabai.campustrack.Models.Enums.AssetStatus;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.AssetRepository;
 import com.jabai.campustrack.Repositories.RoomRepository;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @Service
 @Transactional
 public class AssetService {
-
     private final AssetRepository assetRepository;
     private final RoomRepository roomRepository;
 
-    public AssetService(
-            AssetRepository assetRepository,
-            RoomRepository roomRepository) {
+    public AssetService(AssetRepository assetRepository, RoomRepository roomRepository) {
         this.assetRepository = assetRepository;
         this.roomRepository = roomRepository;
     }
 
-    // CREATE
+    // ===== Main operations =====
+    // Create
     public AssetResponseDto createAsset(CreateAssetRequestDto request) {
+        Long roomId = request.getRoomId();
+        String name = request.getName();
+        String brand = request.getBrand();
+        String model = request.getModel();
+        String serialNumber = request.getSerialNumber();
+        AssetCategory category = request.getCategory();
+        AssetStatus status = request.getStatus();
+        AssetCondition condition = request.getCondition();
+        AssetCriticality criticality = request.getCriticality();
 
-        Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Room not found"
-                ));
-
-        Asset asset = new Asset(
-                room,
-                request.getName(),
-                request.getBrand(),
-                request.getModel(),
-                request.getSerialNumber(),
-                request.getCategory(),
-                request.getStatus(),
-                request.getCondition(),
-                request.getCriticality()
-        );
-
+        Room foundRoom = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", request.getRoomId())));
+        Asset asset = new Asset(foundRoom, name, brand, model, serialNumber, category, status, condition, criticality);
         Asset savedAsset = assetRepository.save(asset);
 
-        return toDto(savedAsset);
+        return buildAssetResponseDto(savedAsset);
     }
 
-    // READ ALL
+    // Read all
     @Transactional(readOnly = true)
     public List<AssetResponseDto> getAllAssets() {
-
         return assetRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(this::buildAssetResponseDto)
                 .toList();
     }
 
-    // READ SINGLE
+    // Read
     @Transactional(readOnly = true)
     public AssetResponseDto getAssetById(Long id) {
-
-        Asset asset = assetRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Asset not found"
-                ));
-
-        return toDto(asset);
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
+        return buildAssetResponseDto(asset);
     }
 
-    // UPDATE
-    public AssetResponseDto updateAsset(
-            Long id,
-            UpdateAssetRequestDto request) {
+    // Update
+    public AssetResponseDto updateAsset(Long id, UpdateAssetRequestDto request) {
+        Long roomId = request.getRoomId();
+        String name = request.getName();
+        String brand = request.getBrand();
+        String model = request.getModel();
+        String serialNumber = request.getSerialNumber();
+        AssetCategory category = request.getCategory();
+        AssetStatus status = request.getStatus();
+        AssetCondition condition = request.getCondition();
+        AssetCriticality criticality = request.getCriticality();
 
-        Asset asset = assetRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Asset not found"
-                ));
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
 
-        // Update room only if provided
-        if (request.roomId() != null) {
-            Room room = roomRepository.findById(request.roomId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Room not found"
-                    ));
-
+        if (roomId != null) {
+            Room room = roomRepository
+                    .findById(roomId)
+                    .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", id)));
             asset.setRoom(room);
         }
-
-        // Update name only if provided
-        if (request.name() != null) {
-            asset.setName(request.name());
-        }
-
-        // Update brand only if provided
-        if (request.brand() != null) {
-            asset.setBrand(request.brand());
-        }
-
-        // Update model only if provided
-        if (request.model() != null) {
-            asset.setModel(request.model());
-        }
-
-        // Update serial number only if provided
-        if (request.serialNumber() != null) {
-            asset.setSerialNumber(request.serialNumber());
-        }
-
-        // Update category only if provided
-        if (request.category() != null) {
-            asset.setCategory(request.category());
-        }
-
-        // Update status only if provided
-        if (request.status() != null) {
-            asset.setStatus(request.status());
-        }
-
-        // Update condition only if provided
-        if (request.condition() != null) {
-            asset.setCondition(request.condition());
-        }
-
-        // Update criticality only if provided
-        if (request.criticality() != null) {
-            asset.setCriticality(request.criticality());
-        }
+        if (name != null)
+            asset.setName(name);
+        if (brand != null)
+            asset.setBrand(brand);
+        if (model != null)
+            asset.setModel(model);
+        if (serialNumber != null)
+            asset.setSerialNumber(serialNumber);
+        if (category != null)
+            asset.setCategory(category);
+        if (status != null)
+            asset.setStatus(status);
+        if (condition != null)
+            asset.setCondition(condition);
+        if (criticality != null)
+            asset.setCriticality(criticality);
 
         Asset updatedAsset = assetRepository.save(asset);
 
-        return toDto(updatedAsset);
+        return buildAssetResponseDto(updatedAsset);
     }
 
-    // DELETE
+    // Delete
     public void deleteAsset(Long id) {
-
-        Asset asset = assetRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Asset not found"
-                ));
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
 
         assetRepository.delete(asset);
     }
 
-    // CONVERT ENTITY TO RESPONSE DTO
-    private AssetResponseDto toDto(Asset asset) {
-
+    // ===== Service Utils =====
+    private AssetResponseDto buildAssetResponseDto(Asset asset) {
         return new AssetResponseDto(
                 asset.getId(),
                 asset.getRoom() != null ? asset.getRoom().getId() : null,

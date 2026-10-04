@@ -1,12 +1,14 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Building;
+import com.jabai.campustrack.Models.Enums.RoomCriticality;
+import com.jabai.campustrack.Models.Enums.RoomType;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Requests.GetRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 
 import org.springframework.data.domain.Page;
@@ -25,72 +27,87 @@ public class RoomService {
         this.buildingRepository = buildingRepository;
     }
 
+    // ===== Main operations =====
+    // Create
     public RoomResponseDto createRoom(CreateRoomRequestDto createRoomRequestDto) {
-        Building building = buildingRepository.findById(createRoomRequestDto.getBuilding_id()).orElse(null);
+        Long buildingId = createRoomRequestDto.getBuildingId();
+        String roomNumber = createRoomRequestDto.getRoomNumber();
+        Integer capacity = createRoomRequestDto.getCapacity();
+        RoomType roomType = createRoomRequestDto.getRoomType();
+        RoomCriticality criticality = createRoomRequestDto.getCriticality();
 
-        if (building == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building does not exist.");
-        }
-
-        Room room = new Room(
-            building,
-            createRoomRequestDto.getRoom_number(),
-            createRoomRequestDto.getCapacity(),
-            createRoomRequestDto.getRoom_type(),
-            createRoomRequestDto.getCriticality()
-        );
-    
+        Building foundBuilding = buildingRepository
+                .findById(buildingId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d", createRoomRequestDto.getBuildingId())));
+        Room room = new Room(foundBuilding, roomNumber, capacity, roomType, criticality);
         roomRepository.save(room);
-        return roomsResponseJson(room, false);
+
+        return buildRoomResponseDto(room);
     }
 
-    public Page<RoomResponseDto> getRooms(GetRoomsRequestDto getRoomsRequestDto, Pageable pageable) {
-        Long buildingID = getRoomsRequestDto.getBuilding_id();
-        Page<Room> fetchedRooms = roomRepository.search(buildingID, getRoomsRequestDto.getCriticality(), getRoomsRequestDto.getRoomType(), pageable);
-        return fetchedRooms.map(toMap -> roomsResponseJson(toMap, true));
+    // Read all
+    public Page<RoomResponseDto> getRooms(Pageable pageable) {
+        return roomRepository
+                .findAll(pageable)
+                .map(this::buildRoomResponseDto);
     }
 
+    // Read
     public RoomResponseDto getRoom(long roomId) {
-        Room fetchedRoom = roomRepository.findById(roomId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
+        Room fetchedRoom = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d", roomId)));
 
-        return roomsResponseJson(fetchedRoom, false);
+        return buildRoomResponseDto(fetchedRoom);
     }
-    
+
+    // Update
     public RoomResponseDto updateRoom(long roomId, UpdateRoomRequestDto updateRoomRequestDto) {
-        Room Savedroom = roomRepository.findById(roomId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
+        Long buildingId = updateRoomRequestDto.getBuildingId();
+        String roomNumber = updateRoomRequestDto.getRoomNumber();
+        Integer capacity = updateRoomRequestDto.getCapacity();
+        RoomType roomType = updateRoomRequestDto.getRoomType();
+        RoomCriticality criticality = updateRoomRequestDto.getCriticality();
 
-        if (updateRoomRequestDto.getBuilding_id() != null) {
-            Building building = buildingRepository.findById(updateRoomRequestDto.getBuilding_id()).orElse(null);
-            if (building == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Building id not found.");
-            }
+        Room Savedroom = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d", roomId)));
+
+        if (buildingId != null) {
+            Building building = buildingRepository
+                    .findById(buildingId)
+                    .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d", buildingId)));
+            Savedroom.setBuilding(building);
         }
-
-        if (updateRoomRequestDto.getCapacity() != null) {Savedroom.setCapacity(updateRoomRequestDto.getCapacity());}
-        if (updateRoomRequestDto.getCriticality() != null) {Savedroom.setCriticality(updateRoomRequestDto.getCriticality());}
-        if (updateRoomRequestDto.getRoom_type() != null) {Savedroom.setRoomType(updateRoomRequestDto.getRoom_type());}
-        if (updateRoomRequestDto.getRoom_number() != null) {Savedroom.setRoomNumber(updateRoomRequestDto.getRoom_number());}
+        if (roomNumber != null)
+            Savedroom.setRoomNumber(roomNumber);
+        if (capacity != null)
+            Savedroom.setCapacity(capacity);
+        if (roomType != null)
+            Savedroom.setRoomType(roomType);
+        if (criticality != null)
+            Savedroom.setCriticality(criticality);
         
         roomRepository.save(Savedroom);
-        return roomsResponseJson(Savedroom, false);
+        return buildRoomResponseDto(Savedroom);
     }
 
-    public RoomResponseDto deleteRoom(long roomId) {
-        Room SavedRoom = roomRepository.findById(roomId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
-        
+    // Delete
+    public void delete(long roomId) {
+        Room SavedRoom = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found."));
+
         roomRepository.delete(SavedRoom);
-        return roomsResponseJson(SavedRoom, false);
     }
 
-    private RoomResponseDto roomsResponseJson(Room room, boolean noBuilding) {
+    // ===== Service Utils =====
+    private RoomResponseDto buildRoomResponseDto(Room room) {
         return new RoomResponseDto(
             room.getId(), 
-            room.getCreatedAt(), 
-            noBuilding == true ? null : room.getBuilding(), 
-            room.getRoomNumber(), 
+            room.getCreatedAt(),
+            room.getBuilding().getId(),
+            room.getRoomNumber(),
             room.getCapacity(), 
             room.getRoomType(), 
             room.getCriticality()

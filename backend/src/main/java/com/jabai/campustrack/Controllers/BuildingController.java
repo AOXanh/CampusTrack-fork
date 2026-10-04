@@ -12,80 +12,51 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
- *
- * <p>ART TECSON: Perform CRUD operations para sa Buildings table</p>
- *
- * <p>Layer structure:</p>
- * <ul>
- *   <li>Controller layer -> DTO (with annotations)</li>
- *   <li>Service layer -> DTO</li>
- *   <li>Repository layer -> Model</li>
- * </ul>
+ * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
+ * <br/>
+ * <p>ART TECSON: Pag add ug paginatiom sa imohang read all gamit ang spring data extension</p>
  */
 @RestController
 @RequestMapping("/api/buildings")
 public class BuildingController {
-
     private final BuildingService buildingService;
 
     public BuildingController(BuildingService buildingService) {
         this.buildingService = buildingService;
     }
 
-    // CREATE
+    // Create
     @PostMapping
-    public ResponseEntity<BuildingResponseDto> createBuilding(
-            @Valid @RequestBody CreateBuildingRequestDto request
-    ) {
-        BuildingResponseDto createdBuilding =
-                buildingService.createBuilding(request);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED )
-                .body(createdBuilding);
+    public ResponseEntity<BuildingResponseDto> createBuilding(@Valid @RequestBody CreateBuildingRequestDto request) {
+        BuildingResponseDto createdBuilding = buildingService.createBuilding(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBuilding);
     }
 
-    // READ ALL
+    // Read all
     @GetMapping
     public ResponseEntity<List<BuildingResponseDto>> getAllBuildings() {
-
-        List<BuildingResponseDto> buildings =
-                buildingService.getAllBuildings();
-
+        List<BuildingResponseDto> buildings = buildingService.getAllBuildings();
         return ResponseEntity.ok(buildings);
     }
 
-    // READ ONE
+    // Read
     @GetMapping("/{id}")
-    public ResponseEntity<BuildingResponseDto> getBuildingById(
-            @PathVariable Long id
-    ) {
-        BuildingResponseDto building =
-                buildingService.getBuildingById(id);
-
+    public ResponseEntity<BuildingResponseDto> getBuildingById(@PathVariable Long id) {
+        BuildingResponseDto building = buildingService.getBuildingById(id);
         return ResponseEntity.ok(building);
     }
 
-    // UPDATE
+    // Update
     @PutMapping("/{id}")
-    public ResponseEntity<BuildingResponseDto> updateBuilding(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateBuildingRequestDto request
-    ) {
-        BuildingResponseDto updatedBuilding =
-                buildingService.updateBuilding(id, request);
-
+    public ResponseEntity<BuildingResponseDto> updateBuilding(@PathVariable Long id, @Valid @RequestBody UpdateBuildingRequestDto request) {
+        BuildingResponseDto updatedBuilding = buildingService.updateBuilding(id, request);
         return ResponseEntity.ok(updatedBuilding);
     }
 
-    // DELETE
+    // Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBuilding(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<Void> deleteBuilding(@PathVariable Long id) {
         buildingService.deleteBuilding(id);
-
         return ResponseEntity.noContent().build();
     }
 }

@@ -3,7 +3,6 @@
     import jakarta.validation.constraints.NotBlank;
 
     public class CreateBuildingRequestDto {
-
         @NotBlank(message = "Building name is required.")
         private final String name;
 

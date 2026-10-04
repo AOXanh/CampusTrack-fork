@@ -55,39 +55,13 @@ public class CreateAssetRequestDto {
         this.criticality = criticality;
     }
 
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public AssetCategory getCategory() {
-        return category;
-    }
-
-    public AssetStatus getStatus() {
-        return status;
-    }
-
-    public AssetCondition getCondition() {
-        return condition;
-    }
-
-    public AssetCriticality getCriticality() {
-        return criticality;
-    }
+    public Long getRoomId() { return roomId; }
+    public String getName() { return name; }
+    public String getBrand() { return brand; }
+    public String getModel() { return model; }
+    public String getSerialNumber() { return serialNumber; }
+    public AssetCategory getCategory() { return category; }
+    public AssetStatus getStatus() { return status; }
+    public AssetCondition getCondition() { return condition; }
+    public AssetCriticality getCriticality() { return criticality; }
 }

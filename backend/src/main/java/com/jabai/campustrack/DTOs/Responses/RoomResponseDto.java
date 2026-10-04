@@ -3,32 +3,26 @@ package com.jabai.campustrack.DTOs.Responses;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoomResponseDto {
-
     private final long id;
     private final LocalDateTime createdAt;
-    private final BuildingResponseDto building;
-    private final String room_number;
+    private final long buildingId;
+    private final String roomNumber;
     private final int capacity;
-    private final RoomType room_type;
+    private final RoomType roomType;
     private final RoomCriticality criticality;
 
-    public RoomResponseDto(long id, LocalDateTime createdAt, Building building, String room_number, int capacity, RoomType room_type, RoomCriticality criticality) {
+    public RoomResponseDto(long id, LocalDateTime createdAt, long buildingId , String room_number, int capacity, RoomType room_type, RoomCriticality criticality) {
         this.id = id;
         this.createdAt = createdAt;
-        if (building != null) {
-            this.building = new BuildingResponseDto(building.getId(), building.getName(), building.getCreatedAt()); // removes rooms
-        } else {
-            this.building = null;
-        }
-        this.room_number = room_number;
+        this.buildingId = buildingId;
+        this.roomNumber = room_number;
         this.capacity = capacity;
-        this.room_type = room_type;
+        this.roomType = room_type;
         this.criticality = criticality;
     }
 
@@ -38,17 +32,17 @@ public class RoomResponseDto {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-    public BuildingResponseDto getBuilding() {
-        return building;
+    public long getBuilding() {
+        return buildingId;
     }
-    public String getRoom_number() {
-        return room_number;
+    public String getRoomNumber() {
+        return roomNumber;
     }
     public int getCapacity() {
         return capacity;
     }
-    public RoomType getRoom_type() {
-        return room_type;
+    public RoomType getRoomType() {
+        return roomType;
     }
     public RoomCriticality getCriticality() {
         return criticality;

@@ -32,27 +32,27 @@ public class NfcTagService {
 
     Asset foundAsset = assetRepository
             .findById(assetId)
-            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %s", assetId)));
+            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", assetId)));
     NfcTag newNfcTag = new NfcTag(foundAsset, uid, status);
     NfcTag response = nfcTagRepository.save(newNfcTag);
 
-    return buildNfcTagResponse(response);
+    return buildNfcTagResponseDto(response);
   }
 
   // Read all
   public Page<NfcTagResponseDto> readAll(Pageable pageable) {
     return nfcTagRepository
             .findAll(pageable)
-            .map(this::buildNfcTagResponse);
+            .map(this::buildNfcTagResponseDto);
   }
 
   // Read
   public NfcTagResponseDto read(Long id) {
     NfcTag foundNfcTag = nfcTagRepository
             .findById(id)
-            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %s", id)));
+            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %d.", id)));
 
-    return buildNfcTagResponse(foundNfcTag);
+    return buildNfcTagResponseDto(foundNfcTag);
   }
 
   // Update
@@ -63,12 +63,12 @@ public class NfcTagService {
 
     NfcTag foundNfcTag = nfcTagRepository
             .findById(id)
-            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %s", id)));
+            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %d.", id)));
 
     if (assetId != null) {
       Asset foundAsset = assetRepository
               .findById(assetId)
-              .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %s", assetId)));
+              .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", assetId)));
       foundNfcTag.setAsset(foundAsset);
     }
     if (uid != null)
@@ -78,20 +78,20 @@ public class NfcTagService {
 
     NfcTag response = nfcTagRepository.save(foundNfcTag);
 
-    return buildNfcTagResponse(response);
+    return buildNfcTagResponseDto(response);
   }
 
   // Delete
   public void delete(Long id) {
     NfcTag response = nfcTagRepository
             .findById(id)
-            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %s", id)));
+            .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %d.", id)));
 
     nfcTagRepository.delete(response);
   }
 
   // ===== Service Utils =====
-  private NfcTagResponseDto buildNfcTagResponse(NfcTag nfcTag) {
+  private NfcTagResponseDto buildNfcTagResponseDto(NfcTag nfcTag) {
     return new NfcTagResponseDto(
             nfcTag.getId(),
             nfcTag.getCreatedAt(),
