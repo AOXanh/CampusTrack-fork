@@ -1,9 +1,9 @@
 package com.jabai.campustrack.DTOs.Requests;
 
-import com.jabai.campustrack.Models.AssetCategory;
-import com.jabai.campustrack.Models.AssetStatus;
-import com.jabai.campustrack.Models.AssetCondition;
-import com.jabai.campustrack.Models.AssetCriticality;
+import com.jabai.campustrack.Models.Enums.AssetCategory;
+import com.jabai.campustrack.Models.Enums.AssetStatus;
+import com.jabai.campustrack.Models.Enums.AssetCondition;
+import com.jabai.campustrack.Models.Enums.AssetCriticality;
 
 public record UpdateAssetRequestDto(
         Long roomId,

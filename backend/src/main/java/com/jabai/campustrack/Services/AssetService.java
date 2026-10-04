@@ -32,21 +32,21 @@ public class AssetService {
     // CREATE
     public AssetResponseDto createAsset(CreateAssetRequestDto request) {
 
-        Room room = roomRepository.findById(request.roomId())
+        Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Room not found"
                 ));
 
         Asset asset = new Asset(
                 room,
-                request.name(),
-                request.brand(),
-                request.model(),
-                request.serialNumber(),
-                request.category(),
-                request.status(),
-                request.condition(),
-                request.criticality()
+                request.getName(),
+                request.getBrand(),
+                request.getModel(),
+                request.getSerialNumber(),
+                request.getCategory(),
+                request.getStatus(),
+                request.getCondition(),
+                request.getCriticality()
         );
 
         Asset savedAsset = assetRepository.save(asset);
