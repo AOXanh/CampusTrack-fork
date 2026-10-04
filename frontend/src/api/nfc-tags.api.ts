@@ -1,7 +1,7 @@
 import apiClient from "@/api/client.api";
-import { NfcTagResponse } from "@/types/response.types";
+import { GetAllNfcTagResponse } from "@/types/response.types";
 
-export async function getNfcTags(): Promise<NfcTagResponse> {
-  const response = await apiClient.get<NfcTagResponse>("/nfc-tags");
+export async function getAllNfcTags(page: number = 1, size: number = 10): Promise<GetAllNfcTagResponse> {
+  const response = await apiClient.get<GetAllNfcTagResponse>(`/nfc-tags?page=${page}&size=${size}`);
   return response.data;
 }

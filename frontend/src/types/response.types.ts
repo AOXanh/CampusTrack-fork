@@ -1,6 +1,7 @@
 import { NfcTag } from "@/types/models.types";
 
-export type NfcTagResponse = {
+// ========== Nfc Tag Responses ==========
+export type GetAllNfcTagResponse = {
   content: NfcTag[];
   page: {
     size: number;
@@ -9,3 +10,17 @@ export type NfcTagResponse = {
     totalPages: number;
   }
 };
+
+// ========== Asset Responses ==========
+
+// ========== Building Responses ==========
+
+// ========== Incident Responses ==========
+
+// ========== Maintenance Record Responses ==========
+
+// ========== Room Responses ==========
+
+// ========== User Responses ==========
+
+// ========== Auth Responses ==========
