@@ -1,0 +1,14 @@
+export default function page() {
+  return (
+    <main className="py-12">
+      <section className="max-w-7xl mx-auto">
+
+        <div className="space-y-6">
+          <h1 className="text-2xl md:text-4xl font-heading font-semibold uppercase tracking-wider">Homepage sa Admin</h1>
+          <p>Hello world ;D</p>
+        </div>
+
+      </section>
+    </main>
+  )
+}
