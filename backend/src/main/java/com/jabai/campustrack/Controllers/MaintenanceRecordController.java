@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
  * <br/>
- * <p>KYLE: Perform CRUD operations para sa Maintenance Records table</p>
+ * <p>CJ: Perform CRUD operations para sa Maintenance Records table</p>
  * <br/>
  * <p>Layer structure:</p>
  * <ul>
