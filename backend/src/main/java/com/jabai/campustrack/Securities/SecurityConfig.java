@@ -8,6 +8,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
@@ -23,13 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 public class SecurityConfig {
-
     private final JwtFilter jwtFilter;
-
-    public SecurityConfig(JwtFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-    }
-
     private final String[] UNAUTHORIZED_PATHS = {
             "/api/auth/register",
             "/api/auth/login",
@@ -41,14 +40,19 @@ public class SecurityConfig {
             "/api/maintenance-records/**",
             "/api/nfc-tags/**",
             "/api/rooms/**",
-
-            "/h2-console/**",
-            "/error"
     };
-
     private final String[] AUTHORIZED_PATHS = {
             "/api/auth/**"
     };
+    private final String[] ALLOWED_ORIGINS = {
+            // Temporary development access
+            "http://localhost:3000"
+    };
+    private final String[] ALLOWED_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"};
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,10 +60,24 @@ public class SecurityConfig {
     }
 
     @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
+        configuration.setAllowedMethods(List.of(ALLOWED_METHODS));
+        configuration.setAllowedHeaders(List.of("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> corsConfigurationSource())
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(UNAUTHORIZED_PATHS).permitAll()
                     .requestMatchers(AUTHORIZED_PATHS).authenticated()
