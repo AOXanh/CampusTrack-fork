@@ -13,11 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 function RowSkeleton() {
   return (
     <TableRow>
-      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[50px]" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+      <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
     </TableRow>
   )
 }
@@ -151,7 +151,7 @@ export default function Sample() {
 
         <Pagination>
           <PaginationContent>
-            <PaginationItem>
+            <PaginationItem hidden={currentPage == 1}>
               <PaginationPrevious onClick={() => setPage(currentPage - 1)} />
             </PaginationItem>
 
@@ -159,7 +159,7 @@ export default function Sample() {
               if (typeof item === "number")
                 return (
                   <PaginationItem key={`pagination-index-${index}`}>
-                    <PaginationLink onClick={() => setPage(item)} className={`${currentPage === index + 1 && "bg-primary text-white"}`}>{item}</PaginationLink>
+                    <PaginationLink onClick={() => setPage(item)} className={`${(currentPage === item) && "bg-primary text-white"}`}>{item}</PaginationLink>
                   </PaginationItem>
                 )
               else
@@ -170,7 +170,7 @@ export default function Sample() {
                 )
             })}
 
-            <PaginationItem>
+            <PaginationItem hidden={currentPage == totalPages - 1}>
               <PaginationNext onClick={() => setPage(currentPage + 1)} />
             </PaginationItem>
           </PaginationContent>
