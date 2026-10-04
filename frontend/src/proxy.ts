@@ -6,11 +6,9 @@ import { NextRequest, NextResponse } from "next/server";
  */
 
 export function proxy(request: NextRequest) {
-  console.log("Hi from middleware");
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: []
+  matcher: ["/:path*"]
 }
