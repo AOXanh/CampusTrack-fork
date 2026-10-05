@@ -1,6 +1,9 @@
 package com.jabai.campustrack.Services;
 
-import com.jabai.campustrack.DTOs.MaintenanceRecordDto;
+import com.jabai.campustrack.DTOs.Requests.CreateMaintenanceRecordRequestDto;
+import com.jabai.campustrack.DTOs.Requests.UpdateMaintenanceRecordRequestDto;
+import com.jabai.campustrack.DTOs.Responses.MaintenanceRecordResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Incident;
 import com.jabai.campustrack.Models.MaintenanceRecord;
 import com.jabai.campustrack.Models.User;
@@ -22,35 +25,35 @@ public class MaintenanceRecordService {
     @Autowired
     private EntityManager entityManager;
 
-
     // CREATE
-    public MaintenanceRecordDto createRecord(MaintenanceRecordDto dto) {
+    public MaintenanceRecordResponseDto createRecord(CreateMaintenanceRecordRequestDto dto) {
         return mapToDto(repository.save(mapToModel(dto)));
     }
 
     // GET ALL (Paginated)
-    public Page<MaintenanceRecordDto> getAllRecords(Pageable pageable) {
+    public Page<MaintenanceRecordResponseDto> getAllRecords(Pageable pageable) {
         return repository.findAll(pageable).map(this::mapToDto);
     }
 
     // GET ONE
-    public MaintenanceRecordDto getRecordById(Long id) {
+    public MaintenanceRecordResponseDto getRecordById(Long id) {
         return mapToDto(findRecordOrThrow(id));
     }
 
     // UPDATE
-    public MaintenanceRecordDto updateRecord(Long id, MaintenanceRecordDto dto) {
+    public MaintenanceRecordResponseDto updateRecord(Long id, UpdateMaintenanceRecordRequestDto dto) {
         MaintenanceRecord record = findRecordOrThrow(id);
         
         if (dto.getAction() != null) record.setAction(dto.getAction());
         if (dto.getRemarks() != null) record.setRemarks(dto.getRemarks());
         if (dto.getCompletedAt() != null) record.setCompletedAt(dto.getCompletedAt());
-        if (dto.getStatus() != null) record.setStatus(MaintenanceRecordStatus.valueOf(dto.getStatus().toUpperCase()));
+        if (dto.getStatus() != null) record.setStatus(MaintenanceRecordStatus.valueOf(dto.getStatus()));
+        
         // Safely link relationships using EntityManager
         if (dto.getIncidentId() != null) record.setIncident(entityManager.getReference(Incident.class, dto.getIncidentId()));
         if (dto.getUserId() != null) record.setUser(entityManager.getReference(User.class, dto.getUserId()));
+        
         return mapToDto(repository.save(record));
-    
     }
 
     // DELETE
@@ -58,29 +61,18 @@ public class MaintenanceRecordService {
         repository.delete(findRecordOrThrow(id));
     }
 
-
-
-
-
-
-
-
-
-
-
-
     // ==========================================
     // PRIVATE HELPER & MAPPER METHODS
     // ==========================================
 
     private MaintenanceRecord findRecordOrThrow(Long id) {
         return repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Record not found with id: " + id));
+            .orElseThrow(() -> new RowNotFoundException("Record not found with id: " + id));
     }
 
-    private MaintenanceRecord mapToModel(MaintenanceRecordDto dto) {
+    private MaintenanceRecord mapToModel(CreateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordStatus status = dto.getStatus() != null 
-            ? MaintenanceRecordStatus.valueOf(dto.getStatus().toUpperCase()) 
+            ? MaintenanceRecordStatus.valueOf(dto.getStatus()) 
             : MaintenanceRecordStatus.PENDING; 
 
         // entityManager.getReference() safely gets the Entity by ID without triggering a database query
@@ -96,8 +88,8 @@ public class MaintenanceRecordService {
         return model;
     }
 
-    private MaintenanceRecordDto mapToDto(MaintenanceRecord model) {
-        MaintenanceRecordDto dto = new MaintenanceRecordDto();
+    private MaintenanceRecordResponseDto mapToDto(MaintenanceRecord model) {
+        MaintenanceRecordResponseDto dto = new MaintenanceRecordResponseDto();
         
         dto.setId(model.getId());
         dto.setAction(model.getAction());
@@ -105,7 +97,7 @@ public class MaintenanceRecordService {
         dto.setCreatedAt(model.getCreatedAt());
         dto.setCompletedAt(model.getCompletedAt());
         
-        if (model.getStatus() != null) dto.setStatus(model.getStatus().name());
+        if (model.getStatus() != null) dto.setStatus(model.getStatus());
         if (model.getIncident() != null) dto.setIncidentId(model.getIncident().getId());
         if (model.getUser() != null) dto.setUserId(model.getUser().getId());
         

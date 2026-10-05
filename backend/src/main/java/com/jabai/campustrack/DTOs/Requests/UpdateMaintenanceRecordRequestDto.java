@@ -1,34 +1,25 @@
-package com.jabai.campustrack.DTOs;
+package com.jabai.campustrack.DTOs.Requests;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
 
-public class MaintenanceRecordDto {
+
+public class UpdateMaintenanceRecordRequestDto {
     
-    private Long id;
-    
-    @NotNull(message = "Incident ID is required")
     private Long incidentId;
     
-    @NotNull(message = "User ID is required")
     private Long userId;
     
-    @NotBlank(message = "Action is required")
     private String action;
     
     private String remarks;
     
     private String status;
+
     
     private LocalDateTime completedAt;
-    
-    private LocalDateTime createdAt;
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public Long getIncidentId() { return incidentId; }
     public void setIncidentId(Long incidentId) { this.incidentId = incidentId; }
 
@@ -46,7 +37,4 @@ public class MaintenanceRecordDto {
 
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
