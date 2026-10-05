@@ -1,0 +1,141 @@
+package com.jabai.campustrack.Services;
+
+import com.jabai.campustrack.DTOs.Requests.CreateAssetRequestDto;
+import com.jabai.campustrack.DTOs.Requests.UpdateAssetRequestDto;
+import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
+import com.jabai.campustrack.Models.Asset;
+import com.jabai.campustrack.Models.Enums.AssetCategory;
+import com.jabai.campustrack.Models.Enums.AssetCondition;
+import com.jabai.campustrack.Models.Enums.AssetCriticality;
+import com.jabai.campustrack.Models.Enums.AssetStatus;
+import com.jabai.campustrack.Models.Room;
+import com.jabai.campustrack.Repositories.AssetRepository;
+import com.jabai.campustrack.Repositories.RoomRepository;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class AssetService {
+    private final AssetRepository assetRepository;
+    private final RoomRepository roomRepository;
+
+    public AssetService(AssetRepository assetRepository, RoomRepository roomRepository) {
+        this.assetRepository = assetRepository;
+        this.roomRepository = roomRepository;
+    }
+
+    // ===== Main operations =====
+    // Create
+    public AssetResponseDto createAsset(CreateAssetRequestDto request) {
+        Long roomId = request.getRoomId();
+        String name = request.getName();
+        String brand = request.getBrand();
+        String model = request.getModel();
+        String serialNumber = request.getSerialNumber();
+        AssetCategory category = request.getCategory();
+        AssetStatus status = request.getStatus();
+        AssetCondition condition = request.getCondition();
+        AssetCriticality criticality = request.getCriticality();
+
+        Room foundRoom = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", request.getRoomId())));
+        Asset asset = new Asset(foundRoom, name, brand, model, serialNumber, category, status, condition, criticality);
+        Asset savedAsset = assetRepository.save(asset);
+
+        return buildAssetResponseDto(savedAsset);
+    }
+
+    // Read all
+    @Transactional(readOnly = true)
+    public List<AssetResponseDto> getAllAssets() {
+        return assetRepository.findAll()
+                .stream()
+                .map(this::buildAssetResponseDto)
+                .toList();
+    }
+
+    // Read
+    @Transactional(readOnly = true)
+    public AssetResponseDto getAssetById(Long id) {
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
+        return buildAssetResponseDto(asset);
+    }
+
+    // Update
+    public AssetResponseDto updateAsset(Long id, UpdateAssetRequestDto request) {
+        Long roomId = request.getRoomId();
+        String name = request.getName();
+        String brand = request.getBrand();
+        String model = request.getModel();
+        String serialNumber = request.getSerialNumber();
+        AssetCategory category = request.getCategory();
+        AssetStatus status = request.getStatus();
+        AssetCondition condition = request.getCondition();
+        AssetCriticality criticality = request.getCriticality();
+
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
+
+        if (roomId != null) {
+            Room room = roomRepository
+                    .findById(roomId)
+                    .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", id)));
+            asset.setRoom(room);
+        }
+        if (name != null)
+            asset.setName(name);
+        if (brand != null)
+            asset.setBrand(brand);
+        if (model != null)
+            asset.setModel(model);
+        if (serialNumber != null)
+            asset.setSerialNumber(serialNumber);
+        if (category != null)
+            asset.setCategory(category);
+        if (status != null)
+            asset.setStatus(status);
+        if (condition != null)
+            asset.setCondition(condition);
+        if (criticality != null)
+            asset.setCriticality(criticality);
+
+        Asset updatedAsset = assetRepository.save(asset);
+
+        return buildAssetResponseDto(updatedAsset);
+    }
+
+    // Delete
+    public void deleteAsset(Long id) {
+        Asset asset = assetRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
+
+        assetRepository.delete(asset);
+    }
+
+    // ===== Service Utils =====
+    private AssetResponseDto buildAssetResponseDto(Asset asset) {
+        return new AssetResponseDto(
+                asset.getId(),
+                asset.getRoom() != null ? asset.getRoom().getId() : null,
+                asset.getName(),
+                asset.getBrand(),
+                asset.getModel(),
+                asset.getSerialNumber(),
+                asset.getCategory(),
+                asset.getStatus(),
+                asset.getCondition(),
+                asset.getCriticality(),
+                asset.getCreatedAt()
+        );
+    }
+}

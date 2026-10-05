@@ -1,14 +1,28 @@
 package com.jabai.campustrack.Controllers;
 
+import com.jabai.campustrack.DTOs.Requests.CreateNfcTagRequestDto;
+import com.jabai.campustrack.DTOs.Requests.UpdateNfcTagRequestDto;
+import com.jabai.campustrack.DTOs.Responses.NfcTagResponseDto;
+import com.jabai.campustrack.Services.NfcTagService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
+ * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
  *
- * <p>CHARLES: Perform CRUD operations para sa Nfc Tags table</p>
+ * <p>CHARLES: Perform search for:</p>
+ * <ul>
+ *   <li>Building id</li>
+ *   <li>Room number</li>
+ *   <li>Capacity</li>
+ *   <li>Room type</li>
+ *   <li>Criticality</li>
+ * </ul>
  *
  * <p>Layer structure:</p>
  * <ul>
@@ -20,8 +34,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/nfc-tags")
 public class NfcTagController {
-  @GetMapping("/hello-world")
-  public ResponseEntity<String> helloWorld() {
-    return ResponseEntity.ok("Hello world from nfc tags ;D");
+  private final NfcTagService nfcTagService;
+
+  public NfcTagController(NfcTagService nfcTagService) {
+    this.nfcTagService = nfcTagService;
+  }
+
+  // Create
+  @PostMapping
+  public ResponseEntity<NfcTagResponseDto> create(@Valid @RequestBody CreateNfcTagRequestDto createNfcTagRequestDto) {
+    NfcTagResponseDto nfcTagResponseDto = nfcTagService.create(createNfcTagRequestDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(nfcTagResponseDto);
+  }
+
+  // Read all
+  @GetMapping
+  public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 10) Pageable pageable) {
+    Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.readAll(pageable);
+    return ResponseEntity.ok(nfcTagResponseDtoPage);
+  }
+
+  // Read
+  @GetMapping("/{id}")
+  public ResponseEntity<NfcTagResponseDto> read(Long id) {
+    NfcTagResponseDto nfcTagResponseDto = nfcTagService.read(id);
+    return ResponseEntity.ok(nfcTagResponseDto);
+  }
+
+  // Update
+  @PutMapping("/{id}")
+  public ResponseEntity<NfcTagResponseDto> update(@PathVariable Long id, @Valid @RequestBody UpdateNfcTagRequestDto updateNfcTagRequestDto) {
+    NfcTagResponseDto nfcTagResponseDto = nfcTagService.update(updateNfcTagRequestDto, id);
+    return ResponseEntity.ok(nfcTagResponseDto);
+  }
+
+  // Delete
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    nfcTagService.delete(id);
+    return ResponseEntity.noContent().build();
   }
 }

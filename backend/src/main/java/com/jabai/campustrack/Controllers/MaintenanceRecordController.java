@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
- *
- * <p>KYLE: Perform CRUD operations para sa Maintenance Records table</p>
- *
+ * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
+ * <br/>
+ * <p>CJ: Perform CRUD operations para sa Maintenance Records table</p>
+ * <br/>
  * <p>Layer structure:</p>
  * <ul>
  *   <li>Controller layer -> DTO (with annotations)</li>
