@@ -1,6 +1,8 @@
 package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 
@@ -55,6 +57,12 @@ public class RoomController {
   @GetMapping
   public ResponseEntity<Page<RoomResponseDto>> getRooms(@PageableDefault(size = 10) Pageable pageable) {
     Page<RoomResponseDto> responseDto = roomService.getRooms(pageable);
+    return ResponseEntity.ok(responseDto);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<Page<RoomResponseDto>> searchRooms(@RequestBody SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
+    Page<RoomResponseDto> responseDto = roomService.searchRooms(searchRoomsRequestDto, pageable);
     return ResponseEntity.ok(responseDto);
   }
 
