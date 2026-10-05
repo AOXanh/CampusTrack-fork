@@ -19,7 +19,7 @@ public class CreateMaintenanceRecordRequestDto {
     
     private String remarks;
     
-    private String status;
+    private MaintenanceRecordStatus status;
     
     private LocalDateTime completedAt;
 
@@ -36,8 +36,8 @@ public class CreateMaintenanceRecordRequestDto {
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public MaintenanceRecordStatus getStatus() { return status; }
+    public void setStatus(MaintenanceRecordStatus status) { this.status = status; }
 
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }

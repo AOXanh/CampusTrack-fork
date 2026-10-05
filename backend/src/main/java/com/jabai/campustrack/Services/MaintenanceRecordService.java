@@ -47,7 +47,7 @@ public class MaintenanceRecordService {
         if (dto.getAction() != null) record.setAction(dto.getAction());
         if (dto.getRemarks() != null) record.setRemarks(dto.getRemarks());
         if (dto.getCompletedAt() != null) record.setCompletedAt(dto.getCompletedAt());
-        if (dto.getStatus() != null) record.setStatus(MaintenanceRecordStatus.valueOf(dto.getStatus()));
+        if (dto.getStatus() != null) record.setStatus(dto.getStatus());
         
         // Safely link relationships using EntityManager
         if (dto.getIncidentId() != null) record.setIncident(entityManager.getReference(Incident.class, dto.getIncidentId()));
@@ -72,7 +72,7 @@ public class MaintenanceRecordService {
 
     private MaintenanceRecord mapToModel(CreateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordStatus status = dto.getStatus() != null 
-            ? MaintenanceRecordStatus.valueOf(dto.getStatus()) 
+            ? dto.getStatus() 
             : MaintenanceRecordStatus.PENDING; 
 
         // entityManager.getReference() safely gets the Entity by ID without triggering a database query
