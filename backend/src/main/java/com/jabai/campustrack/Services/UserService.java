@@ -64,4 +64,12 @@ public class UserService {
                 userToken
         );
     }
+
+    public User getUserProfile(String email){ 
+        return userRepository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found")); 
+    }
+
+
+
+
 }
