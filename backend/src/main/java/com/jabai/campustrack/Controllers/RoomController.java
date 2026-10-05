@@ -2,7 +2,6 @@ package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
-import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 
