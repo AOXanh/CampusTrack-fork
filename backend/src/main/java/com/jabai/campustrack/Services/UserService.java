@@ -4,6 +4,8 @@ import com.jabai.campustrack.DTOs.Requests.LoginUserRequestDto;
 import com.jabai.campustrack.DTOs.Requests.RegisterUserRequestDto;
 import com.jabai.campustrack.DTOs.Responses.LoginUserResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RegisterUserResponseDto;
+import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +67,14 @@ public class UserService {
         );
     }
 
-    public User getUserProfile(String email){ 
-        return userRepository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found")); 
+    public UserProfileResponseDto getUserProfile(String email){ 
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found")); 
+
+        return  new UserProfileResponseDto(
+            user.getName(),
+            user.getEmail(),
+            user.getUserRole()
+        ); 
     }
 
 

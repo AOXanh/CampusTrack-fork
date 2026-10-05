@@ -4,13 +4,14 @@ import com.jabai.campustrack.DTOs.Requests.LoginUserRequestDto;
 import com.jabai.campustrack.DTOs.Requests.RegisterUserRequestDto;
 import com.jabai.campustrack.DTOs.Responses.LoginUserResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RegisterUserResponseDto;
+import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.jabai.campustrack.Services.UserService;
-import com.jabai.campustrack.Models.User;
 
 import jakarta.validation.Valid;
 
@@ -37,13 +38,13 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<String> profile() {
+    public ResponseEntity<UserProfileResponseDto> profile() {
         Authentication authentication = 
         SecurityContextHolder.getContext().getAuthentication(); 
 
         String email = authentication.getName();
-        User user = userService.getUserProfile(email); 
+        UserProfileResponseDto profile = userService.getUserProfile(email); 
 
-        return ResponseEntity.ok(user); 
+        return ResponseEntity.ok(profile);
     }
 }
