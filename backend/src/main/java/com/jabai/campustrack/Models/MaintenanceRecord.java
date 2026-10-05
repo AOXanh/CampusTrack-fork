@@ -13,8 +13,16 @@ public class MaintenanceRecord {
   @Column(name = "id")
   private long id;
 
-  @Column(name = "created_at", updatable = false, insertable = false)
+  @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
+
+  // This tells Hibernate to set the time right before saving to the DB
+  @PrePersist
+  protected void onCreate() {
+      if (this.createdAt == null) {
+          this.createdAt = LocalDateTime.now();
+      }
+  }
 
   // Core columns
   @Column(name = "completed_at")
