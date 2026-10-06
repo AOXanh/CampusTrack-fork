@@ -15,7 +15,7 @@ public class Incident {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", insertable = false, updatable = false)
   private LocalDateTime createdAt;
@@ -144,7 +144,7 @@ public class Incident {
   }
 
   // Getters
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public LocalDateTime getEvaluatedAt() { return evaluatedAt; }
   public LocalDateTime getResolvedAt() { return resolvedAt; }

@@ -12,7 +12,7 @@ public class MaintenanceRecord {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", updatable = false)
   @Generated
@@ -76,7 +76,7 @@ public class MaintenanceRecord {
   }
 
   // Getters
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public LocalDateTime getCompletedAt() { return completedAt; }
   public Incident getIncident() { return incident; }

@@ -13,7 +13,7 @@ public class Building {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
 @Generated
   @Column(name = "created_at", updatable = false, insertable = false)
@@ -35,7 +35,7 @@ public class Building {
 
   // Getters
   public List<Room> getRooms() { return rooms; }
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public String getName() { return name; }
 

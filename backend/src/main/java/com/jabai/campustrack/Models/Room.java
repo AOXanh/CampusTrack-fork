@@ -17,7 +17,7 @@ public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Generated
   @Column(name = "created_at", updatable = false)
@@ -60,7 +60,7 @@ public class Room {
   public int getCapacity() { return capacity; }
   public RoomType getRoomType() { return roomType; }
   public RoomCriticality getCriticality() { return criticality; }
-  public long getId() { return id; }
+  public Long getId() { return id; }
 
   // Setters
   public void setBuilding(Building value) { building = value; }
