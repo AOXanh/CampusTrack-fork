@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class AssetResponseDto {
 
     private final Long id;
+    private final RoomResponseDto room;
     private final Long roomId;
     private final String name;
     private final String brand;
@@ -20,6 +21,33 @@ public class AssetResponseDto {
     private final AssetCondition condition;
     private final AssetCriticality criticality;
     private final LocalDateTime createdAt;
+
+    public AssetResponseDto(
+            Long id,
+            RoomResponseDto room,
+            String name,
+            String brand,
+            String model,
+            String serialNumber,
+            AssetCategory category,
+            AssetStatus status,
+            AssetCondition condition,
+            AssetCriticality criticality,
+            LocalDateTime createdAt
+    ) {
+        this.id = id;
+        this.room = room;
+        this.roomId = null;
+        this.name = name;
+        this.brand = brand;
+        this.model = model;
+        this.serialNumber = serialNumber;
+        this.category = category;
+        this.status = status;
+        this.condition = condition;
+        this.criticality = criticality;
+        this.createdAt = createdAt;
+    }
 
     public AssetResponseDto(
             Long id,
@@ -35,6 +63,7 @@ public class AssetResponseDto {
             LocalDateTime createdAt
     ) {
         this.id = id;
+        this.room = null;
         this.roomId = roomId;
         this.name = name;
         this.brand = brand;
@@ -47,47 +76,16 @@ public class AssetResponseDto {
         this.createdAt = createdAt;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getRoomId() {
-        return roomId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public AssetCategory getCategory() {
-        return category;
-    }
-
-    public AssetStatus getStatus() {
-        return status;
-    }
-
-    public AssetCondition getCondition() {
-        return condition;
-    }
-
-    public AssetCriticality getCriticality() {
-        return criticality;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public Long getId() { return id; }
+    public RoomResponseDto getRoom() { return room; }
+    public String getName() { return name; }
+    public String getBrand() { return brand; }
+    public String getModel() { return model; }
+    public String getSerialNumber() { return serialNumber; }
+    public AssetCategory getCategory() { return category; }
+    public AssetStatus getStatus() { return status; }
+    public AssetCondition getCondition() { return condition; }
+    public AssetCriticality getCriticality() { return criticality; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getRoomId() { return roomId; }
 }

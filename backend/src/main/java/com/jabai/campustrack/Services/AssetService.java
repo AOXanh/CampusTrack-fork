@@ -3,6 +3,7 @@ package com.jabai.campustrack.Services;
 import com.jabai.campustrack.DTOs.Requests.CreateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
+import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Asset;
 import com.jabai.campustrack.Models.Enums.AssetCategory;
@@ -54,7 +55,8 @@ public class AssetService {
     // Read all
     @Transactional(readOnly = true)
     public List<AssetResponseDto> getAllAssets() {
-        return assetRepository.findAll()
+        return assetRepository
+                .findAll()
                 .stream()
                 .map(this::buildAssetResponseDto)
                 .toList();
@@ -124,9 +126,19 @@ public class AssetService {
 
     // ===== Service Utils =====
     private AssetResponseDto buildAssetResponseDto(Asset asset) {
+        RoomResponseDto roomResponseDto = new RoomResponseDto(
+                asset.getRoom().getId(),
+                asset.getRoom().getCreatedAt(),
+                asset.getRoom().getBuilding().getId(),
+                asset.getRoom().getRoomNumber(),
+                asset.getRoom().getCapacity(),
+                asset.getRoom().getRoomType(),
+                asset.getRoom().getCriticality()
+        );
+
         return new AssetResponseDto(
                 asset.getId(),
-                asset.getRoom() != null ? asset.getRoom().getId() : null,
+                roomResponseDto,
                 asset.getName(),
                 asset.getBrand(),
                 asset.getModel(),

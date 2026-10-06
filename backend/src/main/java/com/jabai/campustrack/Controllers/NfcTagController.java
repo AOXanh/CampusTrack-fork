@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateNfcTagRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchNfcTagRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateNfcTagRequestDto;
 import com.jabai.campustrack.DTOs.Responses.NfcTagResponseDto;
 import com.jabai.campustrack.Services.NfcTagService;
@@ -56,9 +57,16 @@ public class NfcTagController {
 
   // Read
   @GetMapping("/{id}")
-  public ResponseEntity<NfcTagResponseDto> read(Long id) {
+  public ResponseEntity<NfcTagResponseDto> read(@PathVariable  Long id) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.read(id);
     return ResponseEntity.ok(nfcTagResponseDto);
+  }
+
+  // Search
+  @GetMapping("/search")
+  public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 10) Pageable pageable) {
+    Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);
+    return ResponseEntity.ok(nfcTagResponseDtoPage);
   }
 
   // Update

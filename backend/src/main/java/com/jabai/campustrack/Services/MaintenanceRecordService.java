@@ -2,105 +2,164 @@ package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.CreateMaintenanceRecordRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateMaintenanceRecordRequestDto;
+import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
 import com.jabai.campustrack.DTOs.Responses.MaintenanceRecordResponseDto;
+import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Incident;
 import com.jabai.campustrack.Models.MaintenanceRecord;
 import com.jabai.campustrack.Models.User;
 import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
+import com.jabai.campustrack.Repositories.IncidentRepository;
 import com.jabai.campustrack.Repositories.MaintenanceRecordRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jabai.campustrack.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class MaintenanceRecordService {
+    private final MaintenanceRecordRepository maintenanceRecordRepository;
+    private final IncidentRepository incidentRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private MaintenanceRecordRepository repository;
+    public MaintenanceRecordService(MaintenanceRecordRepository maintenanceRecordRepository, IncidentRepository incidentRepository, UserRepository userRepository) {
+        this.maintenanceRecordRepository = maintenanceRecordRepository;
+        this.incidentRepository = incidentRepository;
+        this.userRepository = userRepository;
+    }
 
-    // Use EntityManager to bypass protected constructors without needing repositories
-    @Autowired
-    private EntityManager entityManager;
-
-    // CREATE
+    // ===== Main operations =====
+    // Create
     public MaintenanceRecordResponseDto createRecord(CreateMaintenanceRecordRequestDto dto) {
-        return mapToDto(repository.save(mapToModel(dto)));
+        Long incidentId = dto.getIncidentId();
+        Long userId = dto.getUserId();
+        String action = dto.getAction();
+        MaintenanceRecordStatus status = dto.getStatus();
+        String remarks = dto.getRemarks();
+        LocalDateTime completedAt = dto.getCompletedAt();
+
+        Incident foundIncident = incidentRepository
+                .findById(incidentId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find incident with an ID of %d.", incidentId)));
+        User foundUser = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find user with an ID of %d.", userId)));
+
+        MaintenanceRecord newMaintenanceRecord = new MaintenanceRecord(foundIncident, foundUser, action, remarks, status, completedAt);
+        MaintenanceRecord response = maintenanceRecordRepository.save(newMaintenanceRecord);
+
+        return buildMaintenanceRecordResponseDto(response);
     }
 
-    // GET ALL (Paginated)
+    // Read all
     public Page<MaintenanceRecordResponseDto> getAllRecords(Pageable pageable) {
-        return repository.findAll(pageable).map(this::mapToDto);
+        return maintenanceRecordRepository
+                .findAll(pageable)
+                .map(this::buildMaintenanceRecordResponseDto);
     }
 
-    // GET ONE
+    // Get
     public MaintenanceRecordResponseDto getRecordById(Long id) {
-        return mapToDto(findRecordOrThrow(id));
+        MaintenanceRecord foundMaintenanceRecord = maintenanceRecordRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find maintenance record with an ID of %d.", id)));
+        return buildMaintenanceRecordResponseDto(foundMaintenanceRecord);
     }
 
-    // UPDATE
+    // Update
     public MaintenanceRecordResponseDto updateRecord(Long id, UpdateMaintenanceRecordRequestDto dto) {
-        MaintenanceRecord record = findRecordOrThrow(id);
-        
-        if (dto.getAction() != null) record.setAction(dto.getAction());
-        if (dto.getRemarks() != null) record.setRemarks(dto.getRemarks());
-        if (dto.getCompletedAt() != null) record.setCompletedAt(dto.getCompletedAt());
-        if (dto.getStatus() != null) record.setStatus(dto.getStatus());
-        
-        // Safely link relationships using EntityManager
-        if (dto.getIncidentId() != null) record.setIncident(entityManager.getReference(Incident.class, dto.getIncidentId()));
-        if (dto.getUserId() != null) record.setUser(entityManager.getReference(User.class, dto.getUserId()));
-        
-        return mapToDto(repository.save(record));
+        MaintenanceRecord foundMaintenanceRecord = maintenanceRecordRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find maintenance record with an ID of %d.", id)));
+
+        Long incidentId = dto.getIncidentId();
+        Long userId = dto.getUserId();
+        String action = dto.getAction();
+        String remarks = dto.getRemarks();
+        MaintenanceRecordStatus status = dto.getStatus();
+        LocalDateTime completedAt = dto.getCompletedAt();
+
+        if (incidentId != null) {
+            Incident foundIncident = incidentRepository
+                    .findById(incidentId)
+                    .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find incident with an ID of %d.", incidentId)));
+            foundMaintenanceRecord.setIncident(foundIncident);
+        }
+        if (userId != null) {
+            User foundUser = userRepository
+                    .findById(userId)
+                    .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find user with an ID of %d.", userId)));
+            foundMaintenanceRecord.setUser(foundUser);
+        }
+        if (action != null)
+            foundMaintenanceRecord.setAction(action);
+        if (remarks != null)
+            foundMaintenanceRecord.setRemarks(remarks);
+        if (status != null)
+            foundMaintenanceRecord.setStatus(status);
+        if (completedAt != null)
+            foundMaintenanceRecord.setCompletedAt(completedAt);
+
+        MaintenanceRecord response = maintenanceRecordRepository.save(foundMaintenanceRecord);
+
+        return buildMaintenanceRecordResponseDto(response);
     }
 
-    // DELETE
+    // Delete
     public void deleteRecord(Long id) {
-        repository.delete(findRecordOrThrow(id));
+        MaintenanceRecord record = maintenanceRecordRepository
+                .findById(id)
+                .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find maintenance record with an ID of %d.", id)));
+
+        maintenanceRecordRepository.delete(record);
     }
 
-    // ==========================================
-    // PRIVATE HELPER & MAPPER METHODS
-    // ==========================================
 
-    private MaintenanceRecord findRecordOrThrow(Long id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new RowNotFoundException("Record not found with id: " + id));
-    }
+    // ===== Service utils =====
+    private MaintenanceRecordResponseDto buildMaintenanceRecordResponseDto(MaintenanceRecord maintenanceRecord) {
+        Incident incident = maintenanceRecord.getIncident();
+        User user = maintenanceRecord.getUser();
 
-    private MaintenanceRecord mapToModel(CreateMaintenanceRecordRequestDto dto) {
-        MaintenanceRecordStatus status = dto.getStatus() != null 
-            ? dto.getStatus() 
-            : MaintenanceRecordStatus.PENDING; 
-
-        // entityManager.getReference() safely gets the Entity by ID without triggering a database query
-        MaintenanceRecord model = new MaintenanceRecord(
-            entityManager.getReference(Incident.class, dto.getIncidentId()),
-            entityManager.getReference(User.class, dto.getUserId()),
-            dto.getAction(),
-            dto.getRemarks(),
-            status
+        UserProfileResponseDto userProfileResponseDto = new UserProfileResponseDto(
+                user.getName(),
+                user.getEmail(),
+                user.getUserRole()
         );
-        
-        model.setCompletedAt(dto.getCompletedAt());
-        return model;
-    }
 
-    private MaintenanceRecordResponseDto mapToDto(MaintenanceRecord model) {
-        MaintenanceRecordResponseDto dto = new MaintenanceRecordResponseDto();
-        
-        dto.setId(model.getId());
-        dto.setAction(model.getAction());
-        dto.setRemarks(model.getRemarks());
-        dto.setCreatedAt(model.getCreatedAt());
-        dto.setCompletedAt(model.getCompletedAt());
-        
-        if (model.getStatus() != null) dto.setStatus(model.getStatus());
-        if (model.getIncident() != null) dto.setIncidentId(model.getIncident().getId());
-        if (model.getUser() != null) dto.setUserId(model.getUser().getId());
-        
-        return dto;
+        IncidentResponseDto incidentResponseDto = new IncidentResponseDto(
+                incident.getId(),
+                incident.getCreatedAt(),
+                incident.getEvaluatedAt(),
+                incident.getResolvedAt(),
+                incident.getClosedAt(),
+                incident.getRoom().getId(),
+                incident.getReportedBy().getId(),
+                incident.getIncidentNumber(),
+                incident.getDescription(),
+                incident.getSafetyHazard(),
+                incident.getOperationalImpact(),
+                incident.getPriorityScore(),
+                incident.getCategory(),
+                incident.getStatus()
+        );
+
+        if (incident.getAsset() != null)
+            incidentResponseDto.setAssetId(incident.getAsset().getId());
+        if (incident.getAssignedTo() != null)
+            incidentResponseDto.setAssignedTo(incident.getAssignedTo().getId());
+
+        return new MaintenanceRecordResponseDto(
+                maintenanceRecord.getId(),
+                incidentResponseDto,
+                userProfileResponseDto,
+                maintenanceRecord.getAction(),
+                maintenanceRecord.getRemarks(),
+                maintenanceRecord.getStatus(),
+                maintenanceRecord.getCompletedAt(),
+                maintenanceRecord.getCreatedAt()
+        );
     }
 }

@@ -18,6 +18,7 @@ public class UpdateRoomRequestDto {
         this.criticality = criticality;
     }
 
+    // Getters
     public Long getBuildingId() { return buildingId; }
     public Integer getCapacity() { return capacity; }
     public RoomCriticality getCriticality() { return criticality; }

@@ -15,9 +15,9 @@ spring:
     name: campustrack
 
   datasource:
-    url: jdbc:mysql://localhost:3306/campus_track
+    url: jdbc:mysql://localhost:3306/campus_tracker_database
     username: root
-    password: devServer@123n
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jwt:
