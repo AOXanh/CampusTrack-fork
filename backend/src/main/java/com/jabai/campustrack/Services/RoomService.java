@@ -1,5 +1,6 @@
 package com.jabai.campustrack.Services;
 
+import com.jabai.campustrack.DTOs.Responses.BuildingResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Building;
@@ -103,10 +104,16 @@ public class RoomService {
 
     // ===== Service Utils =====
     private RoomResponseDto buildRoomResponseDto(Room room) {
+        BuildingResponseDto buildingResponseDto = new BuildingResponseDto(
+                room.getBuilding().getId(),
+                room.getBuilding().getName(),
+                room.getBuilding().getCreatedAt()
+        );
+
         return new RoomResponseDto(
             room.getId(), 
             room.getCreatedAt(),
-            room.getBuilding().getId(),
+            buildingResponseDto,
             room.getRoomNumber(),
             room.getCapacity(), 
             room.getRoomType(), 

@@ -1,7 +1,9 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.CreateNfcTagRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchNfcTagRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateNfcTagRequestDto;
+import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.DTOs.Responses.NfcTagResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Asset;
@@ -55,6 +57,16 @@ public class NfcTagService {
     return buildNfcTagResponseDto(foundNfcTag);
   }
 
+  // Search
+  public Page<NfcTagResponseDto> search(SearchNfcTagRequestDto searchNfcTagRequestDto, Pageable pageable) {
+    return nfcTagRepository.search(
+            searchNfcTagRequestDto.getAssetId(),
+            searchNfcTagRequestDto.getUid(),
+            searchNfcTagRequestDto.getStatus(),
+            pageable
+    ).map(this::buildNfcTagResponseDto);
+  }
+
   // Update
   public NfcTagResponseDto update(UpdateNfcTagRequestDto updateNfcTagRequestDto, Long id) {
     Long assetId = updateNfcTagRequestDto.getAssetId();
@@ -92,10 +104,24 @@ public class NfcTagService {
 
   // ===== Service Utils =====
   private NfcTagResponseDto buildNfcTagResponseDto(NfcTag nfcTag) {
+    AssetResponseDto assetResponseDto = new AssetResponseDto(
+            nfcTag.getAsset().getId(),
+            nfcTag.getAsset().getRoom().getId(),
+            nfcTag.getAsset().getName(),
+            nfcTag.getAsset().getBrand(),
+            nfcTag.getAsset().getModel(),
+            nfcTag.getAsset().getSerialNumber(),
+            nfcTag.getAsset().getCategory(),
+            nfcTag.getAsset().getStatus(),
+            nfcTag.getAsset().getCondition(),
+            nfcTag.getAsset().getCriticality(),
+            nfcTag.getAsset().getCreatedAt()
+    );
+
     return new NfcTagResponseDto(
             nfcTag.getId(),
             nfcTag.getCreatedAt(),
-            nfcTag.getAsset().getId(),
+            assetResponseDto,
             nfcTag.getUid(),
             nfcTag.getStatus()
     );
