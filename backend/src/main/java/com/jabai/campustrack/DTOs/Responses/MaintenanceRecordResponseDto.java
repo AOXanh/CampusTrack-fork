@@ -35,8 +35,8 @@ public class MaintenanceRecordResponseDto {
 
     // Getters
     public Long getId() { return id; }
-    public IncidentResponseDto getIncidentId() { return incident; }
-    public UserProfileResponseDto getUserId() { return user; }
+    public IncidentResponseDto getIncident() { return incident; }
+    public UserProfileResponseDto getUser() { return user; }
     public String getAction() { return action; }
     public String getRemarks() { return remarks; }
     public MaintenanceRecordStatus getStatus() { return status; }
