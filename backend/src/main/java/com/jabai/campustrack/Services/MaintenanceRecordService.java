@@ -16,8 +16,10 @@ import com.jabai.campustrack.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Service
 public class MaintenanceRecordService {
@@ -116,6 +118,44 @@ public class MaintenanceRecordService {
 
         maintenanceRecordRepository.delete(record);
     }
+
+    //===== Search =====
+    public Page<MaintenanceRecordResponseDto> searchRecords(
+            Long incidentId, Long userId, String action, String remarks, 
+            MaintenanceRecordStatus status, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        
+        Specification<MaintenanceRecord> spec = (root, query, criteriaBuilder) -> {
+            var predicates = new java.util.ArrayList<jakarta.persistence.criteria.Predicate>();
+
+            if (incidentId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("incident").get("id"), incidentId));
+            }
+            if (userId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("user").get("id"), userId));
+            }
+            if (action != null && !action.isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("action")), "%" + action.toLowerCase() + "%"));
+            }
+            if (remarks != null && !remarks.isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("remarks")), "%" + remarks.toLowerCase() + "%"));
+            }
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+            if (startDate != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("completedAt"), startDate.atStartOfDay()));
+            }
+            if (endDate != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("completedAt"), endDate.atTime(23, 59, 59)));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        };
+
+        return maintenanceRecordRepository
+                .findAll(spec, pageable)
+                .map(this::buildMaintenanceRecordResponseDto);
+    }   
 
 
     // ===== Service utils =====
