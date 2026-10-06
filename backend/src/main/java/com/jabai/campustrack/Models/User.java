@@ -11,7 +11,7 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", updatable = false, insertable = false)
   private LocalDateTime createdAt;
@@ -40,7 +40,7 @@ public class User {
   }
 
   // Getters
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public String getName() { return name; }
   public String getEmail() { return email; }

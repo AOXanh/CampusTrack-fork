@@ -12,7 +12,7 @@ public class NfcTag {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", updatable = false, insertable = false)
   @Generated
@@ -40,7 +40,7 @@ public class NfcTag {
   }
 
   // Getters
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public Asset getAsset() { return asset; }
   public String getUid() { return uid; }

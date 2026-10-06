@@ -16,7 +16,7 @@ public class Asset {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", updatable = false, insertable = false)
   private LocalDateTime createdAt;
@@ -104,7 +104,7 @@ public class Asset {
 
   // Getters
   public List<NfcTag> getNfcTags() { return nfcTags; }
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public Room getRoom() { return room; }
   public String getName() { return name; }
