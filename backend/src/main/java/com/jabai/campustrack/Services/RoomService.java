@@ -10,6 +10,7 @@ import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 
 import org.springframework.data.domain.Page;
@@ -51,6 +52,17 @@ public class RoomService {
         return roomRepository
                 .findAll(pageable)
                 .map(this::buildRoomResponseDto);
+    }
+
+    public Page<RoomResponseDto> searchRooms(SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
+        return roomRepository.search(
+            searchRoomsRequestDto.building_id(),
+            searchRoomsRequestDto.criticality(),
+            searchRoomsRequestDto.room_type(),
+            searchRoomsRequestDto.room_number(),
+            searchRoomsRequestDto.capacity(),
+            pageable
+        ).map(this::buildRoomResponseDto);
     }
 
     // Read

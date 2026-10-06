@@ -1,7 +1,7 @@
 package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto; 
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jabai.campustrack.Services.RoomService;
@@ -60,7 +61,7 @@ public class RoomController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<Page<RoomResponseDto>> searchRooms(@RequestBody SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
+  public ResponseEntity<Page<RoomResponseDto>> searchRooms(SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
     Page<RoomResponseDto> responseDto = roomService.searchRooms(searchRoomsRequestDto, pageable);
     return ResponseEntity.ok(responseDto);
   }
