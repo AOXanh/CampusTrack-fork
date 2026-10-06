@@ -14,8 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
- * <br/>
- * <p>ART TECSON: Pag add ug paginatiom sa imohang read all gamit ang spring data extension</p>
+ *
+ * <p>ART TECSON: Perform search by:</p>
+ * <ul>
+ *   <li>name (required) -> Dapat naka keyword</li>
+ * </ul>
+ * <p>P.S.: And dapat naka paginate gihapon sya.</p>
+ * <p>Expected URL: <code>/api/buildings/search?name=SHS+Building+1</code></p>
  */
 @RestController
 @RequestMapping("/api/buildings")
@@ -35,12 +40,8 @@ public class BuildingController {
 
     // Read all
     @GetMapping
-    public ResponseEntity<Page<BuildingResponseDto>> getAllBuildings(
-            Pageable pageable
-    ) {
-        Page<BuildingResponseDto> buildings =
-                buildingService.getAllBuildings(pageable);
-
+    public ResponseEntity<Page<BuildingResponseDto>> getAllBuildings(Pageable pageable) {
+        Page<BuildingResponseDto> buildings = buildingService.getAllBuildings(pageable);
         return ResponseEntity.ok(buildings);
     }
 

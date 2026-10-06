@@ -15,7 +15,7 @@ public class Building {
   @Column(name = "id")
   private Long id;
 
-@Generated
+  @Generated
   @Column(name = "created_at", updatable = false, insertable = false)
   private LocalDateTime createdAt;
 

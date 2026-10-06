@@ -31,7 +31,7 @@ public class BuildingService {
         return buildBuildingResponseDto(savedBuilding);
     }
 
-    // Read all with pagination
+    // Read all
     public Page<BuildingResponseDto> getAllBuildings(Pageable pageable) {
         return buildingRepository
                 .findAll(pageable)
