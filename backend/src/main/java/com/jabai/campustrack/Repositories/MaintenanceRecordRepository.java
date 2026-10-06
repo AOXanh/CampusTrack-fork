@@ -1,6 +1,6 @@
 package com.jabai.campustrack.Repositories;
 
-import com.jabai.campustrack.Models.Asset;
+import com.jabai.campustrack.Models.MaintenanceRecord;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @NullMarked
 @Repository
-public interface AssetRepository extends JpaRepository<Asset, Long> {
+public interface MaintenanceRecordRepository extends JpaRepository<MaintenanceRecord, Long> {
   @Override
-  @EntityGraph(attributePaths = {"room"})
-  Optional<Asset> findById(Long id);
+  @EntityGraph(attributePaths = {"incident", "user"})
+  Optional<MaintenanceRecord> findById(Long id);
 
   @Override
-  @EntityGraph(attributePaths = {"room"})
-  Page<Asset> findAll(Pageable pageable);
+  @EntityGraph(attributePaths = {"incident", "user"})
+  Page<MaintenanceRecord> findAll(Pageable pageable);
 }

@@ -2,6 +2,7 @@ package com.jabai.campustrack.Models;
 
 import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Generated;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +14,8 @@ public class MaintenanceRecord {
   @Column(name = "id")
   private long id;
 
-  @Column(name = "created_at", updatable = false, insertable = false)
+  @Column(name = "created_at", updatable = false)
+  @Generated
   private LocalDateTime createdAt;
 
   // Core columns
@@ -54,6 +56,23 @@ public class MaintenanceRecord {
     this.action = action;
     this.remarks = remarks;
     this.status = status;
+    this.completedAt = null;
+  }
+
+  public MaintenanceRecord(
+          Incident incident,
+          User user,
+          String action,
+          String remarks,
+          MaintenanceRecordStatus status,
+          LocalDateTime completedAt
+  ) {
+    this.incident = incident;
+    this.user = user;
+    this.action = action;
+    this.remarks = remarks;
+    this.status = status;
+    this.completedAt = completedAt;
   }
 
   // Getters

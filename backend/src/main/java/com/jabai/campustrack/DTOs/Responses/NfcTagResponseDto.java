@@ -7,20 +7,20 @@ import java.time.LocalDateTime;
 public class NfcTagResponseDto {
   private final long id;
   private final LocalDateTime createdAt;
-  private final long assetId;
+  private final AssetResponseDto asset;
   private final String uid;
   private final NfcTagStatus status;
 
   public NfcTagResponseDto(
           long id,
           LocalDateTime createdAt,
-          long assetId,
+          AssetResponseDto asset,
           String uid,
           NfcTagStatus status
   ) {
     this.id = id;
     this.createdAt = createdAt;
-    this.assetId = assetId;
+    this.asset = asset;
     this.uid = uid;
     this.status = status;
   }
@@ -28,7 +28,7 @@ public class NfcTagResponseDto {
   // Getters
   public long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
-  public long getAssetId() { return assetId; }
+  public AssetResponseDto getAsset() { return asset; }
   public String getUid() { return uid; }
   public NfcTagStatus getStatus() { return status; }
 }
