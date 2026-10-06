@@ -31,7 +31,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
         WHERE (:buildingId IS NULL OR r.building.id = :buildingId)
           AND (:criticality IS NULL OR r.criticality = :criticality)
           AND (:roomType IS NULL OR r.roomType = :roomType)
-          AND (:roomNumber IS NULL OR LOWER(r.roomNumber) LIKE LOWER(CONCAT('%', :roomNumber, '%')))
+          AND (:roomNumber IS NULL OR r.roomNumber = :roomNumber)
           AND (:capacity IS NULL OR r.capacity = :capacity)
         """)
     Page<Room> search(@Param("buildingId") Long building_id,
