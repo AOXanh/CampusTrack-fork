@@ -6,6 +6,8 @@ import com.jabai.campustrack.DTOs.Responses.BuildingResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Building;
 import com.jabai.campustrack.Repositories.BuildingRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +32,10 @@ public class BuildingService {
     }
 
     // Read all
-    public List<BuildingResponseDto> getAllBuildings() {
+    public Page<BuildingResponseDto> getAllBuildings(Pageable pageable) {
         return buildingRepository
-                .findAll()
-                .stream()
-                .map(this::buildBuildingResponseDto)
-                .toList();
+                .findAll(pageable)
+                .map(this::buildBuildingResponseDto);
     }
 
     // Read
