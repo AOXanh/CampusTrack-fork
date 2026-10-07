@@ -5,14 +5,17 @@ import com.jabai.campustrack.DTOs.Requests.SearchNfcTagRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateNfcTagRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.DTOs.Responses.NfcTagResponseDto;
+import com.jabai.campustrack.Exceptions.CustomExceptions.DuplicatedItemException;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Asset;
 import com.jabai.campustrack.Models.Enums.NfcTagStatus;
 import com.jabai.campustrack.Models.NfcTag;
 import com.jabai.campustrack.Repositories.AssetRepository;
 import com.jabai.campustrack.Repositories.NfcTagRepository;
+import com.jabai.campustrack.Repositories.Specifications.NfcTagSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,6 +38,9 @@ public class NfcTagService {
     Asset foundAsset = assetRepository
             .findById(assetId)
             .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", assetId)));
+    if (nfcTagRepository.existsByUid(uid))
+      throw new DuplicatedItemException("UID already existed");
+
     NfcTag newNfcTag = new NfcTag(foundAsset, uid, status);
     NfcTag response = nfcTagRepository.save(newNfcTag);
 
@@ -59,12 +65,18 @@ public class NfcTagService {
 
   // Search
   public Page<NfcTagResponseDto> search(SearchNfcTagRequestDto searchNfcTagRequestDto, Pageable pageable) {
-    return nfcTagRepository.search(
-            searchNfcTagRequestDto.getAssetId(),
-            searchNfcTagRequestDto.getUid(),
-            searchNfcTagRequestDto.getStatus(),
-            pageable
-    ).map(this::buildNfcTagResponseDto);
+    Long assetId = searchNfcTagRequestDto.getAssetId();
+    String uid = searchNfcTagRequestDto.getUid();
+    NfcTagStatus status = searchNfcTagRequestDto.getStatus();
+
+    Specification<NfcTag> specification = Specification
+            .where(NfcTagSpecifications.hasAssetId(assetId))
+            .and(NfcTagSpecifications.hasUid(uid))
+            .and(NfcTagSpecifications.hasStatus(status));
+
+    return nfcTagRepository
+            .findAll(specification, pageable)
+            .map(this::buildNfcTagResponseDto);
   }
 
   // Update
@@ -77,6 +89,8 @@ public class NfcTagService {
             .findById(id)
             .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find nfc tag with an ID of %d.", id)));
 
+    if (nfcTagRepository.existsByUid(uid))
+      throw new DuplicatedItemException("UID already existed");
     if (assetId != null) {
       Asset foundAsset = assetRepository
               .findById(assetId)
