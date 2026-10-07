@@ -6,6 +6,8 @@ import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
 import com.jabai.campustrack.DTOs.Responses.MaintenanceRecordResponseDto;
 import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
+import com.jabai.campustrack.Repositories.Specifications.MaintenanceRecordSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import com.jabai.campustrack.Models.Incident;
 import com.jabai.campustrack.Models.MaintenanceRecord;
 import com.jabai.campustrack.Models.User;
@@ -16,8 +18,10 @@ import com.jabai.campustrack.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Service
 public class MaintenanceRecordService {
@@ -115,6 +119,21 @@ public class MaintenanceRecordService {
                 .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find maintenance record with an ID of %d.", id)));
 
         maintenanceRecordRepository.delete(record);
+    }
+
+    // ===== Search =====
+    public Page<MaintenanceRecordResponseDto> searchRecords(
+            Long incidentId, Long userId, String action, String remarks, 
+            MaintenanceRecordStatus status, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        
+        // Call the new Specification class
+        Specification<MaintenanceRecord> spec = MaintenanceRecordSpecification.buildSearchSpec(
+                incidentId, userId, action, remarks, status, startDate, endDate
+        );
+
+        return maintenanceRecordRepository
+                .findAll(spec, pageable)
+                .map(this::buildMaintenanceRecordResponseDto);
     }
 
 
