@@ -8,7 +8,7 @@ import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.RoomRepository;
-import com.jabai.campustrack.Repositories.RoomSpecs;
+import com.jabai.campustrack.Repositories.Specifications.RoomSpecifications;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
@@ -58,11 +58,11 @@ public class RoomService {
 
     public Page<RoomResponseDto> searchRooms(SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
         Specification<Room> spec = Specification.where(
-            RoomSpecs.hasBuilding(searchRoomsRequestDto.building_id())
-        ).and(RoomSpecs.hasCapacity(searchRoomsRequestDto.capacity()))
-        .and(RoomSpecs.hasCriticality(searchRoomsRequestDto.criticality()))
-        .and(RoomSpecs.hasRoomNumber(searchRoomsRequestDto.room_number()))
-        .and(RoomSpecs.hasRoomType(searchRoomsRequestDto.room_type()));
+            RoomSpecifications.hasBuilding(searchRoomsRequestDto.building_id())
+        ).and(RoomSpecifications.hasCapacity(searchRoomsRequestDto.capacity()))
+        .and(RoomSpecifications.hasCriticality(searchRoomsRequestDto.criticality()))
+        .and(RoomSpecifications.hasRoomNumber(searchRoomsRequestDto.room_number()))
+        .and(RoomSpecifications.hasRoomType(searchRoomsRequestDto.room_type()));
 
         return roomRepository.findAll(spec, pageable)
             .map(this::buildRoomResponseDto);

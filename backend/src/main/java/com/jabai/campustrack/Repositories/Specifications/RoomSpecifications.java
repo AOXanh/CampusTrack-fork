@@ -1,4 +1,4 @@
-package com.jabai.campustrack.Repositories;
+package com.jabai.campustrack.Repositories.Specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -6,7 +6,7 @@ import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 
-public class RoomSpecs {
+public class RoomSpecifications {
 
     public static Specification<Room> hasBuilding(Long buildingId) {
         return (root, query, cb) ->
