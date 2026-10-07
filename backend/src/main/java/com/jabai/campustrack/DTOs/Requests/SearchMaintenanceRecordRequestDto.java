@@ -10,8 +10,8 @@ public class SearchMaintenanceRecordRequestDto {
   private final String action;
   private final String remarks;
   private final MaintenanceRecordStatus status;
-  private final LocalDateTime startDate;
-  private final LocalDateTime endDate;
+  private final LocalDateTime completedFrom;
+  private final LocalDateTime completedTo;
 
   public SearchMaintenanceRecordRequestDto(
           Long incidentId,
@@ -19,16 +19,16 @@ public class SearchMaintenanceRecordRequestDto {
           String action,
           String remarks,
           MaintenanceRecordStatus status,
-          LocalDateTime startDate,
-          LocalDateTime endDate
+          LocalDateTime completedFrom,
+          LocalDateTime completedTo
   ) {
     this.incidentId = incidentId;
     this.userId = userId;
     this.action = action;
     this.remarks = remarks;
     this.status = status;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.completedFrom = completedFrom;
+    this.completedTo = completedTo;
   }
 
   // Getters
@@ -37,6 +37,6 @@ public class SearchMaintenanceRecordRequestDto {
   public String getAction() { return action; }
   public String getRemarks() { return remarks; }
   public MaintenanceRecordStatus getStatus() { return status; }
-  public LocalDateTime getStartDate() { return startDate; }
-  public LocalDateTime getEndDate() { return endDate; }
+  public LocalDateTime getCompletedFrom() { return completedFrom; }
+  public LocalDateTime getCompletedTo() { return completedTo; }
 }

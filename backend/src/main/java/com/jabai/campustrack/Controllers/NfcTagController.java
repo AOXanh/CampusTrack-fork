@@ -14,23 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
- *
- * <p>CHARLES: Perform search for:</p>
- * <ul>
- *   <li>Building id</li>
- *   <li>Room number</li>
- *   <li>Capacity</li>
- *   <li>Room type</li>
- *   <li>Criticality</li>
- * </ul>
- *
- * <p>Layer structure:</p>
- * <ul>
- *   <li>Controller layer -> DTO (with annotations)</li>
- *   <li>Service layer -> DTO</li>
- *   <li>Repository layer -> Model</li>
- * </ul>
+ * <h1>CHARLES: What?</h1>
  */
 @RestController
 @RequestMapping("/api/nfc-tags")

@@ -18,16 +18,18 @@ import org.springframework.web.bind.annotation.*;
  *
  * <p>CJ: Perform search by:</p>
  * <ul>
- *   <li>Incident id (optional)</li>
- *   <li>User id (optional)</li>
- *   <li>Action (optional) -> Dapat naka keyword</li>
- *   <li>Remarks (optional) -> Dapat naka keyword</li>
- *   <li>Status (optional)</li>
- *   <li>Start date (optional) -> Dapat naka format ha for example 2026-10-07 (COMPLETED AT)</li>
- *   <li>End date (optional) -> Dapat naka format ha for example 2026-10-15 (COMPLETED AT)</li>
+ *   <li>from (optional) -> Dapat naka format ha for example 2026-10-07 (CREATED AT) (NEW TASK)</li>
+ *   <li>to (optional) -> Dapat naka format ha for example 2026-10-15 (CREATED AT) (NEW TASK)</li>
+ *   <li>incidentId (optional)</li>
+ *   <li>userId (optional)</li>
+ *   <li>action (optional) -> Dapat naka keyword</li>
+ *   <li>remarks (optional) -> Dapat naka keyword</li>
+ *   <li>status (optional)</li>
+ *   <li>completedAtFrom (optional) -> Dapat naka format ha for example 2026-10-07 (COMPLETED AT)</li>
+ *   <li>completedAtTo (optional) -> Dapat naka format ha for example 2026-10-15 (COMPLETED AT)</li>
  * </ul>
  * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/maintenance-records/search?incident_id=1&user_id=1&action=Nasakpan&remarks=gipa+principal&status=COMPLETED&start_date=2026-10-07&end_date=2026-10-15</code></p>
+ * <p>Expected URL: <code>/api/maintenance-records/search?from=2026-10-07&to=2026-10-15&incidentId=1&userId=1&action=Nasakpan&remarks=gipa+principal&status=COMPLETED&completedAtFrom=2026-10-07&completedAtTo=2026-10-15</code></p>
  */
 @RestController
 @RequestMapping("/api/maintenance-records")

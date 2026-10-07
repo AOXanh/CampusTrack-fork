@@ -15,7 +15,21 @@ import org.springframework.web.bind.annotation.*;
 /**
  * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
  * <br/>
- * <p>CHRIS CHAN: Pag add ug paginatiom sa imohang read all gamit ang spring data extension</p>
+ * <p>CHRIS CHAN: Perform search by:</p>
+ * <ul>
+ *   <li>from (optional) Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
+ *   <li>to (optional) Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
+ *   <li>roomId (optional)</li>
+ *   <li>name (optional) -> Dapat naka keyword ni sya</li>
+ *   <li>brand (optional) -> Dapat naka keyword ni sya</li>
+ *   <li>model (optional) -> Dapat naka keyword ni sya</li>
+ *   <li>serialNumber (optional)</li>
+ *   <li>category (optional) (DAPAT ENUMS)</li>
+ *   <li>condition (optional) (DAPAT ENUMS)</li>
+ *   <li>criticality (optional) (DAPAT ENUMS)</li>
+ * </ul>
+ * <p>P.S.: And dapat naka paginate gihapon sya.</p>
+ * <p>Expected URL: <code>/api/assets/search?from=2026-10-07&to=2026-10-08&roomId=1&name=Test+name&brand=Test+brand&model=Test+model&serialNumber=Test+serial&category=COMPUTER&condition=DAMAGED&criticality=CRITICAL</code></p>
  */
 @RestController
 @RequestMapping("/api/assets")

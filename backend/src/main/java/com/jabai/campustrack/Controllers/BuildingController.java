@@ -12,16 +12,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
  *
  * <p>ART TECSON: Perform search by:</p>
  * <ul>
- *   <li>name (required) -> Dapat naka keyword</li>
+ *   <li>from (optional) Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
+ *   <li>to (optional) Dapat naka format ha for example 2026-10-08 (CREATED AT)</li>
+ *   <li>name (optional) -> Dapat naka keyword</li>
  * </ul>
  * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/buildings/search?name=SHS+Building+1</code></p>
+ * <p>Expected URL: <code>/api/buildings/search?from=2026-10-07&to=2026-10-08&name=SHS+Building</code></p>
  */
 @RestController
 @RequestMapping("/api/buildings")

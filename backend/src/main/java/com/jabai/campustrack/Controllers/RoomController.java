@@ -21,14 +21,16 @@ import jakarta.validation.Valid;
  *
  * <p>KYLE: Perform search by:</p>
  * <ul>
- *   <li>Building id (optional)</li>
- *   <li>Room number (optional)</li>
- *   <li>Capacity (optional)</li>
- *   <li>Room type (optional)</li>
- *   <li>Criticality (optional)</li>
+ *   <li>from (optional) -> Dapat naka format ha for example 2026-10-07 (CREATED AT) (NEW TASK)</li>
+ *   <li>to (optional) -> Dapat naka format ha for example 2026-10-15 (CREATED AT) (NEW TASK)</li>
+ *   <li>buildingId (optional)</li>
+ *   <li>roomNumber (optional)</li>
+ *   <li>capacity (optional)</li>
+ *   <li>roomType (optional)</li>
+ *   <li>criticality (optional)</li>
  * </ul>
  * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/rooms/search?building_id=1&room_number=69A&capacity=50&room_type=LABORATORY&criticality=HIGH</code></p>
+ * <p>Expected URL: <code>/api/rooms/search?from=2026-10-07&to=2026-10-15&buildingId=1&roomNumber=69A&capacity=50&roomType=LABORATORY&criticality=HIGH</code></p>
  */
 @RestController
 @RequestMapping("/api/rooms")
