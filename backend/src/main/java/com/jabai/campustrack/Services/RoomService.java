@@ -8,12 +8,15 @@ import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.RoomRepository;
+import com.jabai.campustrack.Repositories.Specifications.RoomSpecifications;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,6 +54,18 @@ public class RoomService {
         return roomRepository
                 .findAll(pageable)
                 .map(this::buildRoomResponseDto);
+    }
+
+    public Page<RoomResponseDto> searchRooms(SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
+        Specification<Room> spec = Specification.where(
+            RoomSpecifications.hasBuilding(searchRoomsRequestDto.building_id())
+        ).and(RoomSpecifications.hasCapacity(searchRoomsRequestDto.capacity()))
+        .and(RoomSpecifications.hasCriticality(searchRoomsRequestDto.criticality()))
+        .and(RoomSpecifications.hasRoomNumber(searchRoomsRequestDto.room_number()))
+        .and(RoomSpecifications.hasRoomType(searchRoomsRequestDto.room_type()));
+
+        return roomRepository.findAll(spec, pageable)
+            .map(this::buildRoomResponseDto);
     }
 
     // Read
