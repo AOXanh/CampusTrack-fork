@@ -47,7 +47,7 @@ public class BuildingService {
         return buildBuildingResponseDto(building);
     }
 
-    // Updates
+    // Update
     public BuildingResponseDto updateBuilding(Long id, UpdateBuildingRequestDto request) {
         String name = request.getName();
 
@@ -65,7 +65,6 @@ public class BuildingService {
         Building building = buildingRepository
                 .findById(id)
                 .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find building with an ID of %d.", id)));
-
         buildingRepository.delete(building);
     }
 

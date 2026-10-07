@@ -10,7 +10,7 @@ public class CreateNfcTagRequestDto {
   private final long assetId;
 
   @NotBlank(message = "UID is required.")
-  @Size(max = 100, message = "UID must be 0 to 100 characters.")
+  @Size(max = 100, message = "UID must be 0 to 100 characters only.")
   private final String uid;
 
   @NotNull(message = "Status is required.")

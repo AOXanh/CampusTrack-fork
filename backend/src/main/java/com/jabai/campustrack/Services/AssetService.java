@@ -30,7 +30,7 @@ public class AssetService {
         this.roomRepository = roomRepository;
     }
 
-    // create
+    // Create
     public AssetResponseDto createAsset(CreateAssetRequestDto request) {
         Long roomId = request.getRoomId();
         String name = request.getName();
@@ -46,33 +46,21 @@ public class AssetService {
                 .findById(roomId)
                 .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", request.getRoomId())));
 
-        Asset asset = new Asset(
-                foundRoom,
-                name,
-                brand,
-                model,
-                serialNumber,
-                category,
-                status,
-                condition,
-                criticality
-        );
+        Asset asset = new Asset(foundRoom, name, brand, model, serialNumber, category, status, condition, criticality);
 
         Asset savedAsset = assetRepository.save(asset);
 
         return buildAssetResponseDto(savedAsset);
     }
 
-    // read all
-    @Transactional(readOnly = true)
+    // Read all
     public Page<AssetResponseDto> getAllAssets(Pageable pageable) {
         return assetRepository
                 .findAll(pageable)
                 .map(this::buildAssetResponseDto);
     }
 
-    // read
-    @Transactional(readOnly = true)
+    // Read
     public AssetResponseDto getAssetById(Long id) {
         Asset asset = assetRepository
                 .findById(id)
@@ -81,7 +69,7 @@ public class AssetService {
         return buildAssetResponseDto(asset);
     }
 
-    // update
+    // Update
     public AssetResponseDto updateAsset(Long id, UpdateAssetRequestDto request) {
         Long roomId = request.getRoomId();
         String name = request.getName();
@@ -133,7 +121,7 @@ public class AssetService {
         return buildAssetResponseDto(updatedAsset);
     }
 
-    // delete
+    // Delete
     public void deleteAsset(Long id) {
         Asset asset = assetRepository
                 .findById(id)
@@ -142,7 +130,7 @@ public class AssetService {
         assetRepository.delete(asset);
     }
 
-    // service utils
+    // ===== Service Utils =====
     private AssetResponseDto buildAssetResponseDto(Asset asset) {
         RoomResponseDto roomResponseDto = new RoomResponseDto(
                 asset.getRoom().getId(),

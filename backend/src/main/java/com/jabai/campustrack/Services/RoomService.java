@@ -11,7 +11,7 @@ import com.jabai.campustrack.Repositories.RoomRepository;
 import com.jabai.campustrack.Repositories.Specifications.RoomSpecifications;
 import com.jabai.campustrack.Repositories.BuildingRepository;
 import com.jabai.campustrack.DTOs.Requests.CreateRoomRequestDto;
-import com.jabai.campustrack.DTOs.Requests.SearchRoomsRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchRoomRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateRoomRequestDto;
 
 import org.springframework.data.domain.Page;
@@ -56,13 +56,20 @@ public class RoomService {
                 .map(this::buildRoomResponseDto);
     }
 
-    public Page<RoomResponseDto> searchRooms(SearchRoomsRequestDto searchRoomsRequestDto, Pageable pageable) {
-        Specification<Room> spec = Specification.where(
-            RoomSpecifications.hasBuilding(searchRoomsRequestDto.building_id())
-        ).and(RoomSpecifications.hasCapacity(searchRoomsRequestDto.capacity()))
-        .and(RoomSpecifications.hasCriticality(searchRoomsRequestDto.criticality()))
-        .and(RoomSpecifications.hasRoomNumber(searchRoomsRequestDto.room_number()))
-        .and(RoomSpecifications.hasRoomType(searchRoomsRequestDto.room_type()));
+    // Search
+    public Page<RoomResponseDto> searchRooms(SearchRoomRequestDto searchRoomsRequestDto, Pageable pageable) {
+        Long buildingId = searchRoomsRequestDto.getBuildingId();
+        String roomNumber = searchRoomsRequestDto.getRoomNumber();
+        Integer capacity = searchRoomsRequestDto.getCapacity();
+        RoomType roomType = searchRoomsRequestDto.getRoomType();
+        RoomCriticality criticality = searchRoomsRequestDto.getCriticality();
+
+        Specification<Room> spec = Specification
+                .where(RoomSpecifications.hasBuilding(buildingId))
+                .and(RoomSpecifications.hasRoomNumber(roomNumber))
+                .and(RoomSpecifications.hasCapacity(capacity))
+                .and(RoomSpecifications.hasRoomType(roomType))
+                .and(RoomSpecifications.hasCriticality(criticality));
 
         return roomRepository.findAll(spec, pageable)
             .map(this::buildRoomResponseDto);

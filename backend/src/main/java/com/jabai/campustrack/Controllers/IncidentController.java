@@ -7,7 +7,6 @@ import com.jabai.campustrack.Services.IncidentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,28 +33,31 @@ public class IncidentController {
     this.incidentService = incidentService;
   }
 
+  // Create
   @PostMapping
   public ResponseEntity<IncidentResponseDto> createIncident(@Valid @RequestBody CreateIncidentRequestDto request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.createIncident(request));
   }
 
+  // Read all
   @GetMapping
-  public ResponseEntity<Page<IncidentResponseDto>> getIncidents(
-      @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+  public ResponseEntity<Page<IncidentResponseDto>> getIncidents(@PageableDefault(size = 20) Pageable pageable) {
     return ResponseEntity.ok(incidentService.getIncidents(pageable));
   }
 
+  // Read
   @GetMapping("/{id}")
   public ResponseEntity<IncidentResponseDto> getIncident(@PathVariable Long id) {
     return ResponseEntity.ok(incidentService.getIncident(id));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<IncidentResponseDto> updateIncident(@PathVariable Long id,
-      @Valid @RequestBody UpdateIncidentRequestDto request) {
+  // Update
+  @PatchMapping("/{id}")
+  public ResponseEntity<IncidentResponseDto> updateIncident(@PathVariable Long id, @Valid @RequestBody UpdateIncidentRequestDto request) {
     return ResponseEntity.ok(incidentService.updateIncident(id, request));
   }
 
+  // Delete
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteIncident(@PathVariable Long id) {
     incidentService.deleteIncident(id);

@@ -22,8 +22,7 @@ public class RegisterUserRequestDto {
   @NotBlank(message = "Password confirmation is required.")
   private final String passwordConfirmation;
 
-
-  public RegisterUserRequestDto(String name, String email, String password, String passwordConfirmation, UserRole userRole) {
+  public RegisterUserRequestDto(String name, String email, String password, String passwordConfirmation) {
     this.name = name;
     this.email = email;
     this.password = password;

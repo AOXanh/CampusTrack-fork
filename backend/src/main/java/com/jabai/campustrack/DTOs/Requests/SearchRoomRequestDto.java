@@ -2,19 +2,21 @@ package com.jabai.campustrack.DTOs.Requests;
 
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
-import jakarta.validation.constraints.Size;
 
-public class UpdateRoomRequestDto {
+public class SearchRoomRequestDto {
     private final Long buildingId;
-
-    @Size(max = 50, message = "Room number must be 0 to 50 characters only.")
     private final String roomNumber;
-
     private final Integer capacity;
     private final RoomType roomType;
     private final RoomCriticality criticality;
 
-    public UpdateRoomRequestDto(Long buildingId, String roomNumber, Integer capacity, RoomType roomType, RoomCriticality criticality) {
+    public SearchRoomRequestDto(
+            Long buildingId,
+            String roomNumber,
+            Integer capacity,
+            RoomType roomType,
+            RoomCriticality criticality
+    ) {
         this.buildingId = buildingId;
         this.roomNumber = roomNumber;
         this.capacity = capacity;
@@ -24,8 +26,8 @@ public class UpdateRoomRequestDto {
 
     // Getters
     public Long getBuildingId() { return buildingId; }
-    public Integer getCapacity() { return capacity; }
-    public RoomCriticality getCriticality() { return criticality; }
     public String getRoomNumber() { return roomNumber; }
+    public Integer getCapacity() { return capacity; }
     public RoomType getRoomType() { return roomType; }
+    public RoomCriticality getCriticality() { return criticality; }
 }

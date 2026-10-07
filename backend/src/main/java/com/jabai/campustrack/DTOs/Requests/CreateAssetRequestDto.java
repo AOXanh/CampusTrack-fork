@@ -7,6 +7,7 @@ import com.jabai.campustrack.Models.Enums.AssetStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public class CreateAssetRequestDto {
 
@@ -15,10 +16,16 @@ public class CreateAssetRequestDto {
     private final Long roomId;
 
     @NotBlank(message = "Asset name is required.")
+    @Size(max = 100, message = "Name must be 0 to 100 characters only.")
     private final String name;
 
+    @Size(max = 100, message = "Brand must be 0 to 100 characters only.")
     private final String brand;
+
+    @Size(max = 100, message = "Model must be 0 to 100 characters only.")
     private final String model;
+
+    @Size(max = 100, message = "Serial number must be 0 to 100 characters only.")
     private final String serialNumber;
 
     @NotNull(message = "Asset category is required.")

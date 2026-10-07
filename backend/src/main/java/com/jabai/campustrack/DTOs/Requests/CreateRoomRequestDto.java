@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Positive;
 
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
+import jakarta.validation.constraints.Size;
 
 public class CreateRoomRequestDto {
     @NotNull(message = "Building is required.")
     private final Long buildingId;
 
     @NotEmpty(message = "Room number is required.")
+    @Size(max = 50, message = "Room number must be 0 to 50 characters only.")
     private final String roomNumber;
 
     @NotNull(message = "Capacity is required.")

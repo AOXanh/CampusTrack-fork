@@ -7,6 +7,7 @@ import com.jabai.campustrack.Services.AssetService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,35 +26,35 @@ public class AssetController {
     this.assetService = assetService;
   }
 
-  // create
+  // Create
   @PostMapping
   public ResponseEntity<AssetResponseDto> createAsset(@Valid @RequestBody CreateAssetRequestDto request) {
     AssetResponseDto createdAsset = assetService.createAsset(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdAsset);
   }
 
-  // read all
+  // Read all
   @GetMapping
-  public ResponseEntity<Page<AssetResponseDto>> getAllAssets(Pageable pageable) {
+  public ResponseEntity<Page<AssetResponseDto>> getAllAssets(@PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.getAllAssets(pageable);
     return ResponseEntity.ok(assets);
   }
 
-  // read
+  // Read
   @GetMapping("/{id}")
   public ResponseEntity<AssetResponseDto> getAssetById(@PathVariable Long id) {
     AssetResponseDto asset = assetService.getAssetById(id);
     return ResponseEntity.ok(asset);
   }
 
-  // update
-  @PutMapping("/{id}")
+  // Update
+  @PatchMapping("/{id}")
   public ResponseEntity<AssetResponseDto> updateAsset(@PathVariable Long id, @Valid @RequestBody UpdateAssetRequestDto request) {
     AssetResponseDto updatedAsset = assetService.updateAsset(id, request);
     return ResponseEntity.ok(updatedAsset);
   }
 
-  // delete
+  // Delete
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteAsset(@PathVariable Long id) {
     assetService.deleteAsset(id);

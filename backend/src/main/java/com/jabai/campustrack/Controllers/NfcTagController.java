@@ -50,7 +50,7 @@ public class NfcTagController {
 
   // Read all
   @GetMapping
-  public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 10) Pageable pageable) {
+  public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.readAll(pageable);
     return ResponseEntity.ok(nfcTagResponseDtoPage);
   }
@@ -64,13 +64,13 @@ public class NfcTagController {
 
   // Search
   @GetMapping("/search")
-  public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 10) Pageable pageable) {
+  public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);
     return ResponseEntity.ok(nfcTagResponseDtoPage);
   }
 
   // Update
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> update(@PathVariable Long id, @Valid @RequestBody UpdateNfcTagRequestDto updateNfcTagRequestDto) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.update(updateNfcTagRequestDto, id);
     return ResponseEntity.ok(nfcTagResponseDto);

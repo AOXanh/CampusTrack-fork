@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.CreateMaintenanceRecordRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchMaintenanceRecordRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateMaintenanceRecordRequestDto;
 import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
 import com.jabai.campustrack.DTOs.Responses.MaintenanceRecordResponseDto;
@@ -121,21 +122,29 @@ public class MaintenanceRecordService {
         maintenanceRecordRepository.delete(record);
     }
 
-    // ===== Search =====
-    public Page<MaintenanceRecordResponseDto> searchRecords(
-            Long incidentId, Long userId, String action, String remarks, 
-            MaintenanceRecordStatus status, LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        
+    // Search
+    public Page<MaintenanceRecordResponseDto> searchRecords(SearchMaintenanceRecordRequestDto searchMaintenanceRecordRequestDto, Pageable pageable) {
+        Long incidentId = searchMaintenanceRecordRequestDto.getIncidentId();
+        Long userId = searchMaintenanceRecordRequestDto.getUserId();
+        String action = searchMaintenanceRecordRequestDto.getAction();
+        String remarks = searchMaintenanceRecordRequestDto.getRemarks();
+        MaintenanceRecordStatus status = searchMaintenanceRecordRequestDto.getStatus();
+        LocalDateTime startDate = searchMaintenanceRecordRequestDto.getStartDate();
+        LocalDateTime endDate = searchMaintenanceRecordRequestDto.getEndDate();
+
         // Call the new Specification class
-        Specification<MaintenanceRecord> spec = MaintenanceRecordSpecification.buildSearchSpec(
-                incidentId, userId, action, remarks, status, startDate, endDate
-        );
+        Specification<MaintenanceRecord> spec = Specification
+                .where(MaintenanceRecordSpecification.hasIncidentId(incidentId))
+                .and(MaintenanceRecordSpecification.hasUserId(userId))
+                .and(MaintenanceRecordSpecification.hasActionKeyword(action))
+                .and(MaintenanceRecordSpecification.hasRemarksKeyword(remarks))
+                .and(MaintenanceRecordSpecification.hasStatus(status))
+                .and(MaintenanceRecordSpecification.hasCompletedAtRange(startDate, endDate));
 
         return maintenanceRecordRepository
                 .findAll(spec, pageable)
                 .map(this::buildMaintenanceRecordResponseDto);
     }
-
 
     // ===== Service utils =====
     private MaintenanceRecordResponseDto buildMaintenanceRecordResponseDto(MaintenanceRecord maintenanceRecord) {
@@ -143,6 +152,7 @@ public class MaintenanceRecordService {
         User user = maintenanceRecord.getUser();
 
         UserProfileResponseDto userProfileResponseDto = new UserProfileResponseDto(
+                user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getUserRole()
@@ -162,13 +172,14 @@ public class MaintenanceRecordService {
                 incident.getOperationalImpact(),
                 incident.getPriorityScore(),
                 incident.getCategory(),
+                incident.getPriority(),
                 incident.getStatus()
         );
 
         if (incident.getAsset() != null)
             incidentResponseDto.setAssetId(incident.getAsset().getId());
         if (incident.getAssignedTo() != null)
-            incidentResponseDto.setAssignedTo(incident.getAssignedTo().getId());
+            incidentResponseDto.setAssignedToId(incident.getAssignedTo().getId());
 
         return new MaintenanceRecordResponseDto(
                 maintenanceRecord.getId(),

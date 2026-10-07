@@ -70,10 +70,11 @@ public class UserService {
     public UserProfileResponseDto getUserProfile(String email){ 
         User user =  userRepository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("Email not found")); 
 
-        return  new UserProfileResponseDto(
-            user.getName(),
-            user.getEmail(),
-            user.getUserRole()
+        return new UserProfileResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getUserRole()
         ); 
     }
 

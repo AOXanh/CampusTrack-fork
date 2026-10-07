@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
+import jakarta.validation.constraints.Size;
 
 
 public class CreateMaintenanceRecordRequestDto {
@@ -14,6 +15,7 @@ public class CreateMaintenanceRecordRequestDto {
     private final Long userId;
     
     @NotBlank(message = "Action is required.")
+    @Size(max = 100, message = "Action must be 0 to 100 characters only.")
     private final String action;
 
     @NotNull(message = "Status is required.")

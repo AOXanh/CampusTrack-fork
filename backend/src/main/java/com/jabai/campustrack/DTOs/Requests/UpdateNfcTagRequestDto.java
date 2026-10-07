@@ -1,10 +1,14 @@
 package com.jabai.campustrack.DTOs.Requests;
 
 import com.jabai.campustrack.Models.Enums.NfcTagStatus;
+import jakarta.validation.constraints.Size;
 
 public class UpdateNfcTagRequestDto {
   private final Long assetId;
+
+  @Size(max = 100, message = "UID must be 0 to 100 characters only.")
   private final String uid;
+
   private final NfcTagStatus nfcTagStatus;
 
   public UpdateNfcTagRequestDto(Long assetId, String uid, NfcTagStatus nfcTagStatus) {

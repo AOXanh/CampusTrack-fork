@@ -10,6 +10,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
   public boolean isValid(RegisterUserRequestDto registerUserRequestDto, ConstraintValidatorContext constraintValidatorContext) {
     String password = registerUserRequestDto.getPassword();
     String passwordConfirmation = registerUserRequestDto.getPasswordConfirmation();
+
     return password != null && password.equals(passwordConfirmation);
   }
 }

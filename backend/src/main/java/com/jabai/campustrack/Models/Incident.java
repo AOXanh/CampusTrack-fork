@@ -16,7 +16,7 @@ public class Incident {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
-  private long id;
+  private Long id;
 
   @Column(name = "created_at", insertable = false, updatable = false)
   @Generated // Return the database-generated timestamp after an insert.
@@ -68,10 +68,10 @@ public class Incident {
   private boolean operationalImpact;
 
   @Column(name = "affected_area", nullable = false)
-  private int affectedArea;
+  private Integer affectedArea;
 
   @Column(name = "priority_score", nullable = false)
-  private int priorityScore;
+  private Integer priorityScore;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "category", nullable = false)
@@ -100,10 +100,8 @@ public class Incident {
           IncidentPriority priority,
           IncidentStatus status
   ) {
-    this.asset = null;
     this.room = room;
     this.reportedBy = reportedBy;
-    this.assignedTo = null;
     this.incidentNumber = incidentNumber;
     this.description = description;
     this.safetyHazard = safetyHazard;
@@ -113,40 +111,16 @@ public class Incident {
     this.category = category;
     this.priority = priority;
     this.status = status;
-  }
 
-  public Incident(
-          Asset asset,
-          Room room,
-          User reportedBy,
-          User assignedTo,
-          String incidentNumber,
-          String description,
-          boolean safetyHazard,
-          boolean operationalImpact,
-          int affectedArea,
-          int priorityScore,
-          IncidentCategory category,
-          IncidentPriority priority,
-          IncidentStatus status
-  ) {
-    this.asset = asset;
-    this.room = room;
-    this.reportedBy = reportedBy;
-    this.assignedTo = assignedTo;
-    this.incidentNumber = incidentNumber;
-    this.description = description;
-    this.safetyHazard = safetyHazard;
-    this.operationalImpact = operationalImpact;
-    this.affectedArea = affectedArea;
-    this.priorityScore = priorityScore;
-    this.category = category;
-    this.priority = priority;
-    this.status = status;
+    this.asset = null;
+    this.assignedTo = null;
+    this.evaluatedAt = null;
+    this.resolvedAt = null;
+    this.closedAt = null;
   }
 
   // Getters
-  public long getId() { return id; }
+  public Long getId() { return id; }
   public LocalDateTime getCreatedAt() { return createdAt; }
   public LocalDateTime getEvaluatedAt() { return evaluatedAt; }
   public LocalDateTime getResolvedAt() { return resolvedAt; }
@@ -159,8 +133,8 @@ public class Incident {
   public String getDescription() { return description; }
   public boolean getSafetyHazard() { return safetyHazard; }
   public boolean getOperationalImpact() { return operationalImpact; }
-  public int getAffectedArea() { return affectedArea; }
-  public int getPriorityScore() { return priorityScore; }
+  public Integer getAffectedArea() { return affectedArea; }
+  public Integer getPriorityScore() { return priorityScore; }
   public IncidentCategory getCategory() { return category; }
   public IncidentPriority getPriority() { return priority; }
   public IncidentStatus getStatus() { return status; }
@@ -178,8 +152,8 @@ public class Incident {
   public void setDescription(String value) { description = value; }
   public void setSafetyHazard(boolean value) { safetyHazard = value; }
   public void setOperationalImpact(boolean value) { operationalImpact = value; }
-  public void setAffectedArea(int value) { affectedArea = value; }
-  public void setPriorityScore(int value) { priorityScore = value; }
+  public void setAffectedArea(Integer value) { affectedArea = value; }
+  public void setPriorityScore(Integer value) { priorityScore = value; }
   public void setCategory(IncidentCategory value) { category = value; }
   public void setPriority(IncidentPriority value) { priority = value; }
   public void setStatus(IncidentStatus value) { status = value; }
