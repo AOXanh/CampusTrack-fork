@@ -14,10 +14,10 @@ import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.AssetRepository;
 import com.jabai.campustrack.Repositories.RoomRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -30,8 +30,7 @@ public class AssetService {
         this.roomRepository = roomRepository;
     }
 
-    // ===== Main operations =====
-    // Create
+    // create
     public AssetResponseDto createAsset(CreateAssetRequestDto request) {
         Long roomId = request.getRoomId();
         String name = request.getName();
@@ -46,32 +45,43 @@ public class AssetService {
         Room foundRoom = roomRepository
                 .findById(roomId)
                 .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", request.getRoomId())));
-        Asset asset = new Asset(foundRoom, name, brand, model, serialNumber, category, status, condition, criticality);
+
+        Asset asset = new Asset(
+                foundRoom,
+                name,
+                brand,
+                model,
+                serialNumber,
+                category,
+                status,
+                condition,
+                criticality
+        );
+
         Asset savedAsset = assetRepository.save(asset);
 
         return buildAssetResponseDto(savedAsset);
     }
 
-    // Read all
+    // read all
     @Transactional(readOnly = true)
-    public List<AssetResponseDto> getAllAssets() {
+    public Page<AssetResponseDto> getAllAssets(Pageable pageable) {
         return assetRepository
-                .findAll()
-                .stream()
-                .map(this::buildAssetResponseDto)
-                .toList();
+                .findAll(pageable)
+                .map(this::buildAssetResponseDto);
     }
 
-    // Read
+    // read
     @Transactional(readOnly = true)
     public AssetResponseDto getAssetById(Long id) {
         Asset asset = assetRepository
                 .findById(id)
                 .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find asset with an ID of %d.", id)));
+
         return buildAssetResponseDto(asset);
     }
 
-    // Update
+    // update
     public AssetResponseDto updateAsset(Long id, UpdateAssetRequestDto request) {
         Long roomId = request.getRoomId();
         String name = request.getName();
@@ -93,20 +103,28 @@ public class AssetService {
                     .orElseThrow(() -> new RowNotFoundException(String.format("Unable to find room with an ID of %d.", id)));
             asset.setRoom(room);
         }
+
         if (name != null)
             asset.setName(name);
+
         if (brand != null)
             asset.setBrand(brand);
+
         if (model != null)
             asset.setModel(model);
+
         if (serialNumber != null)
             asset.setSerialNumber(serialNumber);
+
         if (category != null)
             asset.setCategory(category);
+
         if (status != null)
             asset.setStatus(status);
+
         if (condition != null)
             asset.setCondition(condition);
+
         if (criticality != null)
             asset.setCriticality(criticality);
 
@@ -115,7 +133,7 @@ public class AssetService {
         return buildAssetResponseDto(updatedAsset);
     }
 
-    // Delete
+    // delete
     public void deleteAsset(Long id) {
         Asset asset = assetRepository
                 .findById(id)
@@ -124,7 +142,7 @@ public class AssetService {
         assetRepository.delete(asset);
     }
 
-    // ===== Service Utils =====
+    // service utils
     private AssetResponseDto buildAssetResponseDto(Asset asset) {
         RoomResponseDto roomResponseDto = new RoomResponseDto(
                 asset.getRoom().getId(),
