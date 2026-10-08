@@ -1,5 +1,10 @@
 package com.jabai.campustrack.DTOs.Requests;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 
@@ -9,19 +14,27 @@ public class SearchRoomRequestDto {
     private final Integer capacity;
     private final RoomType roomType;
     private final RoomCriticality criticality;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private final LocalDate from;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private final LocalDate to;
 
     public SearchRoomRequestDto(
             Long buildingId,
             String roomNumber,
             Integer capacity,
             RoomType roomType,
-            RoomCriticality criticality
+            RoomCriticality criticality,
+            LocalDate from,
+            LocalDate to
     ) {
         this.buildingId = buildingId;
         this.roomNumber = roomNumber;
         this.capacity = capacity;
         this.roomType = roomType;
         this.criticality = criticality;
+        this.from = from;
+        this.to = to;
     }
 
     // Getters
@@ -30,4 +43,6 @@ public class SearchRoomRequestDto {
     public Integer getCapacity() { return capacity; }
     public RoomType getRoomType() { return roomType; }
     public RoomCriticality getCriticality() { return criticality; }
+    public LocalDate getFrom() { return from; }
+    public LocalDate getTo() { return to; }
 }
