@@ -2,22 +2,22 @@ package com.jabai.campustrack.DTOs.Requests;
 
 import java.time.LocalDate;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class SearchRoomRequestDto {
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private final LocalDate from;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private final LocalDate to;
+
     private final Long buildingId;
     private final String roomNumber;
     private final Integer capacity;
     private final RoomType roomType;
     private final RoomCriticality criticality;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private final LocalDate from;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private final LocalDate to;
 
     public SearchRoomRequestDto(
             Long buildingId,

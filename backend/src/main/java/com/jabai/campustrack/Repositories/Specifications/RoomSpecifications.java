@@ -55,17 +55,15 @@ public class RoomSpecifications {
         };
     }
 
-    public static Specification<Room> hasDateRange(LocalDateTime from, LocalDateTime to) {
+    public static Specification<Room> createdBetween(LocalDateTime from, LocalDateTime to) {
         return (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (from != null) 
-                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), from));;
-
-            if (to != null)
-                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), to));;
-
-            return cb.and(predicates.toArray(new Predicate[0]));
+            if (from == null && to == null)
+                return null;
+            if (from == null)
+                return cb.lessThanOrEqualTo(root.get("createdAt"), to);
+            if (to == null)
+                return cb.greaterThanOrEqualTo(root.get("createdAt"), from);
+            return cb.between(root.get("createdAt"), from, to);
         };
     }
 }

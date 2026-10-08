@@ -62,16 +62,16 @@ public class RoomService {
 
     // Search
     public Page<RoomResponseDto> searchRooms(SearchRoomRequestDto searchRoomsRequestDto, Pageable pageable) {
+        LocalDate fromDate  = searchRoomsRequestDto.getFrom();
+        LocalDate toDate = searchRoomsRequestDto.getTo();
         Long buildingId = searchRoomsRequestDto.getBuildingId();
         String roomNumber = searchRoomsRequestDto.getRoomNumber();
         Integer capacity = searchRoomsRequestDto.getCapacity();
         RoomType roomType = searchRoomsRequestDto.getRoomType();
         RoomCriticality criticality = searchRoomsRequestDto.getCriticality();
-        LocalDate from  = searchRoomsRequestDto.getFrom();
-        LocalDate to = searchRoomsRequestDto.getTo();
 
-        LocalDateTime fromInclusive = from != null ? from.atStartOfDay() : null;
-        LocalDateTime toInclusive = to != null ? to.atTime(LocalTime.MAX) : null;
+        LocalDateTime from = fromDate != null ? fromDate.atStartOfDay() : null;
+        LocalDateTime to = toDate != null ? toDate.atTime(LocalTime.MAX) : null;
 
         Specification<Room> spec = Specification
                 .where(RoomSpecifications.hasBuilding(buildingId))
@@ -79,7 +79,7 @@ public class RoomService {
                 .and(RoomSpecifications.hasCapacity(capacity))
                 .and(RoomSpecifications.hasRoomType(roomType))
                 .and(RoomSpecifications.hasCriticality(criticality))
-                .and(RoomSpecifications.hasDateRange(fromInclusive, toInclusive));
+                .and(RoomSpecifications.createdBetween(from, to));
 
         return roomRepository.findAll(spec, pageable)
             .map(this::buildRoomResponseDto);
