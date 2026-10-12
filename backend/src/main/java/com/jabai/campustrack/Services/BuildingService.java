@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.jabai.campustrack.DTOs.Requests.SearchBuildingRequestDto;
+import com.jabai.campustrack.Repositories.Specifications.BuildingSpecifications;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -70,26 +73,22 @@ public class BuildingService {
         buildingRepository.delete(building);
     }
 
-    //Search
+    // Search
     public Page<BuildingResponseDto> searchBuildings(
-            LocalDate from,
-            LocalDate to,
-            String name,
+            SearchBuildingRequestDto request,
             Pageable pageable
     ) {
         Specification<Building> specification = (root, query, cb) -> cb.conjunction();
 
-        if (from != null) {
-            specification = specification.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("createdAt"), from.atStartOfDay()));
+        if (request.getFrom() != null) {specification = specification.and(BuildingSpecifications.createdAtFrom(request.getFrom()));
         }
-        if (to != null) {
-            specification = specification.and(
-                    (root, query, cb) -> cb.lessThan(root.get("createdAt"), to.plusDays(1).atStartOfDay()));
+
+        if (request.getTo() != null) {specification = specification.and(BuildingSpecifications.createdAtTo(request.getTo()));
         }
-        if (name != null && !name.isBlank()) {
-            specification = specification.and(
-                    (root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+
+        if (request.getName() != null && !request.getName().isBlank()) {specification = specification.and(BuildingSpecifications.nameContains(request.getName()));
         }
+
         return buildingRepository
                 .findAll(specification, pageable)
                 .map(this::buildBuildingResponseDto);
