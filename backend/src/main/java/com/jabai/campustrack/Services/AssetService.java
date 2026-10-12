@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.CreateAssetRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchAssetRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
@@ -13,11 +14,19 @@ import com.jabai.campustrack.Models.Enums.AssetStatus;
 import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Repositories.AssetRepository;
 import com.jabai.campustrack.Repositories.RoomRepository;
+import com.jabai.campustrack.Repositories.Specifications.AssetSpecifications;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @Transactional
@@ -57,6 +66,44 @@ public class AssetService {
     public Page<AssetResponseDto> getAllAssets(Pageable pageable) {
         return assetRepository
                 .findAll(pageable)
+                .map(this::buildAssetResponseDto);
+    }
+
+    // Search
+    public Page<AssetResponseDto> searchAssets(SearchAssetRequestDto request, Pageable pageable) {
+        LocalDate fromDate = request.getFrom();
+        LocalDate toDate = request.getTo();
+        Long roomId = request.getRoomId();
+        String name = request.getName();
+        String brand = request.getBrand();
+        String model = request.getModel();
+        String serialNumber = request.getSerialNumber();
+        AssetCategory category = request.getCategory();
+        AssetCondition condition = request.getCondition();
+        AssetCriticality criticality = request.getCriticality();
+
+        // reject an invalid date range instead of silently returning nothing
+        if (fromDate != null && toDate != null && fromDate.isAfter(toDate))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The 'from' date must not be later than the 'to' date.");
+
+        // from = start of the day, to = end of the day so the whole 'to' date is included
+        LocalDateTime from = fromDate != null ? fromDate.atStartOfDay() : null;
+        LocalDateTime to = toDate != null ? toDate.atTime(LocalTime.MAX) : null;
+
+        // each spec ignores itself when its filter is null, so only the provided filters are applied
+        Specification<Asset> spec = Specification
+                .where(AssetSpecifications.hasRoomId(roomId))
+                .and(AssetSpecifications.hasNameKeyword(name))
+                .and(AssetSpecifications.hasBrandKeyword(brand))
+                .and(AssetSpecifications.hasModelKeyword(model))
+                .and(AssetSpecifications.hasSerialNumber(serialNumber))
+                .and(AssetSpecifications.hasCategory(category))
+                .and(AssetSpecifications.hasCondition(condition))
+                .and(AssetSpecifications.hasCriticality(criticality))
+                .and(AssetSpecifications.createdBetween(from, to));
+
+        return assetRepository
+                .findAll(spec, pageable)
                 .map(this::buildAssetResponseDto);
     }
 

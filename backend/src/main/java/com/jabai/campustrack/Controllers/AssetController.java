@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateAssetRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchAssetRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateAssetRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.Services.AssetService;
@@ -51,6 +52,17 @@ public class AssetController {
   @GetMapping
   public ResponseEntity<Page<AssetResponseDto>> getAllAssets(@PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.getAllAssets(pageable);
+    return ResponseEntity.ok(assets);
+  }
+
+  // Search
+  // this must stay above "/{id}" so "search" is not read as an id
+  @GetMapping("/search")
+  public ResponseEntity<Page<AssetResponseDto>> searchAssets(
+          SearchAssetRequestDto request,
+          @PageableDefault(size = 20) Pageable pageable
+  ) {
+    Page<AssetResponseDto> assets = assetService.searchAssets(request, pageable);
     return ResponseEntity.ok(assets);
   }
 
