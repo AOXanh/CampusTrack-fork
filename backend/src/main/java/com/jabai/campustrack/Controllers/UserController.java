@@ -15,6 +15,13 @@ import com.jabai.campustrack.Services.UserService;
 
 import jakarta.validation.Valid;
 
+/**
+ * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
+ *
+ * <p>JADE: Controller structure</p>
+ *
+ * <p>Ang UserController dapat for <code>/api/user</code>. Ang AuthController dapat for <code>/api/auth</code></p>
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {

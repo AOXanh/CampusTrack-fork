@@ -17,7 +17,7 @@ import com.jabai.campustrack.Services.RoomService;
 import jakarta.validation.Valid;
 
 /**
- * <h1>KYLE</h1>
+ * <h1>RoomController: CHARLES</h1>
  */
 @RestController
 @RequestMapping("/api/rooms")

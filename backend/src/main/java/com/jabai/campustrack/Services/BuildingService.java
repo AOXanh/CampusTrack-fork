@@ -15,7 +15,9 @@ import com.jabai.campustrack.DTOs.Requests.SearchBuildingRequestDto;
 import com.jabai.campustrack.Repositories.Specifications.BuildingSpecifications;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 
 @Service
 public class BuildingService {
@@ -74,20 +76,17 @@ public class BuildingService {
     }
 
     // Search
-    public Page<BuildingResponseDto> searchBuildings(
-            SearchBuildingRequestDto request,
-            Pageable pageable
-    ) {
-        Specification<Building> specification = (root, query, cb) -> cb.conjunction();
+    public Page<BuildingResponseDto> searchBuildings(SearchBuildingRequestDto request, Pageable pageable) {
+        LocalDate completedFromDate = request.getFrom();
+        LocalDate completedToDate = request.getTo();
+        String name = request.getName();
 
-        if (request.getFrom() != null) {specification = specification.and(BuildingSpecifications.createdAtFrom(request.getFrom()));
-        }
+        LocalDateTime completedFrom = completedFromDate != null ? completedFromDate.atStartOfDay() : null;
+        LocalDateTime completedTo = completedToDate != null ? completedToDate.atTime(LocalTime.MAX) : null;
 
-        if (request.getTo() != null) {specification = specification.and(BuildingSpecifications.createdAtTo(request.getTo()));
-        }
-
-        if (request.getName() != null && !request.getName().isBlank()) {specification = specification.and(BuildingSpecifications.nameContains(request.getName()));
-        }
+        Specification<Building> specification = Specification
+                .where(BuildingSpecifications.hasCompletedAtRange(completedFrom, completedTo))
+                .and(BuildingSpecifications.hasNameKeyword(name));
 
         return buildingRepository
                 .findAll(specification, pageable)

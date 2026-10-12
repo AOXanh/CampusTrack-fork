@@ -82,15 +82,9 @@ public class AssetService {
         AssetCondition condition = request.getCondition();
         AssetCriticality criticality = request.getCriticality();
 
-        // reject an invalid date range instead of silently returning nothing
-        if (fromDate != null && toDate != null && fromDate.isAfter(toDate))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The 'from' date must not be later than the 'to' date.");
-
-        // from = start of the day, to = end of the day so the whole 'to' date is included
         LocalDateTime from = fromDate != null ? fromDate.atStartOfDay() : null;
         LocalDateTime to = toDate != null ? toDate.atTime(LocalTime.MAX) : null;
 
-        // each spec ignores itself when its filter is null, so only the provided filters are applied
         Specification<Asset> spec = Specification
                 .where(AssetSpecifications.hasRoomId(roomId))
                 .and(AssetSpecifications.hasNameKeyword(name))

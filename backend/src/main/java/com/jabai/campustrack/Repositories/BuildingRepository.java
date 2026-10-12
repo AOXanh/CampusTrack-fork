@@ -6,7 +6,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BuildingRepository
-        extends JpaRepository<Building, Long>,
-        JpaSpecificationExecutor<Building> {
-}
+public interface BuildingRepository extends JpaRepository<Building, Long>, JpaSpecificationExecutor<Building> { }

@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 public class SearchAssetRequestDto {
-    // format: yyyy-MM-dd (example: 2026-10-07), filters by created at
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private final LocalDate from;
 

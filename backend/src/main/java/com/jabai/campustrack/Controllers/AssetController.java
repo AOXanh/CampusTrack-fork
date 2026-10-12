@@ -14,23 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
- * <br/>
- * <p>CHRIS CHAN: Perform search by:</p>
- * <ul>
- *   <li>from (optional) Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
- *   <li>to (optional) Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
- *   <li>roomId (optional)</li>
- *   <li>name (optional) -> Dapat naka keyword ni sya</li>
- *   <li>brand (optional) -> Dapat naka keyword ni sya</li>
- *   <li>model (optional) -> Dapat naka keyword ni sya</li>
- *   <li>serialNumber (optional)</li>
- *   <li>category (optional) (DAPAT ENUMS)</li>
- *   <li>condition (optional) (DAPAT ENUMS)</li>
- *   <li>criticality (optional) (DAPAT ENUMS)</li>
- * </ul>
- * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/assets/search?from=2026-10-07&to=2026-10-08&roomId=1&name=Test+name&brand=Test+brand&model=Test+model&serialNumber=Test+serial&category=COMPUTER&condition=DAMAGED&criticality=CRITICAL</code></p>
+ * <h1>AssetController: CHRIS CHAN</h1>
  */
 @RestController
 @RequestMapping("/api/assets")
@@ -58,10 +42,7 @@ public class AssetController {
   // Search
   // this must stay above "/{id}" so "search" is not read as an id
   @GetMapping("/search")
-  public ResponseEntity<Page<AssetResponseDto>> searchAssets(
-          SearchAssetRequestDto request,
-          @PageableDefault(size = 20) Pageable pageable
-  ) {
+  public ResponseEntity<Page<AssetResponseDto>> searchAssets(SearchAssetRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.searchAssets(request, pageable);
     return ResponseEntity.ok(assets);
   }

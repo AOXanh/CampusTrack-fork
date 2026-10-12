@@ -5,36 +5,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 public class SearchBuildingRequestDto {
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private final LocalDate from;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate from;
+    private final LocalDate to;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate to;
+    private final String name;
 
-    private String name;
-
-    public LocalDate getFrom() {
-        return from;
-    }
-
-    public void setFrom(LocalDate from) {
+    public SearchBuildingRequestDto(LocalDate from, LocalDate to, String name) {
         this.from = from;
-    }
-
-    public LocalDate getTo() {
-        return to;
-    }
-
-    public void setTo(LocalDate to) {
         this.to = to;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
+
+    // Getters
+    public LocalDate getFrom() { return from; }
+    public LocalDate getTo() { return to; }
+    public String getName() { return name; }
 }
