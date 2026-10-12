@@ -14,15 +14,18 @@ import { toast } from "sonner";
 import { Field, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
 
 // Types
-type SearchValues = "assetId" | "uid" | "status";
+type SearchValues = "createdAt" | "assetId" | "uid" | "status";
 type SelectMenuItem = { label: string; value: SearchValues };
 
 export default function SamplePage() {
   // Constants
   const pageSize = 20;
   const searchSelectItems: SelectMenuItem[] = [
+    { label: "Search by Created At", value: "createdAt" },
     { label: "Search by Asset ID", value: "assetId" },
     { label: "Search by UID", value: "uid" },
     { label: "Search by Status", value: "status" },
@@ -31,6 +34,7 @@ export default function SamplePage() {
   // States
   const [selectedSearchFilter, setSelectedSearchFilter] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>("");
+  const [createdRangedValue, setCreatedRangedValue] = useState<DateRange | undefined>(undefined);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [selectedNfcTag, setSelectedNfcTag] = useState<NfcTag | null>(null);
   const [nfcTags, setNfcTags] = useState<NfcTag[]>([]);
@@ -55,15 +59,19 @@ export default function SamplePage() {
   async function searchNfcTagsSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    setNfcTags([]);
-
-    if (!searchValue || !selectedSearchFilter)
+    if (!selectedSearchFilter)
       return await fetchNfcTags().then().catch();
+
+    setNfcTags([]);
 
     const parsedAssetId = Number.parseInt(searchValue);
 
     try {
       const response = await searchNfcTags({
+        ...(selectedSearchFilter === "createdAt" && {
+          from: createdRangedValue?.from?.toISOString().split("T")[0],
+          to: createdRangedValue?.to?.toISOString().split("T")[0]
+        }),
         ...(selectedSearchFilter === "assetId" && { assetId: !isNaN(parsedAssetId) ? parsedAssetId : -1 }),
         ...(selectedSearchFilter === "uid" && { uid: searchValue }),
         ...(selectedSearchFilter === "status" && { status: searchValue })
@@ -75,6 +83,13 @@ export default function SamplePage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong while fetching the NFC Tags.");
     }
+  }
+
+  function resetSearch() {
+    setSearchValue("");
+    setCreatedRangedValue(undefined);
+    setSelectedSearchFilter(null);
+    fetchNfcTags().then().catch();
   }
 
   function generatePages(): (string | number)[] {
@@ -198,7 +213,7 @@ export default function SamplePage() {
 
           <Card>
             <CardContent className="space-y-6">
-              <div className="flex justify-end">
+              <div className="flex justify-end border-b pb-4">
                 <Link href="/sample/create">
                   <Button><Plus /> Create</Button>
                 </Link>
@@ -206,15 +221,17 @@ export default function SamplePage() {
 
               <div>
                 <form onSubmit={searchNfcTagsSubmit}>
-                  <FieldSet className="flex flex-row gap-2">
-                    <Field>
-                      <Input type="text" placeholder="Search here..." value={searchValue} onChange={e => setSearchValue(e.currentTarget.value)} />
-                    </Field>
+                  <FieldSet className={`${selectedSearchFilter !== "createdAt" && "flex flex-row gap-2"}`}>
+                    {(selectedSearchFilter !== "createdAt") && (
+                      <Field>
+                        <Input type="text" placeholder="Search here..." value={searchValue} onChange={e => setSearchValue(e.currentTarget.value)} />
+                      </Field>
+                    )}
 
-                    <div className="inline-flex gap-2">
+                    <div className="self-end inline-flex gap-2">
                       <Select items={searchSelectItems} value={selectedSearchFilter} onValueChange={setSelectedSearchFilter}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a Status" />
+                          <SelectValue placeholder="Select a Filter" />
                         </SelectTrigger>
 
                         <SelectContent>
@@ -228,8 +245,20 @@ export default function SamplePage() {
                         </SelectContent>
                       </Select>
 
+                      {selectedSearchFilter !== null && (
+                        <Button onClick={resetSearch} variant="secondary" >Reset</Button>
+                      )}
+
                       <Button type="submit">Search</Button>
                     </div>
+
+                    {(selectedSearchFilter && selectedSearchFilter === "createdAt") && (
+                      <Field>
+                        <div className="flex justify-center">
+                          <Calendar mode="range" selected={createdRangedValue} onSelect={setCreatedRangedValue} numberOfMonths={3} className="rounded-md border [--cell-size:3rem]" />
+                        </div>
+                      </Field>
+                    )}
                   </FieldSet>
                 </form>
               </div>
