@@ -6,15 +6,15 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
 
 public final class BuildingSpecifications {
-    public static Specification<Building> hasCompletedAtRange(LocalDateTime from, LocalDateTime to) {
+    public static Specification<Building> hasCreatedAtRange(LocalDateTime from, LocalDateTime to) {
         return (root, query, criteriaBuilder) -> {
             if (from == null && to == null)
                 return null;
             if (from == null)
-                return criteriaBuilder.lessThanOrEqualTo(root.get("completedAt"), to);
+                return criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), to);
             if (to == null)
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("completedAt"), from);
-            return criteriaBuilder.between(root.get("completedAt"), from, to);
+                return criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), from);
+            return criteriaBuilder.between(root.get("createdAt"), from, to);
         };
     }
 

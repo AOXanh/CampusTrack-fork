@@ -77,15 +77,15 @@ public class BuildingService {
 
     // Search
     public Page<BuildingResponseDto> searchBuildings(SearchBuildingRequestDto request, Pageable pageable) {
-        LocalDate completedFromDate = request.getFrom();
-        LocalDate completedToDate = request.getTo();
+        LocalDate fromDate = request.getFrom();
+        LocalDate toDate = request.getTo();
         String name = request.getName();
 
-        LocalDateTime completedFrom = completedFromDate != null ? completedFromDate.atStartOfDay() : null;
-        LocalDateTime completedTo = completedToDate != null ? completedToDate.atTime(LocalTime.MAX) : null;
+        LocalDateTime from = fromDate != null ? fromDate.atStartOfDay() : null;
+        LocalDateTime to = toDate != null ? toDate.atTime(LocalTime.MAX) : null;
 
         Specification<Building> specification = Specification
-                .where(BuildingSpecifications.hasCompletedAtRange(completedFrom, completedTo))
+                .where(BuildingSpecifications.hasCreatedAtRange(from, to))
                 .and(BuildingSpecifications.hasNameKeyword(name));
 
         return buildingRepository
