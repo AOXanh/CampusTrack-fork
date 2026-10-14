@@ -1,28 +1,34 @@
 from django.template.loader import render_to_string
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
-from jinja2 import Template
 import os, io, uuid, json
-
-# Google Drive OAuth Imports
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.http import MediaIoBaseUpload
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from pdf_parser.schemas import CreateIncidentReportRequest
+
 
 load_dotenv()
+
 
 _SCOPES: list[str | None] = [os.environ.get("SCOPES")]
 _FOLDER_ID: str | None = os.environ.get("FOLDER_ID")
 _TOKEN: str | None = os.environ.get("TOKEN")
 _CLIENT_SECRET: str | None = os.environ.get("CLIENT_SECRET")
 
-"""
-This private function uploads the PDF file to Drive.
 
-Parameters: pdf_bytes (bytes), filename (str)
-Returns: str (the link of the uploaded PDF file link)
+"""
+NOTE: DO NOT VIOLATE THE STRUCTURE LAYER
+
+CJ and Kyle:
+
+Pag research mo ug better or reliable way to store our pdf files
+Mao ni ang requirements sa cloud storage:
+  - Free and no need na ug billing
+  - At least 500 MB to 1 GB
+  - And naay python package nga well maintained
 """
 def _upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
     creds = None
@@ -30,8 +36,6 @@ def _upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
     if _TOKEN:
         token_info = json.loads(_TOKEN)
         creds = Credentials.from_authorized_user_info(token_info, _SCOPES)
-
-    # Check if credentials are not valid
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -64,23 +68,14 @@ def _upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
 
     return file.get('webViewLink')
 
-"""
-This public function creates the incident report PDF
 
-Dict required properties: { "report", "involved_parties", "details" and "preparer" }
-Parameters: data (dict)
-Returns: tuple[str] (The filename and the google drive view link)
-"""
-def create_incident_report_pdf(data: dict) -> tuple[str]:
-    template_string = render_to_string("pdf/incident_report_pdf.html")
-    template = Template(template_string)
-
-    rendered_html = template.render(
-        report=data.get("report", {}),
-        involved_parties=data.get("involved_parties", []),
-        details=data.get("details", {}),
-        preparer=data.get("preparer", {})
-    )
+def create_incident_report_pdf(data: CreateIncidentReportRequest) -> tuple[str, str]:
+    rendered_html = render_to_string("pdf/incident_report_pdf.html", {
+      "report": data["report"],
+      "involved_parties": data["involved_parties"],
+      "details": data["details"],
+      "preparer": data["preparer"],
+    })
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -94,6 +89,6 @@ def create_incident_report_pdf(data: dict) -> tuple[str]:
 
     try:
         gdrive_url = _upload_pdf_to_drive(pdf_bytes, filename)
-        return (filename, gdrive_url)
+        return filename, gdrive_url
     except Exception as e:
         raise Exception(e)

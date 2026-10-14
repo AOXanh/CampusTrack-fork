@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from pdf_parser import views
 
 urlpatterns = [
     path("", views.pdf_parser_helloworld, name="pdf_parser_helloworld"),
