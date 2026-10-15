@@ -6,7 +6,7 @@ import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RoomResponseDto;
 import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
-import com.jabai.campustrack.Exceptions.CustomExceptions.DuplicatedItemException;
+import com.jabai.campustrack.Exceptions.CustomExceptions.DuplicatedRowException;
 import com.jabai.campustrack.Exceptions.CustomExceptions.RowNotFoundException;
 import com.jabai.campustrack.Models.Asset;
 import com.jabai.campustrack.Models.Enums.IncidentCategory;
@@ -84,7 +84,7 @@ public class IncidentService {
         );
 
         if (incidentRepository.existsByIncidentNumber(incidentNumber))
-            throw new DuplicatedItemException("Incident number already exists.");
+            throw new DuplicatedRowException("Incident number already exists.");
 
         if (assetId != null) {
             Asset foundAsset = assetRepository
@@ -179,7 +179,7 @@ public class IncidentService {
         if (priority != null)
             foundIncident.setPriority(priority);
         if (incidentRepository.existsByIncidentNumber(incidentNumber))
-            throw new DuplicatedItemException("Incident number already exists.");
+            throw new DuplicatedRowException("Incident number already exists.");
         if (incidentNumber != null)
             foundIncident.setIncidentNumber(incidentNumber);
         if (description != null)
@@ -229,6 +229,7 @@ public class IncidentService {
         );
 
         UserProfileResponseDto userProfileResponseDto = new UserProfileResponseDto(
+                reportedBy.getCreatedAt(),
                 reportedBy.getId(),
                 reportedBy.getName(),
                 reportedBy.getEmail(),
@@ -269,6 +270,7 @@ public class IncidentService {
             ));
         if (assignedTo != null)
             incidentResponseDto.setAssigned(new UserProfileResponseDto(
+                    assignedTo.getCreatedAt(),
                     assignedTo.getId(),
                     assignedTo.getName(),
                     assignedTo.getEmail(),

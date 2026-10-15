@@ -1,85 +1,60 @@
 package com.jabai.campustrack.Securities;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
+import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import com.jabai.campustrack.Models.*;
 
-@Configuration 
+@Component
 public class JwtUtil {
-    @Value("${spring.jwt.secret}")
-    private String JWT_SECRET;
+    private final SecretKey signingKey;
+    private final String issuer;
+    private final long expirationMs;
 
-    @Value("${spring.jwt.issuer}")
-    private String JWT_ISSUER;
+    public JwtUtil(
+            @Value("${spring.jwt.secret}") String secret,
+            @Value("${spring.jwt.issuer}") String issuer,
+            @Value("${spring.jwt.expiration}") long expirationMs
+    ) {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32)
+            throw new IllegalStateException("spring.jwt.secret must be at least 32 characters");
 
-    @Value("${spring.jwt.expiration}")
-    private long JWT_EXPIRATION;
+        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        this.issuer = issuer;
+        this.expirationMs = expirationMs;
+    }
 
-
-    //This generates a web token so that every request made must go through a validation before allowing the user to do certain actions
-    
     public String generateToken(User user) {
-        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
+        Date now = new Date();
         return Jwts.builder()
-                .subject(user.getEmail())
-                .claim("role", user.getUserRole())
-                .issuedAt(new Date())
-                .issuer(JWT_ISSUER)
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
+                .subject(String.valueOf(user.getId()))
+                .claim("role", String.valueOf(user.getUserRole()))
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(signingKey)
                 .compact();
-    } 
-
-
-  //  This extracts the user's role so that later on we'll be able to use this extraction when evaluating their role for certain authority
-
-    public String extractRole(String token){ 
-        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
-        return  Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("role", String.class); 
     }
 
-
-    //This extracts the Username/ Email / Subject / Unique Identifier of the user so that we know who are we currently working with 
-    
-    public String extractSubject(String token){ 
-        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
-        return  Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject(); 
-    } 
-
-    //This checks if the JWT of a user request is valid 
-
-    public boolean isTokenValid(String token){ 
-        SecretKey signingKey = Keys.hmacShaKeyFor(JWT_SECRET.getBytes()); 
-        try{    
-              Jwts.parser()
+    public Claims parseToken(String token) {
+        try {
+            return Jwts.parser()
                     .verifyWith(signingKey)
+                    .requireIssuer(issuer)
                     .build()
-                    .parseSignedClaims(token);
-                    return true; 
-
-        }catch(Exception e){ 
-
-            //Basin pwede mo maka make og exception if ever dili ko maka make exception ani 
-        
-            return  false;
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
         }
     }
-
 }

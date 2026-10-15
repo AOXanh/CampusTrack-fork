@@ -155,6 +155,7 @@ public class MaintenanceRecordService {
         User user = maintenanceRecord.getUser();
 
         UserProfileResponseDto userProfileResponseDto = new UserProfileResponseDto(
+                user.getCreatedAt(),
                 user.getId(),
                 user.getName(),
                 user.getEmail(),

@@ -4,11 +4,9 @@ import com.jabai.campustrack.DTOs.Requests.LoginUserRequestDto;
 import com.jabai.campustrack.DTOs.Requests.RegisterUserRequestDto;
 import com.jabai.campustrack.DTOs.Responses.LoginUserResponseDto;
 import com.jabai.campustrack.DTOs.Responses.RegisterUserResponseDto;
-import com.jabai.campustrack.DTOs.Responses.UserProfileResponseDto;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.jabai.campustrack.Services.UserService;
@@ -16,19 +14,18 @@ import com.jabai.campustrack.Services.UserService;
 import jakarta.validation.Valid;
 
 /**
+ *
  * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
  *
- * <p>JADE: Controller structure</p>
+ * <p>JADE: Continue sad dri</p>
  *
- * <p>Ang UserController dapat for <code>/api/user</code>. Ang AuthController dapat for <code>/api/auth</code></p>
  */
 @RestController
 @RequestMapping("/api/auth")
-public class UserController {
+public class AuthController {
     private final UserService userService;
 
-
-    public UserController(UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 
@@ -44,13 +41,26 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<UserProfileResponseDto> profile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    /**
+     * METHOD LEVEL AUTHORIZATION EXAMPLES
+     * Mga example ni sya bai
+     */
 
-        String email = authentication.getName();
-        UserProfileResponseDto profile = userService.getUserProfile(email); 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin-only-test")
+    public ResponseEntity<String> adminRaniSyaBai() {
+        return ResponseEntity.ok().body("Hello world daw bai ana si admin");
+    }
 
-        return ResponseEntity.ok(profile);
+    @PreAuthorize("hasRole('WORKER')")
+    @GetMapping("/worker-only-test")
+    public ResponseEntity<String> workerRaniSyaBai() {
+        return ResponseEntity.ok().body("Hello world daw bai ana si worker");
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user-only-test")
+    public ResponseEntity<String> userRaniSyaBai() {
+        return ResponseEntity.ok().body("Hello world daw bai ana si user");
     }
 }

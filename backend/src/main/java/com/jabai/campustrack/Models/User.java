@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import com.jabai.campustrack.Models.Enums.UserRole;
+import org.hibernate.annotations.Generated;
 
 @Entity
 @Table(name = "users")
@@ -14,6 +15,7 @@ public class User {
   private Long id;
 
   @Column(name = "created_at", updatable = false, insertable = false)
+  @Generated
   private LocalDateTime createdAt;
 
   // Core columns

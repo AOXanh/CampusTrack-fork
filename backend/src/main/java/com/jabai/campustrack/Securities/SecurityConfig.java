@@ -1,41 +1,34 @@
 package com.jabai.campustrack.Securities;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 import java.util.List;
 
 /**
  * <p>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</p>
  *
- * <p>JADE: Continue dri bai and pag add ug policy which user role ang mga perform CRUD each tables and unsay mga permissions nila ;D</p>
- *
- * <p>Layer structure:</p>
- * <ul>
- *   <li>Controller layer -> DTO (with annotations)</li>
- *   <li>Service layer -> DTO</li>
- *   <li>Repository layer -> Model</li>
- * </ul>
+ * <h1>JADE</h1>
  */
 @Configuration
-@EnableMethodSecurity //This enables the PreAuthorization checker 
+@EnableMethodSecurity
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
-    private final String[] UNAUTHORIZED_PATHS = {
-            "/api/auth/register",
-            "/api/auth/login",
-
-            // Temporary development access
+    private final String[] PUBLIC_PATHS = {"/api/auth/register", "/api/auth/login", "/error"};
+    private final String[] DEV_OPEN_PATHS = {
             "/api/assets/**",
             "/api/buildings/**",
             "/api/incidents/**",
@@ -43,16 +36,17 @@ public class SecurityConfig {
             "/api/nfc-tags/**",
             "/api/rooms/**",
     };
-    private final String[] AUTHORIZED_PATHS = {
-            "/api/auth/**"
-    };
-    private final String[] ALLOWED_ORIGINS = {
-            // Temporary development access
-            "http://localhost:3000"
-    };
+    private final String[] ALLOWED_ORIGINS = {"http://localhost:3000"};
     private final String[] ALLOWED_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"};
 
-    public SecurityConfig(JwtFilter jwtFilter) {
+    private final JwtFilter jwtFilter;
+    private final boolean devOpen;
+
+    public SecurityConfig(
+            @Value("${spring.application.security.dev-open}") boolean devOpen,
+            JwtFilter jwtFilter
+    ) {
+        this.devOpen = devOpen;
         this.jwtFilter = jwtFilter;
     }
 
@@ -76,17 +70,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> corsConfigurationSource())
-            .authorizeHttpRequests(auth -> {
-                auth.requestMatchers(UNAUTHORIZED_PATHS).permitAll()
-                    .requestMatchers(AUTHORIZED_PATHS).authenticated()
-                    .anyRequest().authenticated();
-            })
-            .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class); //This configures the token filter before allowing spring security to run
+        http.csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            .authorizeHttpRequests(this::authorizedHttpRequests)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private void authorizedHttpRequests(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth.requestMatchers(PUBLIC_PATHS).permitAll();
+
+        if (devOpen)
+            auth.requestMatchers(DEV_OPEN_PATHS).permitAll();
+
+        auth.anyRequest().authenticated();
     }
 }
