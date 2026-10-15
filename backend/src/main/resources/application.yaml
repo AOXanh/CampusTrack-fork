@@ -13,6 +13,8 @@ spring:
 
   application:
     name: campustrack
+    security:
+      dev-open: true
 
   datasource:
     url: jdbc:mysql://localhost:3306/campus_track
