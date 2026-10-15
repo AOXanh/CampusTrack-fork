@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Controllers;
 
 import com.jabai.campustrack.DTOs.Requests.CreateIncidentRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchIncidentRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateIncidentRequestDto;
 import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
 import com.jabai.campustrack.Services.IncidentService;
@@ -34,7 +35,7 @@ import org.springframework.web.bind.annotation.*;
  *   <li>status (optional) (DAPAT NAKA ENUMS)</li>
  * </ul>
  * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/incidents/search?from=2026-10-07&to=2026-10-08&assetId=1&roomId=1&reportedById=1&assignedToId=2&incidentNumber=INC-0001&description=broken+projector&safetyHazard=true&operationalImpact=HIGH&affectedArea=Lab+Room&priorityScore=80&category=EQUIPMENT_FAILURE&priority=HIGH&status=OPEN</code></p>
+ * <p>Expected URL: <code>/api/incidents/search?from=2026-10-07&to=2026-10-08&assetId=1&roomId=1&reportedById=1&assignedToId=2&incidentNumber=INC-0001&description=broken+projector&safetyHazard=true&operationalImpact=false&affectedArea=2&priorityScore=80&category=EQUIPMENT_FAILURE&priority=HIGH&status=REPORTED</code></p>
  */
 @RestController
 @RequestMapping("/api/incidents")
@@ -55,6 +56,14 @@ public class IncidentController {
   @GetMapping
   public ResponseEntity<Page<IncidentResponseDto>> getIncidents(@PageableDefault(size = 20) Pageable pageable) {
     return ResponseEntity.ok(incidentService.getIncidents(pageable));
+  }
+
+  // Search
+  @GetMapping("/search")
+  public ResponseEntity<Page<IncidentResponseDto>> searchIncidents(
+      @Valid @ModelAttribute SearchIncidentRequestDto request,
+      @PageableDefault(size = 20) Pageable pageable) {
+    return ResponseEntity.ok(incidentService.searchIncidents(request, pageable));
   }
 
   // Read
