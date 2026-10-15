@@ -1,94 +1,75 @@
+import time
+import uuid
+import os
 from django.template.loader import render_to_string
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
-import os, io, uuid, json
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.http import MediaIoBaseUpload
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from pdf_parser.schemas import CreateIncidentReportRequest
-
+from supabase import create_client, Client
 
 load_dotenv()
 
-
-_SCOPES: list[str | None] = [os.environ.get("SCOPES")]
-_FOLDER_ID: str | None = os.environ.get("FOLDER_ID")
-_TOKEN: str | None = os.environ.get("TOKEN")
-_CLIENT_SECRET: str | None = os.environ.get("CLIENT_SECRET")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 """
-NOTE: DO NOT VIOLATE THE STRUCTURE LAYER
+This private function uploads the PDF bytes directly to Supabase Storage.
 
-CJ and Kyle:
-
-Pag research mo ug better or reliable way to store our pdf files
-Mao ni ang requirements sa cloud storage:
-  - Free and no need na ug billing
-  - At least 500 MB to 1 GB
-  - And naay python package nga well maintained
+Parameters: pdf_bytes (bytes), filename (str), bucket_name (str)
+Returns: str (the public URL of the uploaded PDF file)
 """
-def _upload_pdf_to_drive(pdf_bytes: bytes, filename: str) -> str:
-    creds = None
-
-    if _TOKEN:
-        token_info = json.loads(_TOKEN)
-        creds = Credentials.from_authorized_user_info(token_info, _SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            print("==============================")
-            print("TOKEN REFRESHED! Update your .env TOKEN with this:")
-            print(creds.to_json())
-        else:
-            if _CLIENT_SECRET is None:
-                raise ValueError("Missing CLIENT_SECRET in .env")
-
-            client_config = json.loads(_CLIENT_SECRET)
-
-            flow = InstalledAppFlow.from_client_config(client_config, _SCOPES)
-            creds = flow.run_local_server(port=0)
-
-            print("==============================")
-            print("NEW TOKEN GENERATED! Add this to your .env TOKEN:")
-            print(creds.to_json())
-
-    service = build('drive', 'v3', credentials=creds)
-
-    pdf_stream = io.BytesIO(pdf_bytes)
-    file_metadata = {'name': filename, 'parents': [_FOLDER_ID]}
-    media = MediaIoBaseUpload(pdf_stream, mimetype='application/pdf', resumable=True)
-    file = service.files().create(body=file_metadata, media_body=media, fields='id, webViewLink').execute()
-
-    file_id = file.get('id')
-    permission = {'type': 'anyone', 'role': 'reader'}
-    service.permissions().create(fileId=file_id,body=permission,fields='id').execute()
-
-    return file.get('webViewLink')
-
-
-def create_incident_report_pdf(data: CreateIncidentReportRequest) -> tuple[str, str]:
-    rendered_html = render_to_string("pdf/incident_report_pdf.html", {
-      "report": data["report"],
-      "involved_parties": data["involved_parties"],
-      "details": data["details"],
-      "preparer": data["preparer"],
-    })
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.set_content(rendered_html)
-        pdf_bytes = page.pdf(format="A4", print_background=True)
-        browser.close()
-
-    random_hex = uuid.uuid4().hex[:8]
-    filename = f"UC_Incident_Report_{random_hex}.pdf"
+def _upload_pdf_to_supabase(pdf_bytes: bytes, filename: str, bucket_name: str = "pdfs") -> str:
+    destination_path = f"public/{int(time.time())}-{filename}"
+    print(f"Attempting to upload '{filename}' to Supabase bucket '{bucket_name}'...")
 
     try:
-        gdrive_url = _upload_pdf_to_drive(pdf_bytes, filename)
-        return filename, gdrive_url
+        # Upload the raw bytes directly to Supabase
+        supabase.storage.from_(bucket_name).upload(
+            path=destination_path,
+            file=pdf_bytes,
+            file_options={"content-type": "application/pdf"}
+        )
+        print(f"Successfully uploaded")
+        
+        # Get the public URL 
+        public_url = supabase.storage.from_(bucket_name).get_public_url(destination_path)
+        return public_url
+
     except Exception as e:
-        raise Exception(e)
+        print(f"Upload failed: {e}")
+        raise
+
+
+"""
+This public function creates the incident report PDF and uploads it.
+
+Dict required properties: { "report", "involved_parties", "details" and "preparer" }
+Parameters: data (dict)
+Returns: tuple[str, str] (The filename and the Supabase storage view link)
+"""
+def create_incident_report_pdf(data: dict) -> tuple[str, str]:
+    # Render the Django template with the actual report data
+    rendered_html = render_to_string("pdf/incident_report_pdf.html", {
+        "report": data.get("report", {}),
+        "involved_parties": data.get("involved_parties", []),
+        "details": data.get("details", {}),
+        "preparer": data.get("preparer", {}),
+    })
+
+    # Use context managers to automatically handle launching and closing the browser
+    with sync_playwright() as p, p.chromium.launch() as browser:
+        page = browser.new_page()
+        page.set_content(rendered_html, wait_until="networkidle")
+
+        # Debug: check whether the rendered page contains visible text
+        print("Rendered page title:", page.title())
+        print("Rendered page text:", page.locator("body").inner_text()[:1000])
+
+        pdf_bytes = page.pdf(format="A4", print_background=True)
+
+    filename = f"UC_Incident_Report_{uuid.uuid4().hex[:8]}.pdf"
+    
+    supabase_url = _upload_pdf_to_supabase(pdf_bytes, filename, bucket_name="incident")
+
+    return filename, supabase_url
