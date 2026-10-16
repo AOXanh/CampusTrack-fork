@@ -28,6 +28,10 @@ def create_pdf_report(request: HttpRequest):
   except ValidationError as e:
     return JsonResponse({"message": "Invalid incident report data"}, status=400)
 
-  filename, link = services.create_incident_report_pdf(report_data)
-  response_body: CreateIncidentReportResponse = { "filename": filename, "link": link }
-  return JsonResponse(response_body)
+  try:
+    filename, link = services.create_incident_report_pdf(report_data)
+    response_body: CreateIncidentReportResponse = {"filename": filename, "link": link}
+    return JsonResponse(response_body)
+  except Exception as e:
+    print(f"Create Error: {e}")
+    return JsonResponse({ "message": "Something went wrong while processing your PDF file." }, status=500)
