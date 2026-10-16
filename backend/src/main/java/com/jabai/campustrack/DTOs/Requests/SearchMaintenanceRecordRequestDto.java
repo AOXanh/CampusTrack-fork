@@ -1,6 +1,7 @@
 package com.jabai.campustrack.DTOs.Requests;
 
 import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -12,8 +13,12 @@ public class SearchMaintenanceRecordRequestDto {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private final LocalDate completedTo;
 
+  @Positive
   private final Long incidentId;
+
+  @Positive
   private final Long userId;
+
   private final String action;
   private final String remarks;
   private final MaintenanceRecordStatus status;

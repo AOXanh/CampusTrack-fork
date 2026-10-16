@@ -7,10 +7,11 @@ import com.jabai.campustrack.Models.Enums.AssetCriticality;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 public class AssetSpecifications {
 
-    // exact match on room id
+
     public static Specification<Asset> hasRoomId(Long roomId) {
         return (root, query, cb) -> {
             if (roomId == null)
@@ -19,34 +20,48 @@ public class AssetSpecifications {
         };
     }
 
-    // keyword search (case-insensitive, partial match)
     public static Specification<Asset> hasNameKeyword(String name) {
         return (root, query, cb) -> {
             if (name == null || name.isBlank())
                 return null;
-            return cb.like(cb.lower(root.get("name")), "%" + name.trim().toLowerCase() + "%");
+            String keyword = name
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\").replace("%", "\\%")
+                    .replace("_", "\\_");
+            return cb.like(cb.lower(root.get("name")), "%" + keyword + "%", '\\');
         };
     }
 
-    // keyword search (case-insensitive, partial match)
     public static Specification<Asset> hasBrandKeyword(String brand) {
         return (root, query, cb) -> {
             if (brand == null || brand.isBlank())
                 return null;
-            return cb.like(cb.lower(root.get("brand")), "%" + brand.trim().toLowerCase() + "%");
+            String keyword = brand
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_");
+            return cb.like(cb.lower(root.get("brand")), "%" + keyword + "%", '\\');
         };
     }
 
-    // keyword search (case-insensitive, partial match)
     public static Specification<Asset> hasModelKeyword(String model) {
         return (root, query, cb) -> {
             if (model == null || model.isBlank())
                 return null;
-            return cb.like(cb.lower(root.get("model")), "%" + model.trim().toLowerCase() + "%");
+            String keyword = model
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_");
+            return cb.like(cb.lower(root.get("model")), "%" + keyword + "%", '\\');
         };
     }
 
-    // exact match on serial number
+
     public static Specification<Asset> hasSerialNumber(String serialNumber) {
         return (root, query, cb) -> {
             if (serialNumber == null || serialNumber.isBlank())
@@ -55,7 +70,7 @@ public class AssetSpecifications {
         };
     }
 
-    // exact match on category enum
+
     public static Specification<Asset> hasCategory(AssetCategory category) {
         return (root, query, cb) -> {
             if (category == null)
@@ -64,7 +79,7 @@ public class AssetSpecifications {
         };
     }
 
-    // exact match on condition enum
+
     public static Specification<Asset> hasCondition(AssetCondition condition) {
         return (root, query, cb) -> {
             if (condition == null)
@@ -73,7 +88,7 @@ public class AssetSpecifications {
         };
     }
 
-    // exact match on criticality enum
+
     public static Specification<Asset> hasCriticality(AssetCriticality criticality) {
         return (root, query, cb) -> {
             if (criticality == null)
@@ -82,7 +97,6 @@ public class AssetSpecifications {
         };
     }
 
-    // created at range, either side can be omitted
     public static Specification<Asset> createdBetween(LocalDateTime from, LocalDateTime to) {
         return (root, query, cb) -> {
             if (from == null && to == null)

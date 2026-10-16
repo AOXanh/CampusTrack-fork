@@ -60,9 +60,7 @@ public class IncidentController {
 
   // Search
   @GetMapping("/search")
-  public ResponseEntity<Page<IncidentResponseDto>> searchIncidents(
-      @Valid @ModelAttribute SearchIncidentRequestDto request,
-      @PageableDefault(size = 20) Pageable pageable) {
+  public ResponseEntity<Page<IncidentResponseDto>> searchIncidents(@Valid SearchIncidentRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
     return ResponseEntity.ok(incidentService.searchIncidents(request, pageable));
   }
 

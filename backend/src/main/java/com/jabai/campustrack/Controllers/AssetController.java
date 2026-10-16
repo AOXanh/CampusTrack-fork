@@ -42,7 +42,7 @@ public class AssetController {
   // Search
   // this must stay above "/{id}" so "search" is not read as an id
   @GetMapping("/search")
-  public ResponseEntity<Page<AssetResponseDto>> searchAssets(SearchAssetRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
+  public ResponseEntity<Page<AssetResponseDto>> searchAssets(@Valid SearchAssetRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.searchAssets(request, pageable);
     return ResponseEntity.ok(assets);
   }

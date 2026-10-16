@@ -42,7 +42,7 @@ public class BuildingController {
 
     // Search
     @GetMapping("/search")
-    public ResponseEntity<Page<BuildingResponseDto>> searchBuildings(@ModelAttribute SearchBuildingRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<Page<BuildingResponseDto>> searchBuildings(@Valid SearchBuildingRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.searchBuildings(request, pageable);
         return ResponseEntity.ok(buildings);
     }

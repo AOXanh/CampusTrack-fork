@@ -57,7 +57,7 @@ public class MaintenanceRecordController {
     // Search endpoint
     @GetMapping("/search")
     public ResponseEntity<Page<MaintenanceRecordResponseDto>> searchRecords(
-            SearchMaintenanceRecordRequestDto searchMaintenanceRecordRequestDto,
+            @Valid SearchMaintenanceRecordRequestDto searchMaintenanceRecordRequestDto,
             @PageableDefault(size = 20) Pageable pageable
     ) {
         Page<MaintenanceRecordResponseDto> records = maintenanceRecordService.searchRecords(searchMaintenanceRecordRequestDto, pageable);

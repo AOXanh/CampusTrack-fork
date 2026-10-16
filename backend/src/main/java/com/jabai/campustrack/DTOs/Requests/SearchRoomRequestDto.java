@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class SearchRoomRequestDto {
@@ -13,6 +14,7 @@ public class SearchRoomRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private final LocalDate to;
 
+    @Positive
     private final Long buildingId;
     private final String roomNumber;
     private final Integer capacity;

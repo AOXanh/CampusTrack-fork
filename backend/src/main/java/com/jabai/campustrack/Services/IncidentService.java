@@ -24,10 +24,8 @@ import com.jabai.campustrack.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -128,11 +126,8 @@ public class IncidentService {
     public Page<IncidentResponseDto> searchIncidents(SearchIncidentRequestDto request, Pageable pageable) {
         LocalDate fromDate = request.getFrom();
         LocalDate toDate = request.getTo();
-        if (fromDate != null && toDate != null && fromDate.isAfter(toDate))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From date must not be after to date.");
 
         LocalDateTime from = fromDate == null ? null : fromDate.atStartOfDay();
-        // An exclusive next-day boundary includes every timestamp on the requested to date.
         LocalDateTime to = toDate == null ? null : toDate.plusDays(1).atStartOfDay();
 
         Specification<Incident> spec = Specification

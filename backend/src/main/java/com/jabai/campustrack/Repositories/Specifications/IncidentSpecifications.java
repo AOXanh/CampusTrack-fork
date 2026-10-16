@@ -11,69 +11,122 @@ import java.util.Locale;
 
 public class IncidentSpecifications {
     public static Specification<Incident> hasAssetId(Long assetId) {
-        return (root, query, cb) -> assetId == null ? null : cb.equal(root.get("asset").get("id"), assetId);
+        return (root, query, cb) -> {
+            if (assetId == null)
+                return null;
+            return cb.equal(root.get("asset").get("id"), assetId);
+        };
     }
 
     public static Specification<Incident> hasRoomId(Long roomId) {
-        return (root, query, cb) -> roomId == null ? null : cb.equal(root.get("room").get("id"), roomId);
+        return (root, query, cb) -> {
+            if (roomId == null)
+                return null;
+            return cb.equal(root.get("room").get("id"), roomId);
+        };
     }
 
     public static Specification<Incident> hasReportedById(Long reportedById) {
-        return (root, query, cb) -> reportedById == null ? null : cb.equal(root.get("reportedBy").get("id"), reportedById);
+        return (root, query, cb) -> {
+            if (reportedById == null)
+                return null;
+            return cb.equal(root.get("reportedBy").get("id"), reportedById);
+        };
     }
 
     public static Specification<Incident> hasAssignedToId(Long assignedToId) {
-        return (root, query, cb) -> assignedToId == null ? null : cb.equal(root.get("assignedTo").get("id"), assignedToId);
+        return (root, query, cb) -> {
+            if (assignedToId == null)
+                return null;
+            return cb.equal(root.get("assignedTo").get("id"), assignedToId);
+        };
     }
 
     public static Specification<Incident> hasIncidentNumber(String incidentNumber) {
-        return (root, query, cb) -> incidentNumber == null || incidentNumber.isBlank() ? null
-                : cb.equal(root.get("incidentNumber"), incidentNumber.trim());
+        return (root, query, cb) -> {
+            if (incidentNumber == null || incidentNumber.isBlank())
+                return null;
+            return cb.equal(root.get("incidentNumber"), incidentNumber.trim());
+        };
     }
 
-    // Case-insensitive keyword matching; SQL wildcard characters are treated literally.
     public static Specification<Incident> hasDescriptionKeyword(String description) {
         return (root, query, cb) -> {
-            if (description == null || description.isBlank()) return null;
-            String keyword = description.trim().toLowerCase(Locale.ROOT)
-                    .replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+            if (description == null || description.isBlank())
+                return null;
+            String keyword = description
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\").replace("%", "\\%")
+                    .replace("_", "\\_");
             return cb.like(cb.lower(root.get("description")), "%" + keyword + "%", '\\');
         };
     }
 
     public static Specification<Incident> hasSafetyHazard(Boolean safetyHazard) {
-        return (root, query, cb) -> safetyHazard == null ? null : cb.equal(root.get("safetyHazard"), safetyHazard);
+        return (root, query, cb) -> {
+            if (safetyHazard == null)
+                return null;
+            return cb.equal(root.get("safetyHazard"), safetyHazard);
+        };
     }
 
     public static Specification<Incident> hasOperationalImpact(Boolean operationalImpact) {
-        return (root, query, cb) -> operationalImpact == null ? null : cb.equal(root.get("operationalImpact"), operationalImpact);
+        return (root, query, cb) -> {
+            if (operationalImpact == null)
+                return null;
+            return cb.equal(root.get("operationalImpact"), operationalImpact);
+        };
     }
 
     public static Specification<Incident> hasAffectedArea(Integer affectedArea) {
-        return (root, query, cb) -> affectedArea == null ? null : cb.equal(root.get("affectedArea"), affectedArea);
+        return (root, query, cb) -> {
+            if (affectedArea == null)
+                return null;
+            return cb.equal(root.get("affectedArea"), affectedArea);
+        };
     }
 
     public static Specification<Incident> hasPriorityScore(Integer priorityScore) {
-        return (root, query, cb) -> priorityScore == null ? null : cb.equal(root.get("priorityScore"), priorityScore);
+        return (root, query, cb) -> {
+            if (priorityScore == null)
+                return null;
+            return cb.equal(root.get("priorityScore"), priorityScore);
+        };
     }
 
     public static Specification<Incident> hasCategory(IncidentCategory category) {
-        return (root, query, cb) -> category == null ? null : cb.equal(root.get("category"), category);
+        return (root, query, cb) -> {
+            if (category == null)
+                return null;
+            return cb.equal(root.get("category"), category);
+        };
     }
 
     public static Specification<Incident> hasPriority(IncidentPriority priority) {
-        return (root, query, cb) -> priority == null ? null : cb.equal(root.get("priority"), priority);
+        return (root, query, cb) -> {
+            if (priority == null)
+                return null;
+            return cb.equal(root.get("priority"), priority);
+        };
     }
 
     public static Specification<Incident> hasStatus(IncidentStatus status) {
-        return (root, query, cb) -> status == null ? null : cb.equal(root.get("status"), status);
+        return (root, query, cb) -> {
+            if (status == null)
+                return null;
+            return cb.equal(root.get("status"), status);
+        };
     }
 
     public static Specification<Incident> createdBetween(LocalDateTime from, LocalDateTime to) {
         return (root, query, cb) -> {
-            if (from == null && to == null) return null;
-            if (from == null) return cb.lessThan(root.get("createdAt"), to);
-            if (to == null) return cb.greaterThanOrEqualTo(root.get("createdAt"), from);
+            if (from == null && to == null)
+                return null;
+            if (from == null)
+                return cb.lessThan(root.get("createdAt"), to);
+            if (to == null)
+                return cb.greaterThanOrEqualTo(root.get("createdAt"), from);
             return cb.and(cb.greaterThanOrEqualTo(root.get("createdAt"), from), cb.lessThan(root.get("createdAt"), to));
         };
     }

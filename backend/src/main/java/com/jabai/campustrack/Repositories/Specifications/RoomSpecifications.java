@@ -1,9 +1,6 @@
 package com.jabai.campustrack.Repositories.Specifications;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,7 +8,6 @@ import com.jabai.campustrack.Models.Room;
 import com.jabai.campustrack.Models.Enums.RoomCriticality;
 import com.jabai.campustrack.Models.Enums.RoomType;
 
-import jakarta.persistence.criteria.Predicate;
 
 public class RoomSpecifications {
 

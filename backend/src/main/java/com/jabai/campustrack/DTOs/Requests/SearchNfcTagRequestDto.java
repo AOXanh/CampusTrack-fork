@@ -1,6 +1,7 @@
 package com.jabai.campustrack.DTOs.Requests;
 
 import com.jabai.campustrack.Models.Enums.NfcTagStatus;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -12,7 +13,9 @@ public class SearchNfcTagRequestDto {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private final LocalDate to;
 
+  @Positive
   private final Long assetId;
+
   private final String uid;
   private final NfcTagStatus status;
 

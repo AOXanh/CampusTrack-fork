@@ -18,21 +18,27 @@ public class SearchIncidentRequestDto {
 
     @Positive
     private final Long assetId;
+
     @Positive
     private final Long roomId;
+
     @Positive
     private final Long reportedById;
+
     @Positive
     private final Long assignedToId;
+
     private final String incidentNumber;
     private final String description;
-    // Boxed booleans distinguish an omitted filter from an explicit false.
     private final Boolean safetyHazard;
     private final Boolean operationalImpact;
+
     @Positive
     private final Integer affectedArea;
+
     @PositiveOrZero
     private final Integer priorityScore;
+
     private final IncidentCategory category;
     private final IncidentPriority priority;
     private final IncidentStatus status;

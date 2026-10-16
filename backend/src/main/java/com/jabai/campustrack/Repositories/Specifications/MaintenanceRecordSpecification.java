@@ -5,6 +5,7 @@ import com.jabai.campustrack.Models.Enums.MaintenanceRecordStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 public class MaintenanceRecordSpecification {
     public static Specification<MaintenanceRecord> hasIncidentId(Long incidentId) {
@@ -27,7 +28,13 @@ public class MaintenanceRecordSpecification {
         return (root, query, criteriaBuilder) -> {
             if (action == null || action.isBlank())
                 return null;
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("action")), "%" + action.toLowerCase() + "%");
+            String keyword = action
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("action")), "%" + keyword + "%", '\\');
         };
     }
 
@@ -35,7 +42,13 @@ public class MaintenanceRecordSpecification {
         return (root, query, criteriaBuilder) -> {
             if (remarks == null || remarks.isBlank())
                 return null;
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("remarks")), "%" + remarks.toLowerCase() + "%");
+            String keyword = remarks
+                    .trim()
+                    .toLowerCase(Locale.ROOT)
+                    .replace("\\", "\\\\")
+                    .replace("%", "\\%")
+                    .replace("_", "\\_");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("remarks")), "%" + keyword + "%", '\\');
         };
     }
 

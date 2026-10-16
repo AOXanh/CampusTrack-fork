@@ -3,6 +3,7 @@ package com.jabai.campustrack.DTOs.Requests;
 import com.jabai.campustrack.Models.Enums.AssetCategory;
 import com.jabai.campustrack.Models.Enums.AssetCondition;
 import com.jabai.campustrack.Models.Enums.AssetCriticality;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -14,7 +15,9 @@ public class SearchAssetRequestDto {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private final LocalDate to;
 
+    @Positive
     private final Long roomId;
+
     private final String name;
     private final String brand;
     private final String model;
