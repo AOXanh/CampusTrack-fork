@@ -1,6 +1,7 @@
 package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.CreateIncidentRequestDto;
+import com.jabai.campustrack.DTOs.Requests.SearchIncidentRequestDto;
 import com.jabai.campustrack.DTOs.Requests.UpdateIncidentRequestDto;
 import com.jabai.campustrack.DTOs.Responses.AssetResponseDto;
 import com.jabai.campustrack.DTOs.Responses.IncidentResponseDto;
@@ -18,12 +19,17 @@ import com.jabai.campustrack.Models.Enums.IncidentStatus;
 import com.jabai.campustrack.Repositories.AssetRepository;
 import com.jabai.campustrack.Repositories.IncidentRepository;
 import com.jabai.campustrack.Repositories.RoomRepository;
+import com.jabai.campustrack.Repositories.Specifications.IncidentSpecifications;
 import com.jabai.campustrack.Repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -115,6 +121,37 @@ public class IncidentService {
         return incidentRepository
                 .findAll(pageable)
                 .map(this::buildIncidentResponseDto);
+    }
+
+    // Search
+    @Transactional(readOnly = true)
+    public Page<IncidentResponseDto> searchIncidents(SearchIncidentRequestDto request, Pageable pageable) {
+        LocalDate fromDate = request.getFrom();
+        LocalDate toDate = request.getTo();
+        if (fromDate != null && toDate != null && fromDate.isAfter(toDate))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From date must not be after to date.");
+
+        LocalDateTime from = fromDate == null ? null : fromDate.atStartOfDay();
+        // An exclusive next-day boundary includes every timestamp on the requested to date.
+        LocalDateTime to = toDate == null ? null : toDate.plusDays(1).atStartOfDay();
+
+        Specification<Incident> spec = Specification
+                .where(IncidentSpecifications.hasAssetId(request.getAssetId()))
+                .and(IncidentSpecifications.hasRoomId(request.getRoomId()))
+                .and(IncidentSpecifications.hasReportedById(request.getReportedById()))
+                .and(IncidentSpecifications.hasAssignedToId(request.getAssignedToId()))
+                .and(IncidentSpecifications.hasIncidentNumber(request.getIncidentNumber()))
+                .and(IncidentSpecifications.hasDescriptionKeyword(request.getDescription()))
+                .and(IncidentSpecifications.hasSafetyHazard(request.getSafetyHazard()))
+                .and(IncidentSpecifications.hasOperationalImpact(request.getOperationalImpact()))
+                .and(IncidentSpecifications.hasAffectedArea(request.getAffectedArea()))
+                .and(IncidentSpecifications.hasPriorityScore(request.getPriorityScore()))
+                .and(IncidentSpecifications.hasCategory(request.getCategory()))
+                .and(IncidentSpecifications.hasPriority(request.getPriority()))
+                .and(IncidentSpecifications.hasStatus(request.getStatus()))
+                .and(IncidentSpecifications.createdBetween(from, to));
+
+        return incidentRepository.findAll(spec, pageable).map(this::buildIncidentResponseDto);
     }
 
     // Read
