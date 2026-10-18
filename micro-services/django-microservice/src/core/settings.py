@@ -10,11 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR.parent / ".env")
+JWT_SECRET = os.getenv("JWT_SECRET", "")
+JWT_ISSUER = os.getenv("JWT_ISSUER", "")
+
+# Match Java;s HMAC selection using shared secret UTF8 byte length
+JWT_ALGORITHM = "HS256"
+if len(JWT_SECRET.encode("utf-8")) >= 64:
+    JWT_ALGORITHM = "HS512"
+elif len(JWT_SECRET.encode("utf-8")) >= 48:
+    JWT_ALGORITHM = "HS384"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
