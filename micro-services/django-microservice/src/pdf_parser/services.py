@@ -8,12 +8,6 @@ _SUPABASE = get_supabase_client()
 _PDF_TEMPLATE_PATH = "pdf/incident_report_pdf.html"
 
 
-"""
-This private function uploads the PDF bytes directly to Supabase Storage.
-
-Parameters: pdf_bytes (bytes), filename (str), bucket_name (str)
-Returns: str (the public URL of the uploaded PDF file)
-"""
 def _upload_pdf_to_supabase(pdf_bytes: bytes, filename: str, bucket_name: str = "PDFs") -> str:
     destination_path = f"{int(time.time())}-{filename}"
 
@@ -26,13 +20,6 @@ def _upload_pdf_to_supabase(pdf_bytes: bytes, filename: str, bucket_name: str = 
         raise
 
 
-"""
-This public function creates the incident report PDF and uploads it.
-
-Dict required properties: { "report", "involved_parties", "details" and "preparer" }
-Parameters: data (dict)
-Returns: tuple[str, str] (The filename and the Supabase storage view link)
-"""
 def create_incident_report_pdf(data: dict) -> tuple[str, str]:
     rendered_html = render_to_string(_PDF_TEMPLATE_PATH, {
         "report": data.get("report", {}),

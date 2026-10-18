@@ -20,15 +20,6 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR.parent / ".env")
-JWT_SECRET = os.getenv("JWT_SECRET", "")
-JWT_ISSUER = os.getenv("JWT_ISSUER", "")
-
-# Match Java;s HMAC selection using shared secret UTF8 byte length
-JWT_ALGORITHM = "HS256"
-if len(JWT_SECRET.encode("utf-8")) >= 64:
-    JWT_ALGORITHM = "HS512"
-elif len(JWT_SECRET.encode("utf-8")) >= 48:
-    JWT_ALGORITHM = "HS384"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -51,18 +42,35 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "pdf_parser"
+    "health",
+    "pdf_parser",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "pdf_parser.middleware.PdfParserMiddleware"
+    "pdf_parser.middleware.PdfParserMiddleware",
+]
+
+# JWT
+JWT_SECRET = os.getenv("JWT_SECRET", "")
+JWT_ISSUER = os.getenv("JWT_ISSUER", "")
+JWT_ALGORITHMS = ["HS256"]
+
+# ALLOWED ORIGINS
+CORS_ALLOWED_ORIGINS = [
+    o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
+]
+
+# PUBLIC URLS
+PUBLIC_PATHS = [
+    "/api/health/",
 ]
 
 ROOT_URLCONF = 'core.urls'

@@ -21,6 +21,9 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 
+    # Health
+    path("api/health/", include("health.urls")),
+
     # API
     path("api/pdf-parser/", include("pdf_parser.urls"))
 ]
