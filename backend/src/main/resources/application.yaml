@@ -15,6 +15,10 @@ spring:
     name: campustrack
     security:
       dev-open: true
+    cors:
+      allowed-origins: http://localhost:8000
+    microservices:
+      pdf-parser: http://localhost:8001/
 
   datasource:
     url: jdbc:mysql://localhost:3306/campus_track
