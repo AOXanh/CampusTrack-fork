@@ -36,17 +36,19 @@ public class SecurityConfig {
             "/api/nfc-tags/**",
             "/api/rooms/**",
     };
-    private final String[] ALLOWED_ORIGINS = {"http://localhost:3000"};
     private final String[] ALLOWED_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"};
 
+    private final String[] allowedOrigins;
     private final JwtFilter jwtFilter;
     private final boolean devOpen;
 
     public SecurityConfig(
             @Value("${spring.application.security.dev-open}") boolean devOpen,
+            @Value("${spring.application.cors.allowed-origins}") String[] allowedOrigins,
             JwtFilter jwtFilter
     ) {
         this.devOpen = devOpen;
+        this.allowedOrigins = allowedOrigins;
         this.jwtFilter = jwtFilter;
     }
 
@@ -58,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
+        configuration.setAllowedOrigins(List.of(allowedOrigins));
         configuration.setAllowedMethods(List.of(ALLOWED_METHODS));
         configuration.setAllowedHeaders(List.of("*"));
 
@@ -69,7 +71,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

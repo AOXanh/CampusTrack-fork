@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,18 +42,22 @@ public class JwtUtil {
                 .issuer(issuer)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationMs))
-                .signWith(signingKey)
+                .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
     }
 
     public Claims parseToken(String token) {
         try {
-            return Jwts.parser()
+            Jws<Claims> jws = Jwts.parser()
                     .verifyWith(signingKey)
                     .requireIssuer(issuer)
                     .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+                    .parseSignedClaims(token);
+
+            if (!Jwts.SIG.HS256.getId().equals(jws.getHeader().getAlgorithm()))
+                return null;
+
+            return jws.getPayload();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
