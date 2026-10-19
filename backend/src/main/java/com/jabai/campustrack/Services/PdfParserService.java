@@ -27,6 +27,6 @@ public class PdfParserService {
             .get()
             .uri("/posts")
             .retrieve()
-            .body(new ParameterizedTypeReference<List<PdfParserResponseDto>>() { });
+            .body(new ParameterizedTypeReference<>() { });
   }
 }
