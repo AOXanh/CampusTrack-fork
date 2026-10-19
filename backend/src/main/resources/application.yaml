@@ -19,6 +19,7 @@ spring:
       allowed-origins: http://localhost:8000
     microservices:
       pdf-parser: http://localhost:8001/
+      sample: https://jsonplaceholder.typicode.com/
 
   datasource:
     url: jdbc:mysql://localhost:3306/campus_track
