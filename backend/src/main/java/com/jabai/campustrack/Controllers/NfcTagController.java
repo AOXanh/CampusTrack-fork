@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +27,7 @@ public class NfcTagController {
   }
 
   // Create
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<NfcTagResponseDto> create(@Valid @RequestBody CreateNfcTagRequestDto createNfcTagRequestDto) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.create(createNfcTagRequestDto);
@@ -33,6 +35,7 @@ public class NfcTagController {
   }
 
   // Read all
+  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
   @GetMapping
   public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.readAll(pageable);
@@ -40,6 +43,7 @@ public class NfcTagController {
   }
 
   // Read
+  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
   @GetMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> read(@PathVariable Long id) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.read(id);
@@ -47,6 +51,7 @@ public class NfcTagController {
   }
 
   // Search
+  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
   @GetMapping("/search")
   public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);
@@ -54,6 +59,7 @@ public class NfcTagController {
   }
 
   // Update
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> update(@PathVariable Long id, @Valid @RequestBody UpdateNfcTagRequestDto updateNfcTagRequestDto) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.update(updateNfcTagRequestDto, id);
@@ -61,6 +67,7 @@ public class NfcTagController {
   }
 
   // Delete
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     nfcTagService.delete(id);
