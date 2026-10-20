@@ -1,6 +1,6 @@
 package com.jabai.campustrack.DTOs.Requests;
 
-import com.jabai.campustrack.Models.Enums.UserRole;
+
 import com.jabai.campustrack.Validations.Interfaces.PasswordMatches;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
