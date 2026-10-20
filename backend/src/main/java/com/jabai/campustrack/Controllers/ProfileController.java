@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,19 +43,27 @@ public class ProfileController {
 
   // Update
   @PatchMapping("/upadate/me")
-  public ResponseEntity<UserProfileResponseDto> updateme(Authentication authentication, @Valid @RequestBody UpdateUserProfileRequestDto request){ 
+  public ResponseEntity<UserProfileResponseDto> updateMe(Authentication authentication, @Valid @RequestBody UpdateUserProfileRequestDto request){ 
     Long id = Long.parseLong(authentication.getName()); 
     UserProfileResponseDto updatedUserProfile = userService.updateUserProfile(id, request); 
     return ResponseEntity.ok(updatedUserProfile); 
   } 
 
   // Change password
-  @PatchMapping("/changepassword")
-  public ResponseEntity<UserProfileResponseDto> changepassword(Authentication authentication, @Valid @RequestBody  UpdateUserPasswordRequestDto request){ 
+  @PatchMapping("/changepassword/me")
+  public ResponseEntity<UserProfileResponseDto> changePassword(Authentication authentication, @Valid @RequestBody  UpdateUserPasswordRequestDto request){ 
   Long id = Long.parseLong(authentication.getName()); 
   UserProfileResponseDto updatedPassword = userService.updateUserPassword(id, request); 
   return ResponseEntity.ok(updatedPassword); 
   }
 
   // Delete
+  @DeleteMapping("/delete/me")
+  public ResponseEntity<Void> deleteAccount(Authentication auth){ 
+    Long id = Long.parseLong(auth.getName()); 
+    userService.deleteUser(id);
+   return ResponseEntity.noContent().build(); 
+  }
+
+
 }
