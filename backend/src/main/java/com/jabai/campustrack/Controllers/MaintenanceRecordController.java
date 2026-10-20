@@ -42,7 +42,7 @@ public class MaintenanceRecordController {
     }
 
     // Create
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @PostMapping
     public ResponseEntity<MaintenanceRecordResponseDto> createRecord(@Valid @RequestBody CreateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordResponseDto created = maintenanceRecordService.createRecord(dto);
@@ -50,7 +50,7 @@ public class MaintenanceRecordController {
     }
 
     // Read all
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping
     public ResponseEntity<Page<MaintenanceRecordResponseDto>> getAllRecords(@PageableDefault(size = 20) Pageable pageable) {
         Page<MaintenanceRecordResponseDto> records = maintenanceRecordService.getAllRecords(pageable);
@@ -58,7 +58,7 @@ public class MaintenanceRecordController {
     }
 
     // Search endpoint
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping("/search")
     public ResponseEntity<Page<MaintenanceRecordResponseDto>> searchRecords(
             @Valid SearchMaintenanceRecordRequestDto searchMaintenanceRecordRequestDto,
@@ -69,7 +69,7 @@ public class MaintenanceRecordController {
     }
 
     // Read
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping("/{id}")
     public ResponseEntity<MaintenanceRecordResponseDto> getRecordById(@PathVariable Long id) {
         MaintenanceRecordResponseDto record = maintenanceRecordService.getRecordById(id);
@@ -77,7 +77,7 @@ public class MaintenanceRecordController {
     }
 
     // Update
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @PatchMapping("/{id}")
     public ResponseEntity<MaintenanceRecordResponseDto> updateRecord(@PathVariable Long id, @RequestBody UpdateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordResponseDto updated = maintenanceRecordService.updateRecord(id, dto);

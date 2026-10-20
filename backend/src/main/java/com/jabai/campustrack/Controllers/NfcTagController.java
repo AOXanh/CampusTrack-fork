@@ -35,7 +35,7 @@ public class NfcTagController {
   }
 
   // Read all
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping
   public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.readAll(pageable);
@@ -43,7 +43,7 @@ public class NfcTagController {
   }
 
   // Read
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> read(@PathVariable Long id) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.read(id);
@@ -51,7 +51,7 @@ public class NfcTagController {
   }
 
   // Search
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+ 
   @GetMapping("/search")
   public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);

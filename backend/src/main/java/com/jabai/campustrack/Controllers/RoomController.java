@@ -39,7 +39,7 @@ public class RoomController {
   }
 
   // Read all
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping
   public ResponseEntity<Page<RoomResponseDto>> getRooms(@PageableDefault(size = 20) Pageable pageable) {
     Page<RoomResponseDto> responseDto = roomService.getRooms(pageable);
@@ -47,7 +47,7 @@ public class RoomController {
   }
 
   // Search
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+ 
   @GetMapping("/search")
   public ResponseEntity<Page<RoomResponseDto>> searchRooms(
           SearchRoomRequestDto searchRoomsRequestDto,
@@ -58,7 +58,7 @@ public class RoomController {
   }
 
   // Read
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+ 
   @GetMapping("/{id}")
   public ResponseEntity<RoomResponseDto> getRoom(@PathVariable Long id) {
     RoomResponseDto responseDto = roomService.getRoom(id);

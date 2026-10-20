@@ -49,7 +49,7 @@ public class UserService {
             registerUserRequestDto.getName(),
             registerUserRequestDto.getEmail(),
             hashedPassword,
-            UserRole.USER
+            UserRole.STUDENT
         );
 
         userRepository.save(user);

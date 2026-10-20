@@ -36,7 +36,7 @@ public class BuildingController {
     }
 
     // Read all
-    @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+    
     @GetMapping
     public ResponseEntity<Page<BuildingResponseDto>> getAllBuildings(@PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.getAllBuildings(pageable);
@@ -44,7 +44,7 @@ public class BuildingController {
     }
 
     // Search
-    @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+    
     @GetMapping("/search")
     public ResponseEntity<Page<BuildingResponseDto>> searchBuildings(@Valid SearchBuildingRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.searchBuildings(request, pageable);
@@ -52,7 +52,7 @@ public class BuildingController {
     }
 
     // Read
-    @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+   
     @GetMapping("/{id}")
     public ResponseEntity<BuildingResponseDto> getBuildingById(@PathVariable Long id) {
         BuildingResponseDto building = buildingService.getBuildingById(id);

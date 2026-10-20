@@ -35,7 +35,7 @@ public class AssetController {
   }
 
   // Read all
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping
   public ResponseEntity<Page<AssetResponseDto>> getAllAssets(@PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.getAllAssets(pageable);
@@ -44,7 +44,7 @@ public class AssetController {
 
   // Search
   // this must stay above "/{id}" so "search" is not read as an id
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping("/search")
   public ResponseEntity<Page<AssetResponseDto>> searchAssets(@Valid SearchAssetRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.searchAssets(request, pageable);
@@ -52,7 +52,7 @@ public class AssetController {
   }
 
   // Read
-  @PreAuthorize("isAuthenticated()") // Not necessary but for readability 
+  
   @GetMapping("/{id}")
   public ResponseEntity<AssetResponseDto> getAssetById(@PathVariable Long id) {
     AssetResponseDto asset = assetService.getAssetById(id);
