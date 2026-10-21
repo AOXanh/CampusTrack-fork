@@ -35,7 +35,6 @@ public class NfcTagController {
   }
 
   // Read all
-  
   @GetMapping
   public ResponseEntity<Page<NfcTagResponseDto>> readAll(@PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.readAll(pageable);
@@ -43,7 +42,6 @@ public class NfcTagController {
   }
 
   // Read
-  
   @GetMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> read(@PathVariable Long id) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.read(id);
@@ -51,9 +49,8 @@ public class NfcTagController {
   }
 
   // Search
- 
   @GetMapping("/search")
-  public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
+  public ResponseEntity<Page<NfcTagResponseDto>> search(@Valid SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);
     return ResponseEntity.ok(nfcTagResponseDtoPage);
   }

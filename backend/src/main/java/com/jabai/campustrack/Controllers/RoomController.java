@@ -39,7 +39,6 @@ public class RoomController {
   }
 
   // Read all
-  
   @GetMapping
   public ResponseEntity<Page<RoomResponseDto>> getRooms(@PageableDefault(size = 20) Pageable pageable) {
     Page<RoomResponseDto> responseDto = roomService.getRooms(pageable);
@@ -47,7 +46,6 @@ public class RoomController {
   }
 
   // Search
- 
   @GetMapping("/search")
   public ResponseEntity<Page<RoomResponseDto>> searchRooms(
           SearchRoomRequestDto searchRoomsRequestDto,
@@ -58,7 +56,6 @@ public class RoomController {
   }
 
   // Read
- 
   @GetMapping("/{id}")
   public ResponseEntity<RoomResponseDto> getRoom(@PathVariable Long id) {
     RoomResponseDto responseDto = roomService.getRoom(id);

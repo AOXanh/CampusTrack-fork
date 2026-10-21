@@ -15,22 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
- *
- * <p>CJ: Perform search by:</p>
- * <ul>
- *   <li>from (optional) -> Dapat naka format ha for example 2026-10-07 (CREATED AT) (NEW TASK)</li>
- *   <li>to (optional) -> Dapat naka format ha for example 2026-10-15 (CREATED AT) (NEW TASK)</li>
- *   <li>incidentId (optional)</li>
- *   <li>userId (optional)</li>
- *   <li>action (optional) -> Dapat naka keyword</li>
- *   <li>remarks (optional) -> Dapat naka keyword</li>
- *   <li>status (optional)</li>
- *   <li>completedAtFrom (optional) -> Dapat naka format ha for example 2026-10-07 (COMPLETED AT)</li>
- *   <li>completedAtTo (optional) -> Dapat naka format ha for example 2026-10-15 (COMPLETED AT)</li>
- * </ul>
- * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/maintenance-records/search?from=2026-10-07&to=2026-10-15&incidentId=1&userId=1&action=Nasakpan&remarks=gipa+principal&status=COMPLETED&completedAtFrom=2026-10-07&completedAtTo=2026-10-15</code></p>
+ * <h1>MaintenanceRecordController: CJ</h1>
  */
 @RestController
 @RequestMapping("/api/maintenance-records")

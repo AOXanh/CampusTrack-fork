@@ -36,7 +36,6 @@ public class BuildingController {
     }
 
     // Read all
-    
     @GetMapping
     public ResponseEntity<Page<BuildingResponseDto>> getAllBuildings(@PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.getAllBuildings(pageable);
@@ -44,7 +43,6 @@ public class BuildingController {
     }
 
     // Search
-    
     @GetMapping("/search")
     public ResponseEntity<Page<BuildingResponseDto>> searchBuildings(@Valid SearchBuildingRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.searchBuildings(request, pageable);
@@ -52,7 +50,6 @@ public class BuildingController {
     }
 
     // Read
-   
     @GetMapping("/{id}")
     public ResponseEntity<BuildingResponseDto> getBuildingById(@PathVariable Long id) {
         BuildingResponseDto building = buildingService.getBuildingById(id);
