@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.jabai.campustrack.Services.RoomService;
@@ -30,6 +31,7 @@ public class RoomController {
   }
 
   // Create
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<RoomResponseDto> createRoom(@Valid @RequestBody CreateRoomRequestDto createRoomRequestDto) {
     RoomResponseDto responseDto = roomService.createRoom(createRoomRequestDto);
@@ -37,6 +39,7 @@ public class RoomController {
   }
 
   // Read all
+  
   @GetMapping
   public ResponseEntity<Page<RoomResponseDto>> getRooms(@PageableDefault(size = 20) Pageable pageable) {
     Page<RoomResponseDto> responseDto = roomService.getRooms(pageable);
@@ -44,6 +47,7 @@ public class RoomController {
   }
 
   // Search
+ 
   @GetMapping("/search")
   public ResponseEntity<Page<RoomResponseDto>> searchRooms(
           SearchRoomRequestDto searchRoomsRequestDto,
@@ -54,6 +58,7 @@ public class RoomController {
   }
 
   // Read
+ 
   @GetMapping("/{id}")
   public ResponseEntity<RoomResponseDto> getRoom(@PathVariable Long id) {
     RoomResponseDto responseDto = roomService.getRoom(id);
@@ -61,6 +66,7 @@ public class RoomController {
   }
 
   // Update
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   public ResponseEntity<RoomResponseDto> updateRoom(@PathVariable Long id, @RequestBody UpdateRoomRequestDto updateRoomRequestDto) {
     RoomResponseDto responseDto = roomService.updateRoom(id, updateRoomRequestDto);
@@ -68,6 +74,7 @@ public class RoomController {
   }
 
   // Delete
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<RoomResponseDto> deleteRoom(@PathVariable Long id) {
     roomService.delete(id);

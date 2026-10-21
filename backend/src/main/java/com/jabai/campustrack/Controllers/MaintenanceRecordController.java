@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,6 +42,7 @@ public class MaintenanceRecordController {
     }
 
     // Create
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @PostMapping
     public ResponseEntity<MaintenanceRecordResponseDto> createRecord(@Valid @RequestBody CreateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordResponseDto created = maintenanceRecordService.createRecord(dto);
@@ -48,6 +50,7 @@ public class MaintenanceRecordController {
     }
 
     // Read all
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping
     public ResponseEntity<Page<MaintenanceRecordResponseDto>> getAllRecords(@PageableDefault(size = 20) Pageable pageable) {
         Page<MaintenanceRecordResponseDto> records = maintenanceRecordService.getAllRecords(pageable);
@@ -55,6 +58,7 @@ public class MaintenanceRecordController {
     }
 
     // Search endpoint
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping("/search")
     public ResponseEntity<Page<MaintenanceRecordResponseDto>> searchRecords(
             @Valid SearchMaintenanceRecordRequestDto searchMaintenanceRecordRequestDto,
@@ -65,6 +69,7 @@ public class MaintenanceRecordController {
     }
 
     // Read
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @GetMapping("/{id}")
     public ResponseEntity<MaintenanceRecordResponseDto> getRecordById(@PathVariable Long id) {
         MaintenanceRecordResponseDto record = maintenanceRecordService.getRecordById(id);
@@ -72,6 +77,7 @@ public class MaintenanceRecordController {
     }
 
     // Update
+    @PreAuthorize("hasAnyRole('ADMIN', 'WORKER')")
     @PatchMapping("/{id}")
     public ResponseEntity<MaintenanceRecordResponseDto> updateRecord(@PathVariable Long id, @RequestBody UpdateMaintenanceRecordRequestDto dto) {
         MaintenanceRecordResponseDto updated = maintenanceRecordService.updateRecord(id, dto);
@@ -79,6 +85,7 @@ public class MaintenanceRecordController {
     }
 
     // Delete
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecord(@PathVariable Long id) {
         maintenanceRecordService.deleteRecord(id);

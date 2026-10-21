@@ -58,7 +58,7 @@ public class AuthController {
         return ResponseEntity.ok().body("Hello world daw bai ana si worker");
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('STUDENT')") // CHANGED IT FOR FORMALITY, I GUESS XD
     @GetMapping("/user-only-test")
     public ResponseEntity<String> userRaniSyaBai() {
         return ResponseEntity.ok().body("Hello world daw bai ana si user");

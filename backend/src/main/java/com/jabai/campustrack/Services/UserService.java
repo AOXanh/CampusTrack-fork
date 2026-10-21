@@ -49,7 +49,7 @@ public class UserService {
             registerUserRequestDto.getName(),
             registerUserRequestDto.getEmail(),
             hashedPassword,
-            UserRole.USER
+            UserRole.STUDENT
         );
 
         userRepository.save(user);
@@ -99,11 +99,18 @@ public class UserService {
         String name = updateUserProfileRequestDto.getName();
         String email =  updateUserProfileRequestDto.getEmail();
 
-        if (name != null)
-            foundUser.setName(name);
-        if (email != null)
-            foundUser.setEmail(email);
+      if (name != null) {
+    foundUser.setName(name);
+}
 
+if (email != null) {
+    userRepository.findByEmail(email).ifPresent(owner -> {
+        if (!owner.getId().equals(id)) {
+            throw new DuplicatedRowException("This email already exists.");
+        }
+    });
+    foundUser.setEmail(email);
+}
         User response = userRepository.save(foundUser);
         return buildUserProfileResponseDto(response);
     }

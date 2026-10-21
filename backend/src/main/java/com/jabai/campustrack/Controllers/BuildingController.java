@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.jabai.campustrack.DTOs.Requests.SearchBuildingRequestDto;
@@ -27,6 +28,7 @@ public class BuildingController {
     }
 
     // Create
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<BuildingResponseDto> createBuilding(@Valid @RequestBody CreateBuildingRequestDto request) {
         BuildingResponseDto createdBuilding = buildingService.createBuilding(request);
@@ -34,6 +36,7 @@ public class BuildingController {
     }
 
     // Read all
+    
     @GetMapping
     public ResponseEntity<Page<BuildingResponseDto>> getAllBuildings(@PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.getAllBuildings(pageable);
@@ -41,6 +44,7 @@ public class BuildingController {
     }
 
     // Search
+    
     @GetMapping("/search")
     public ResponseEntity<Page<BuildingResponseDto>> searchBuildings(@Valid SearchBuildingRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
         Page<BuildingResponseDto> buildings = buildingService.searchBuildings(request, pageable);
@@ -48,6 +52,7 @@ public class BuildingController {
     }
 
     // Read
+   
     @GetMapping("/{id}")
     public ResponseEntity<BuildingResponseDto> getBuildingById(@PathVariable Long id) {
         BuildingResponseDto building = buildingService.getBuildingById(id);
@@ -55,6 +60,7 @@ public class BuildingController {
     }
 
     // Update
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<BuildingResponseDto> updateBuilding(@PathVariable Long id, @Valid @RequestBody UpdateBuildingRequestDto request) {
         BuildingResponseDto updatedBuilding = buildingService.updateBuilding(id, request);
@@ -62,6 +68,7 @@ public class BuildingController {
     }
 
     // Delete
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBuilding(@PathVariable Long id) {
         buildingService.deleteBuilding(id);
