@@ -1,13 +1,14 @@
 package com.jabai.campustrack.DTOs.Requests;
 
 
+import com.jabai.campustrack.Validations.Interfaces.PasswordConfirmable;
 import com.jabai.campustrack.Validations.Interfaces.PasswordMatches;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @PasswordMatches
-public class RegisterUserRequestDto {
+public class RegisterUserRequestDto implements PasswordConfirmable {
   @NotBlank(message = "Name is required.")
   private final String name;
 

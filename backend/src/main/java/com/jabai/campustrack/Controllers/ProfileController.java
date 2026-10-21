@@ -47,7 +47,7 @@ public class ProfileController {
 
   // Change password
   @PatchMapping("/me/change-password")
-  public ResponseEntity<UserProfileResponseDto> changePassword(Authentication authentication, @Valid @RequestBody  UpdateUserPasswordRequestDto request) {
+  public ResponseEntity<UserProfileResponseDto> changePassword(Authentication authentication, @Valid @RequestBody UpdateUserPasswordRequestDto request) {
     Long id = Long.parseLong(authentication.getName());
     UserProfileResponseDto updatedPassword = userService.updateUserPassword(id, request);
     return ResponseEntity.ok(updatedPassword);

@@ -121,6 +121,9 @@ public class UserService {
                 .findById(id)
                 .orElseThrow(() -> new RowNotFoundException("Unable to find the user."));
 
+        if (!passwordEncoder.matches(updateUserPasswordRequestDto.getCurrentPassword(), foundUser.getHashedPassword()))
+            throw new InvalidCredentialsException("Your current password doesn't matched");
+
         String hashedPassword = passwordEncoder.encode(updateUserPasswordRequestDto.getPassword());
         foundUser.setHashedPassword(hashedPassword);
 
