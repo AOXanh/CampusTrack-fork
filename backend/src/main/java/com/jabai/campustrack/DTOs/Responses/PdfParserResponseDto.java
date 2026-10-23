@@ -1,5 +1,8 @@
 package com.jabai.campustrack.DTOs.Responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PdfParserResponseDto {
   /**
    * SAMPLE RANI SYA

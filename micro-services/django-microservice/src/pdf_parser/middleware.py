@@ -26,7 +26,7 @@ class PdfParserMiddleware:
       return self.get_response(request)
 
     headers = request.headers
-
+    print(headers)
     if headers.get("Authorization") is None:
       return JsonResponse({ "message": "Unauthorized" }, status=401)
 
