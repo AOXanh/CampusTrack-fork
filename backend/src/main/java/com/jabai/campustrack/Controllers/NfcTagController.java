@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +27,7 @@ public class NfcTagController {
   }
 
   // Create
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<NfcTagResponseDto> create(@Valid @RequestBody CreateNfcTagRequestDto createNfcTagRequestDto) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.create(createNfcTagRequestDto);
@@ -48,12 +50,13 @@ public class NfcTagController {
 
   // Search
   @GetMapping("/search")
-  public ResponseEntity<Page<NfcTagResponseDto>> search(SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
+  public ResponseEntity<Page<NfcTagResponseDto>> search(@Valid SearchNfcTagRequestDto searchNfcTagRequestDto, @PageableDefault(size = 20) Pageable pageable) {
     Page<NfcTagResponseDto> nfcTagResponseDtoPage = nfcTagService.search(searchNfcTagRequestDto, pageable);
     return ResponseEntity.ok(nfcTagResponseDtoPage);
   }
 
   // Update
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   public ResponseEntity<NfcTagResponseDto> update(@PathVariable Long id, @Valid @RequestBody UpdateNfcTagRequestDto updateNfcTagRequestDto) {
     NfcTagResponseDto nfcTagResponseDto = nfcTagService.update(updateNfcTagRequestDto, id);
@@ -61,6 +64,7 @@ public class NfcTagController {
   }
 
   // Delete
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     nfcTagService.delete(id);

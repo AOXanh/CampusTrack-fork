@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +27,7 @@ public class AssetController {
   }
 
   // Create
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<AssetResponseDto> createAsset(@Valid @RequestBody CreateAssetRequestDto request) {
     AssetResponseDto createdAsset = assetService.createAsset(request);
@@ -40,7 +42,6 @@ public class AssetController {
   }
 
   // Search
-  // this must stay above "/{id}" so "search" is not read as an id
   @GetMapping("/search")
   public ResponseEntity<Page<AssetResponseDto>> searchAssets(@Valid SearchAssetRequestDto request, @PageableDefault(size = 20) Pageable pageable) {
     Page<AssetResponseDto> assets = assetService.searchAssets(request, pageable);
@@ -55,6 +56,7 @@ public class AssetController {
   }
 
   // Update
+  @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   public ResponseEntity<AssetResponseDto> updateAsset(@PathVariable Long id, @Valid @RequestBody UpdateAssetRequestDto request) {
     AssetResponseDto updatedAsset = assetService.updateAsset(id, request);
@@ -62,6 +64,7 @@ public class AssetController {
   }
 
   // Delete
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteAsset(@PathVariable Long id) {
     assetService.deleteAsset(id);

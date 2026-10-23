@@ -14,28 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <h4>NOTE: DO NOT VIOLATE LAYERS STRUCTURE.</h4>
- * <br/>
- * <p>JOHN LOUIE: Perform search by:</p>
- * <ul>
- *   <li>from (optional) -> Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
- *   <li>to (optional) -> Dapat naka format ha for example 2026-10-07 (CREATED AT)</li>
- *   <li>assetId (optional)</li>
- *   <li>roomId (optional)</li>
- *   <li>reportedById (optional)</li>
- *   <li>assignedToId (optional)</li>
- *   <li>incidentNumber (optional)</li>
- *   <li>description (optional) -> Dapat naka keyword ni</li>
- *   <li>safetyHazard (optional)</li>
- *   <li>operationalImpact (optional)</li>
- *   <li>affectedArea (optional)</li>
- *   <li>priorityScore (optional)</li>
- *   <li>category (optional) (DAPAT NAKA ENUMS)</li>
- *   <li>priority (optional) (DAPAT NAKA ENUMS)</li>
- *   <li>status (optional) (DAPAT NAKA ENUMS)</li>
- * </ul>
- * <p>P.S.: And dapat naka paginate gihapon sya.</p>
- * <p>Expected URL: <code>/api/incidents/search?from=2026-10-07&to=2026-10-08&assetId=1&roomId=1&reportedById=1&assignedToId=2&incidentNumber=INC-0001&description=broken+projector&safetyHazard=true&operationalImpact=false&affectedArea=2&priorityScore=80&category=EQUIPMENT_FAILURE&priority=HIGH&status=REPORTED</code></p>
+ * <h1>IncidentController: JOHN LOUIE </h1>
+ *
+ * <p>JADE: Palihug lang ko ug follow up sa mga user roles ari</p>
  */
 @RestController
 @RequestMapping("/api/incidents")

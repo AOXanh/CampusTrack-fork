@@ -49,7 +49,7 @@ public class UserService {
             registerUserRequestDto.getName(),
             registerUserRequestDto.getEmail(),
             hashedPassword,
-            UserRole.USER
+            UserRole.STUDENT
         );
 
         userRepository.save(user);
@@ -101,8 +101,15 @@ public class UserService {
 
         if (name != null)
             foundUser.setName(name);
-        if (email != null)
+        if (email != null) {
+            userRepository
+                    .findByEmail(email)
+                    .ifPresent(user -> {
+                        if (!user.getId().equals(id))
+                            throw new DuplicatedRowException("This email already exists.");
+                    });
             foundUser.setEmail(email);
+        }
 
         User response = userRepository.save(foundUser);
         return buildUserProfileResponseDto(response);
@@ -113,6 +120,9 @@ public class UserService {
         User foundUser = userRepository
                 .findById(id)
                 .orElseThrow(() -> new RowNotFoundException("Unable to find the user."));
+
+        if (!passwordEncoder.matches(updateUserPasswordRequestDto.getCurrentPassword(), foundUser.getHashedPassword()))
+            throw new InvalidCredentialsException("Your current password doesn't matched");
 
         String hashedPassword = passwordEncoder.encode(updateUserPasswordRequestDto.getPassword());
         foundUser.setHashedPassword(hashedPassword);
