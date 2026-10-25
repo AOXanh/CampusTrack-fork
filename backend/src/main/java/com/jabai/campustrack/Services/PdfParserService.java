@@ -21,7 +21,6 @@ public class PdfParserService {
   private final RestClient restClient;
 
   public PdfParserService(
-          @Value("${spring.application.microservices.sample}") String microServiceUrl,
           @Value("${spring.application.microservices.pdf-parser}") String pdfParserUrl
   ) {
     this.restClient = RestClient
