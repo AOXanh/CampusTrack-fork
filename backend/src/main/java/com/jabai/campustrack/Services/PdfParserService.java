@@ -47,13 +47,4 @@ public class PdfParserService {
     }
 
   }
-
-
-  public List<PdfParserResponseDto> sampleGetAll() {
-    return restClient
-            .get()
-            .uri("/posts")
-            .retrieve()
-            .body(new ParameterizedTypeReference<>() { });
-  }
 }
