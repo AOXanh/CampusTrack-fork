@@ -2,6 +2,9 @@ package com.jabai.campustrack.Services;
 
 import com.jabai.campustrack.DTOs.Requests.PdfParserRequestDto;
 import com.jabai.campustrack.DTOs.Responses.PdfParserResponseDto;
+
+import tools.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -28,20 +31,22 @@ public class PdfParserService {
   }
 
   public ResponseEntity<PdfParserResponseDto> parsePdf(PdfParserRequestDto pdfParserRequestDto, String Authorization) {
+    String json = new ObjectMapper().writeValueAsString(pdfParserRequestDto);
     try {
-      return ResponseEntity.ok(
+      PdfParserResponseDto response =
       restClient.post()
-      .uri("create/")
+      .uri("api/pdf-parser/create/")
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
       .header("Authorization", Authorization)
-      .body(pdfParserRequestDto)    
+      .body(json)    
       .retrieve()
-      .body(PdfParserResponseDto.class)
-      );
+      .body(PdfParserResponseDto.class);
+      return ResponseEntity.ok(response);
     } catch (RestClientResponseException e) {
-      return ResponseEntity.status(e.getStatusCode().value()).body(new PdfParserResponseDto(null, null, null, e.getResponseBodyAsString()));
+      return ResponseEntity.status(e.getStatusCode().value()).body(new PdfParserResponseDto(e.getResponseBodyAsString()));
     }
+
   }
 
 
