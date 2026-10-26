@@ -244,6 +244,16 @@ public class IncidentService {
     }
 
     // ===== Service Utils =====
+
+    // used by @PreAuthorize in the controller - CHRIS CHAN
+    @Transactional(readOnly = true)
+    public boolean isOwner(Long incidentId, String userId) {
+        return incidentRepository
+                .findById(incidentId)
+                .map(incident -> incident.getReportedBy().getId().toString().equals(userId))
+                .orElse(false);
+    }
+
     private IncidentResponseDto buildIncidentResponseDto(Incident incident) {
         Room room = incident.getRoom();
         User reportedBy = incident.getReportedBy();
