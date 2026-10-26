@@ -1,13 +1,18 @@
 package com.jabai.campustrack.Controllers;
 
+import com.jabai.campustrack.DTOs.Requests.PdfParserRequestDto;
 import com.jabai.campustrack.DTOs.Responses.PdfParserResponseDto;
 import com.jabai.campustrack.Services.PdfParserService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * <h1>PdfParserController: Kyle</h1>
@@ -22,6 +27,7 @@ import java.util.List;
  *   <li>STRICTLY only gamit ug RestClient para sa requests niya to microservices</li>
  * </ul>
  */
+
 @RestController
 @RequestMapping("/api/pdf-parser")
 public class PdfParserController {
@@ -31,9 +37,10 @@ public class PdfParserController {
     this.pdfParserService = pdfParserService;
   }
 
-  @GetMapping("/sample")
-  public ResponseEntity<List<PdfParserResponseDto>> sample() {
-    List<PdfParserResponseDto> response = pdfParserService.sampleGetAll();
-    return ResponseEntity.ok(response);
+  @PostMapping
+  public ResponseEntity<PdfParserResponseDto> createIncidentReport(@Valid @RequestBody PdfParserRequestDto createIncidentReportRequestDto, @RequestHeader("Authorization") String Authorization) {
+    ResponseEntity<PdfParserResponseDto> response = pdfParserService.parsePdf(createIncidentReportRequestDto, Authorization);
+    return response;
   }
+
 }

@@ -1,24 +1,38 @@
 package com.jabai.campustrack.DTOs.Responses;
 
-public class PdfParserResponseDto {
-  /**
-   * SAMPLE RANI SYA
-   */
-  private final Integer userId;
-  private final Integer id;
-  private final String title;
-  private final String body;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-  public PdfParserResponseDto(Integer userId, Integer id, String title, String body) {
-    this.userId = userId;
-    this.id = id;
-    this.title = title;
-    this.body = body;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PdfParserResponseDto {
+  private final String filename;
+  private final String link;
+  private final String message;
+
+  @JsonCreator
+  public PdfParserResponseDto(
+    @JsonProperty("filename") String filename, 
+    @JsonProperty("link") String link) {
+    this.filename = filename;
+    this.link = link;
+    this.message = null;
+  }
+
+  public PdfParserResponseDto(String message) {
+    this.message = message;
+    this.filename = null;
+    this.link = null;
   }
 
   // Getters
-  public String getBody() { return body; }
-  public String getTitle() { return title; }
-  public Integer getId() { return id; }
-  public Integer getUserId() { return userId; }
+ public String getFilename() {
+     return filename;
+ }
+ public String getLink() {
+     return link;
+ }
+ public String getMessage() {
+     return message;
+ }
 }
