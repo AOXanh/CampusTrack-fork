@@ -65,4 +65,11 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
         return ResponseEntity.status(409).body(error);
     }
+
+    @ExceptionHandler(PdfParserException.class)
+    public ResponseEntity<Map<String,String>> pdfParser(PdfParserException ex) {
+        Map<String,String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(ex.getStatus()).body(error);
+    }
 }

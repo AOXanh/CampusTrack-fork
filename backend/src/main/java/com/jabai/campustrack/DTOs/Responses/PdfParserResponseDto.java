@@ -26,13 +26,7 @@ public class PdfParserResponseDto {
   }
 
   // Getters
- public String getFilename() {
-     return filename;
- }
- public String getLink() {
-     return link;
- }
- public String getMessage() {
-     return message;
- }
+ public String getFilename() { return filename; }
+ public String getLink() { return link; }
+ public String getMessage() { return message; }
 }

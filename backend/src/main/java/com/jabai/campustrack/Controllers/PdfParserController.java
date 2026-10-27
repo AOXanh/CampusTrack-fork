@@ -7,7 +7,6 @@ import com.jabai.campustrack.Services.PdfParserService;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -16,18 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <h1>PdfParserController: Kyle</h1>
- *
- * <p>E connect ang PDF parser sa micro-service dri bai</p>
- * <p>Gamita ang PdfParserService ngadto sa services</p>
- * <p>Requirements:</p>
- * <ul>
- *   <li>Dapat naay Origin gikan sa backend</li>
- *   <li>Ang Origin kay provided ngadto sa application properties</li>
- *   <li>Refer ngadto sa <code>pdf_parser/schemas.py</code> para sa request and response DTO niya</li>
- *   <li>STRICTLY only gamit ug RestClient para sa requests niya to microservices</li>
- * </ul>
  */
-
 @RestController
 @RequestMapping("/api/pdf-parser")
 public class PdfParserController {
@@ -38,9 +26,9 @@ public class PdfParserController {
   }
 
   @PostMapping
-  public ResponseEntity<PdfParserResponseDto> createIncidentReport(@Valid @RequestBody PdfParserRequestDto createIncidentReportRequestDto, @RequestHeader("Authorization") String Authorization) {
-    ResponseEntity<PdfParserResponseDto> response = pdfParserService.parsePdf(createIncidentReportRequestDto, Authorization);
-    return response;
+  public ResponseEntity<PdfParserResponseDto> createIncidentReport(
+          @Valid @RequestBody PdfParserRequestDto createIncidentReportRequestDto,
+          @RequestHeader("Authorization") String Authorization) {
+    return pdfParserService.parsePdf(createIncidentReportRequestDto, Authorization);
   }
-
 }
