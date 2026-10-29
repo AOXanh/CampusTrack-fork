@@ -19,7 +19,7 @@ export default function SampleLoginPage() {
 
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
-      router.replace("/sample/student/dashboard");
+      router.replace("/sample/user/dashboard");
     }
   }, [isLoading, isLoggedIn, router]);
 
@@ -30,7 +30,7 @@ export default function SampleLoginPage() {
 
     try {
       await login({ email, password });
-      router.replace("/sample/student/dashboard");
+      router.replace("/sample/user/dashboard");
     } catch (cause: unknown) {
       setError(cause instanceof Error ? cause.message : "Login failed. Please try again.");
     } finally {
