@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/api/api-auth";
@@ -42,8 +49,8 @@ export default function SampleLoginPage() {
     <main className="flex min-h-full flex-1 items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <h1 className="text-4xl font-semibold">Log in</h1>
-          <p className="text-muted-foreground">Enter your account details to continue.</p>
+          <CardTitle>Log in</CardTitle>
+          <CardDescription>Enter your account details to continue.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -73,6 +80,15 @@ export default function SampleLoginPage() {
                 />
               </Field>
               {error && <FieldError>{error}</FieldError>}
+              <p className="text-center text-muted-foreground">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/sample/register"
+                  className="font-medium text-foreground underline underline-offset-4 hover:text-primary"
+                >
+                  Register
+                </Link>
+              </p>
               <Button type="submit" isDisabled={isSubmitting || isLoading}>
                 {isSubmitting ? "Logging in..." : "Log in"}
               </Button>
