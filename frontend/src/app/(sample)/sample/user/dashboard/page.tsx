@@ -139,7 +139,7 @@ export default function UserDashboardPage() {
 
   return (
     <main className="flex min-h-full flex-1 items-center justify-center px-4 py-12">
-      <div className="w-full max-w-xl space-y-6">
+      <div className={`w-full ${!isLoading && !error && profile ? "grid grid-cols-1 gap-6 lg:grid-cols-2 max-w-7xl" : "max-w-xl"}`}>
         <Card>
           <CardHeader>
             <CardTitle>User Dashboard</CardTitle>
