@@ -94,7 +94,7 @@ Key constraints:
 - Enums: `@Enumerated(EnumType.STRING)`. Never ORDINAL.
 - `created_at`: populated by DB. Mark `insertable = false, updatable = false`. Do not set in Java.
 - Relations: `FetchType.LAZY` by default. Watch N+1; use `@EntityGraph` or fetch join when listing.
-- Enums in use: RoomType, RoomCriticality, AssetCategory, AssetStatus, AssetCondition, AssetCriticality, NfcTagStatus, IncidentCategory, IncidentPriority, IncidentStatus, MaintenanceRecordStatus, UserRole (`ADMIN`, `WORKER`, `USER`).
+- Enums in use: RoomType, RoomCriticality, AssetCategory, AssetStatus, AssetCondition, AssetCriticality, NfcTagStatus, IncidentCategory, IncidentPriority, IncidentStatus, MaintenanceRecordStatus, UserRole (`ADMIN`, `WORKER`, `STUDENT`).
 - Schema owned by migrations, not entities. See "Database design" section.
 
 ## Controllers and HTTP methods
@@ -128,39 +128,39 @@ Good:
 @RestController
 @RequestMapping("/api/incidents")
 public class IncidentController {
-  private final IncidentService incidentService;
+    private final IncidentService incidentService;
 
-  public IncidentController(IncidentService incidentService) {
-    this.incidentService = incidentService;
-  }
+    public IncidentController(IncidentService incidentService) {
+        this.incidentService = incidentService;
+    }
 
-  @PostMapping
-  public ResponseEntity<IncidentResponse> create(@Valid @RequestBody CreateIncidentRequest request) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.create(request));
-  }
+    @PostMapping
+    public ResponseEntity<IncidentResponse> create(@Valid @RequestBody CreateIncidentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.create(request));
+    }
 
-  @GetMapping("/{id}")
-  public IncidentResponse getById(@PathVariable Long id) {
-    return incidentService.getById(id);
-  }
+    @GetMapping("/{id}")
+    public IncidentResponse getById(@PathVariable Long id) {
+        return incidentService.getById(id);
+    }
 
-  @GetMapping
-  public PageResponse<IncidentResponse> search(IncidentFilter filter,
-                                               @RequestParam(defaultValue = "1") int page,
-                                               @RequestParam(defaultValue = "10") int size) {
-    return incidentService.search(filter, page, size);
-  }
+    @GetMapping
+    public PageResponse<IncidentResponse> search(IncidentFilter filter,
+                                                 @RequestParam(defaultValue = "1") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
+        return incidentService.search(filter, page, size);
+    }
 
-  @PatchMapping("/{id}")
-  public IncidentResponse update(@PathVariable Long id, @Valid @RequestBody UpdateIncidentRequest request) {
-    return incidentService.update(id, request);
-  }
+    @PatchMapping("/{id}")
+    public IncidentResponse update(@PathVariable Long id, @Valid @RequestBody UpdateIncidentRequest request) {
+        return incidentService.update(id, request);
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    incidentService.delete(id);
-    return ResponseEntity.noContent().build();
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        incidentService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 ```
 
@@ -168,17 +168,17 @@ Bad:
 ```java
 @RestController
 public class IncidentController {
-  @PostMapping("/api/createIncident")            // verb in URL
-  public Incident create(@RequestBody Incident i) { ... }  // entity exposed, no @Valid, returns 200
+    @PostMapping("/api/createIncident")            // verb in URL
+    public Incident create(@RequestBody Incident i) { ... }  // entity exposed, no @Valid, returns 200
 
-  @PutMapping("/api/incident/update/{id}")       // PUT, verb, singular
-  public Incident update(...) { ... }
+    @PutMapping("/api/incident/update/{id}")       // PUT, verb, singular
+    public Incident update(...) { ... }
 
-  @GetMapping("/api/incidents/all")              // not base path
-  public List<Incident> all() { ... }            // no pagination
+    @GetMapping("/api/incidents/all")              // not base path
+    public List<Incident> all() { ... }            // no pagination
 
-  @DeleteMapping("/api/incidents/{id}")
-  public String delete(@PathVariable Long id) { return "deleted"; }  // body on delete
+    @DeleteMapping("/api/incidents/{id}")
+    public String delete(@PathVariable Long id) { return "deleted"; }  // body on delete
 }
 ```
 
@@ -216,28 +216,28 @@ public record RoomResponse(Long id, String roomNumber, int capacity) {}
 Good:
 ```java
 public class RoomResponse {
-  private Long id;
-  private String roomNumber;
-  private int capacity;
+    private Long id;
+    private String roomNumber;
+    private int capacity;
 
-  public RoomResponse() {}
+    public RoomResponse() {}
 
-  public static RoomResponse from(Room room) {
-    RoomResponse dto = new RoomResponse();
-    dto.setId(room.getId());
-    dto.setRoomNumber(room.getRoomNumber());
-    dto.setCapacity(room.getCapacity());
-    return dto;
-  }
+    public static RoomResponse from(Room room) {
+        RoomResponse dto = new RoomResponse();
+        dto.setId(room.getId());
+        dto.setRoomNumber(room.getRoomNumber());
+        dto.setCapacity(room.getCapacity());
+        return dto;
+    }
 
-  public Long getId() { return id; }
-  public void setId(Long id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-  public String getRoomNumber() { return roomNumber; }
-  public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public String getRoomNumber() { return roomNumber; }
+    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
 
-  public int getCapacity() { return capacity; }
-  public void setCapacity(int capacity) { this.capacity = capacity; }
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
 }
 ```
 
@@ -347,8 +347,8 @@ public interface RoomMapper { RoomResponse toResponse(Room room); }
 
 @Component
 public class RoomMapperImpl implements RoomMapper {
-  @Override
-  public RoomResponse toResponse(Room room) { return RoomResponse.from(room); }
+    @Override
+    public RoomResponse toResponse(Room room) { return RoomResponse.from(room); }
 }
 ```
 
@@ -382,21 +382,21 @@ Bad:
 ```java
 // Get room by id
 public RoomResponse getById(Long id) {
-  // Find room in database
-  Room room = roomRepository.findById(id)
-          // If not found throw exception
-          .orElseThrow(() -> new ResourceNotFoundException("Room not found: " + id));
-  // Return response
-  return RoomResponse.from(room);
+    // Find room in database
+    Room room = roomRepository.findById(id)
+            // If not found throw exception
+            .orElseThrow(() -> new ResourceNotFoundException("Room not found: " + id));
+    // Return response
+    return RoomResponse.from(room);
 }
 ```
 
 Good:
 ```java
 public RoomResponse getById(Long id) {
-  Room room = roomRepository.findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Room not found: " + id));
-  return RoomResponse.from(room);
+    Room room = roomRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Room not found: " + id));
+    return RoomResponse.from(room);
 }
 ```
 
@@ -433,8 +433,8 @@ Bad:
 ```java
 @Service
 public class RoomService {
-  @Autowired
-  private RoomRepository roomRepository;
+    @Autowired
+    private RoomRepository roomRepository;
 }
 ```
 
@@ -442,11 +442,11 @@ Good:
 ```java
 @Service
 public class RoomService {
-  private final RoomRepository roomRepository;
+    private final RoomRepository roomRepository;
 
-  public RoomService(RoomRepository roomRepository) {
-    this.roomRepository = roomRepository;
-  }
+    public RoomService(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
 }
 ```
 
@@ -458,7 +458,7 @@ Bad:
 ```java
 @GetMapping("/users/{id}")
 public User get(@PathVariable Long id) {
-  return userRepository.findById(id).get();
+    return userRepository.findById(id).get();
 }
 ```
 Leaks `password_hash`. `.get()` throws `NoSuchElementException` -> 500. Controller hits repo.
@@ -467,15 +467,15 @@ Good:
 ```java
 @GetMapping("/users/{id}")
 public UserResponse get(@PathVariable Long id) {
-  return userService.getById(id);
+    return userService.getById(id);
 }
 ```
 ```java
 // service
 public UserResponse getById(Long id) {
-  User user = userRepository.findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
-  return UserResponse.from(user);
+    User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+    return UserResponse.from(user);
 }
 ```
 
@@ -484,16 +484,16 @@ public UserResponse getById(Long id) {
 Bad:
 ```java
 public void closeIncident(Long id) {
-  Incident incident = incidentRepository.findById(id).orElse(null);
-  if (incident != null) {
-    if (incident.getStatus() == IncidentStatus.RESOLVED) {
-      incident.setStatus(IncidentStatus.CLOSED);
-      incident.setClosedAt(LocalDateTime.now());
-      incidentRepository.save(incident);
-    } else {
-      throw new RuntimeException("bad status");
+    Incident incident = incidentRepository.findById(id).orElse(null);
+    if (incident != null) {
+        if (incident.getStatus() == IncidentStatus.RESOLVED) {
+            incident.setStatus(IncidentStatus.CLOSED);
+            incident.setClosedAt(LocalDateTime.now());
+            incidentRepository.save(incident);
+        } else {
+            throw new RuntimeException("bad status");
+        }
     }
-  }
 }
 ```
 Silent no-op when missing. Generic exception. Arrow-shaped code.
@@ -502,15 +502,15 @@ Good:
 ```java
 @Transactional
 public void closeIncident(Long id) {
-  Incident incident = incidentRepository.findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Incident not found: " + id));
+    Incident incident = incidentRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Incident not found: " + id));
 
-  if (incident.getStatus() != IncidentStatus.RESOLVED) {
-    throw new InvalidStateException("Only RESOLVED incident can be closed");
-  }
+    if (incident.getStatus() != IncidentStatus.RESOLVED) {
+        throw new InvalidStateException("Only RESOLVED incident can be closed");
+    }
 
-  incident.setStatus(IncidentStatus.CLOSED);
-  incident.setClosedAt(LocalDateTime.now());
+    incident.setStatus(IncidentStatus.CLOSED);
+    incident.setClosedAt(LocalDateTime.now());
 }
 ```
 Fail fast. Happy path flat. Dirty checking saves inside `@Transactional`, no explicit `save`.
@@ -525,10 +525,10 @@ if (incident.getStatus().toString().equals("OPEN")) { ... }
 Good:
 ```java
 return switch (incident.getStatus()) {
-        case OPEN -> handleOpen(incident);
+    case OPEN -> handleOpen(incident);
     case RESOLVED -> handleResolved(incident);
-default -> throw new InvalidStateException("Unsupported status: " + incident.getStatus());
-        };
+    default -> throw new InvalidStateException("Unsupported status: " + incident.getStatus());
+};
 ```
 
 ### Pagination 1-based
@@ -541,12 +541,12 @@ Pageable pageable = PageRequest.of(page, size); // client page=1 skips first pag
 Good:
 ```java
 public PageResponse<RoomResponse> search(RoomFilter filter, int page, int size) {
-  if (page < 1) throw new BadRequestException("page must be >= 1");
-  int safeSize = Math.min(size, MAX_PAGE_SIZE);
+    if (page < 1) throw new BadRequestException("page must be >= 1");
+    int safeSize = Math.min(size, MAX_PAGE_SIZE);
 
-  Pageable pageable = PageRequest.of(page - 1, safeSize, Sort.by("id"));
-  Page<Room> result = roomRepository.findAll(RoomSpecifications.from(filter), pageable);
-  return PageResponse.from(result, RoomResponse::from, page);
+    Pageable pageable = PageRequest.of(page - 1, safeSize, Sort.by("id"));
+    Page<Room> result = roomRepository.findAll(RoomSpecifications.from(filter), pageable);
+    return PageResponse.from(result, RoomResponse::from, page);
 }
 ```
 Response `page` echoes 1-based value.
@@ -563,20 +563,20 @@ Query grows with every filter.
 Good:
 ```java
 public final class RoomSpecifications {
-  private RoomSpecifications() {}
+    private RoomSpecifications() {}
 
-  public static Specification<Room> from(RoomFilter f) {
-    return Specification.where(hasType(f.getType()))
-            .and(inBuilding(f.getBuildingId()));
-  }
+    public static Specification<Room> from(RoomFilter f) {
+        return Specification.where(hasType(f.getType()))
+                .and(inBuilding(f.getBuildingId()));
+    }
 
-  private static Specification<Room> hasType(RoomType type) {
-    return (root, q, cb) -> type == null ? null : cb.equal(root.get("roomType"), type);
-  }
+    private static Specification<Room> hasType(RoomType type) {
+        return (root, q, cb) -> type == null ? null : cb.equal(root.get("roomType"), type);
+    }
 
-  private static Specification<Room> inBuilding(Long buildingId) {
-    return (root, q, cb) -> buildingId == null ? null : cb.equal(root.get("building").get("id"), buildingId);
-  }
+    private static Specification<Room> inBuilding(Long buildingId) {
+        return (root, q, cb) -> buildingId == null ? null : cb.equal(root.get("building").get("id"), buildingId);
+    }
 }
 ```
 `null` predicate = skipped. Each filter composable.
@@ -628,7 +628,7 @@ private Room room;
 Bad:
 ```java
 user.setPasswordHash(request.password());
-        log.info("Login attempt {} / {}", email, request.password());
+log.info("Login attempt {} / {}", email, request.password());
 String token = Jwts.builder().subject(email).claim("role", "ADMIN").compact();
 ```
 Plaintext password. Password in log. Wrong claims, breaks Django contract.
@@ -636,7 +636,7 @@ Plaintext password. Password in log. Wrong claims, breaks Django contract.
 Good:
 ```java
 user.setPasswordHash(passwordEncoder.encode(request.password()));
-        log.info("Login attempt for userId={}", user.getId());
+log.info("Login attempt for userId={}", user.getId());
 String token = jwtUtil.generateToken(user.getId()); // subject = user id string only
 ```
 
@@ -645,11 +645,11 @@ String token = jwtUtil.generateToken(user.getId()); // subject = user id string 
 Bad:
 ```java
 try {
-        return service.create(req);
+    return service.create(req);
 } catch (Exception e) {
-        e.printStackTrace();
+    e.printStackTrace();
     return null;
-            }
+}
 ```
 
 Good:
@@ -657,17 +657,17 @@ Good:
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<ErrorResponse> notFound(ResourceNotFoundException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
-  }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> notFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> invalid(MethodArgumentNotValidException ex) {
-    return ResponseEntity.badRequest()
-            .body(new ErrorResponse("VALIDATION_ERROR", ex.getBindingResult().getFieldError().getDefaultMessage()));
-  }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> invalid(MethodArgumentNotValidException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse("VALIDATION_ERROR", ex.getBindingResult().getFieldError().getDefaultMessage()));
+    }
 }
 ```
 Service throws specific exception. One place maps to HTTP.
