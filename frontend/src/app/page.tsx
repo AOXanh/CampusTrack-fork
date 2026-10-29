@@ -1,4 +1,4 @@
-export default function Home() {
+export default function SamplePage() {
   return (
     <main className="py-12 space-y-16">
 
