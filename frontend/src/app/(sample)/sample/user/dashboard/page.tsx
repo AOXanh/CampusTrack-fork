@@ -22,6 +22,14 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -42,6 +50,7 @@ export default function UserDashboardPage() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const loadProfile = useCallback(async () => {
     setIsLoadingProfile(true);
@@ -118,10 +127,6 @@ export default function UserDashboardPage() {
   }
 
   async function handleDeleteAccount() {
-    if (!window.confirm("Delete your account? This action cannot be undone.")) {
-      return;
-    }
-
     setAccountError(null);
     setIsDeletingAccount(true);
 
@@ -266,14 +271,37 @@ export default function UserDashboardPage() {
                 <CardDescription>This action cannot be undone.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {accountError && <FieldError>{accountError}</FieldError>}
-                <Button
-                  variant="destructive"
-                  onPress={handleDeleteAccount}
-                  isDisabled={isDeletingAccount}
+                <DialogTrigger
+                  isOpen={isDeleteDialogOpen}
+                  onOpenChange={setIsDeleteDialogOpen}
                 >
-                  {isDeletingAccount ? "Deleting account..." : "Delete account"}
-                </Button>
+                  <Button variant="destructive">Delete account</Button>
+                  <Dialog isDismissable={!isDeletingAccount}>
+                    <DialogHeader>
+                      <DialogTitle>Delete account?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone. Your account will be permanently deleted.
+                      </DialogDescription>
+                    </DialogHeader>
+                    {accountError && <FieldError>{accountError}</FieldError>}
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onPress={() => setIsDeleteDialogOpen(false)}
+                        isDisabled={isDeletingAccount}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onPress={handleDeleteAccount}
+                        isDisabled={isDeletingAccount}
+                      >
+                        {isDeletingAccount ? "Deleting account..." : "Delete account"}
+                      </Button>
+                    </DialogFooter>
+                  </Dialog>
+                </DialogTrigger>
               </CardContent>
             </Card>
           </>
