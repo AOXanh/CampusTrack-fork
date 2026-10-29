@@ -57,10 +57,15 @@ export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): 
   });
 
   if (!response.ok) {
-    if (response.status === 401 && !endpoint.endsWith("/api/auth/login")) {
+    if (
+      response.status === 401 &&
+      !endpoint.endsWith("/api/auth/login") &&
+      !endpoint.endsWith("/api/profile/me/change-password")
+    ) {
       clearSession();
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-        window.location.replace("/login");
+        // window.location.replace("/login");
+        window.location.replace("/sample/login"); // Temporary rani sya bai para sa sample type shit-
       }
     }
 
