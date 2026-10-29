@@ -11,7 +11,7 @@ import { useAuth } from "@/components/hooks/use-auth";
 
 export default function SampleLoginPage() {
   const router = useRouter();
-  const { checkAuth, isLoading, isLoggedIn } = useAuth();
+  const { isLoading, isLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,13 +30,7 @@ export default function SampleLoginPage() {
 
     try {
       await login({ email, password });
-      const user = await checkAuth();
-
-      if (user) {
-        router.replace("/sample/student/dashboard");
-      } else {
-        setError("Could not verify your login. Please try again.");
-      }
+      router.replace("/sample/student/dashboard");
     } catch (cause: unknown) {
       setError(cause instanceof Error ? cause.message : "Login failed. Please try again.");
     } finally {

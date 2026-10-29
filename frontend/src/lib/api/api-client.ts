@@ -57,7 +57,7 @@ export async function apiFetch<T>(endpoint: string, options: RequestInit = {}): 
   });
 
   if (!response.ok) {
-    if (response.status === 401) {
+    if (response.status === 401 && !endpoint.endsWith("/api/auth/login")) {
       clearSession();
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
         window.location.replace("/login");
