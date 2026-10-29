@@ -150,7 +150,7 @@ Entity endpoints follow fixed map (example: incidents):
 
 Backend stores enums as STRING. Match exactly, case-sensitive.
 
-- `UserRole`: `ADMIN`, `WORKER`, `USER`.
+- `UserRole`: `ADMIN`, `WORKER`, `STUDENT`.
 - Other enums (`AssetStatus`, `AssetCondition`, `AssetCriticality`, `AssetCategory`, `RoomType`, `RoomCriticality`, `NfcTagStatus`, `IncidentCategory`, `IncidentPriority`, `IncidentStatus`, `MaintenanceRecordStatus`): copy values from backend `Models.Enums`. Define once in `types/`, reuse everywhere.
 
 ## Auth
