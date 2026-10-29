@@ -16,7 +16,7 @@ spring:
     security:
       dev-open: true
     cors:
-      allowed-origins: http://localhost:8000
+      allowed-origins: http://localhost:8000,http://localhost:3000
     microservices:
       pdf-parser: http://localhost:8001/api/
       sample: https://jsonplaceholder.typicode.com/
