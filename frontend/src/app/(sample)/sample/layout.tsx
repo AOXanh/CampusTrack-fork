@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "@/app/globals.css";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
+import { TriangleAlertIcon } from "lucide-react";
 
 const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
 
@@ -28,7 +30,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable, geistHeading.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Alert className="rounded-none border-x-0 border-t-0">
+          <TriangleAlertIcon aria-hidden="true" />
+          <AlertTitle>Sample page</AlertTitle>
+          <AlertDescription>
+            This page is a sample page only for development.
+          </AlertDescription>
+        </Alert>
+        {children}
+      </body>
     </html>
   );
 }
