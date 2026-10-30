@@ -1,12 +1,19 @@
 from typing import Callable
+from threading import Lock
+from time import time
 import jwt
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse, JsonResponse
 from jwt import InvalidTokenError
 
 from core.settings import PUBLIC_PATHS
+
+_RATE_LIMIT: int = 30
+_RATE_WINDOW: int = 60
+_rate_limit_lock: Lock = Lock()
 
 
 def is_public(path: str) -> bool:
@@ -55,5 +62,19 @@ class PdfParserMiddleware:
 
     setattr(request, "user_id", user_id)
     setattr(request, "role", role)
+
+    # A cache get/set pair is not atomic without synchronizing request threads.
+    with _rate_limit_lock:
+      now: float = time()
+      cache_key: str = f"pdf-parser:rate-limit:{user_id}:{int(now // _RATE_WINDOW)}"
+      request_count: object = cache.get(cache_key, 0)
+      if not isinstance(request_count, int):
+        raise TypeError("Invalid request count in rate-limit cache.")
+      if request_count >= _RATE_LIMIT:
+        retry_after: int = _RATE_WINDOW - int(now % _RATE_WINDOW)
+        return JsonResponse({ "message": "Too many requests. Please try again later." }, status=429,
+                            headers={"Retry-After": str(retry_after)})
+      cache.set(cache_key, request_count + 1, timeout=_RATE_WINDOW)
+
     return self.get_response(request)
   
